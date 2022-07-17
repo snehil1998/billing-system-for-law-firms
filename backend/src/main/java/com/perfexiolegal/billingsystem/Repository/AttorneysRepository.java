@@ -1,13 +1,19 @@
 package com.perfexiolegal.billingsystem.Repository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
 import com.perfexiolegal.billingsystem.Model.Attorneys;
+import com.perfexiolegal.billingsystem.Model.AttorneysInService;
+import com.perfexiolegal.billingsystem.Model.ServicePricing;
+import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,7 +35,16 @@ public class AttorneysRepository {
             UUID attorneyId = (UUID) resultSet.getObject("attorney_id");
             String firstName = resultSet.getString("first_name");
             String lastName = resultSet.getString("last_name");
-            return Attorneys.builder().attorneyId(attorneyId).firstName(firstName).lastName(lastName).build();
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<ServicePricing> servicePricing = null;
+            try {
+              servicePricing =
+                  objectMapper.readValue(resultSet.getString("service_pricing"), List.class);
+            } catch (JsonProcessingException e) {
+              logger.info("can't convert from PG json to java object");
+            }
+            return Attorneys.builder().attorneyId(attorneyId).firstName(firstName).lastName(lastName)
+                .servicePricing(servicePricing).build();
           });
       return Optional.of(attorneysList);
     } catch (DataAccessException e) {
@@ -46,7 +61,16 @@ public class AttorneysRepository {
             UUID attorneyId = (UUID) resultSet.getObject("attorney_id");
             String firstName = resultSet.getString("first_name");
             String lastName = resultSet.getString("last_name");
-            return Attorneys.builder().attorneyId(attorneyId).firstName(firstName).lastName(lastName).build();
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<ServicePricing> servicePricing = null;
+            try {
+              servicePricing =
+                  objectMapper.readValue(resultSet.getString("service_pricing"), List.class);
+            } catch (JsonProcessingException e) {
+              logger.info("can't convert from PG json to java object");
+            }
+            return Attorneys.builder().attorneyId(attorneyId).firstName(firstName).lastName(lastName)
+                .servicePricing(servicePricing).build();
           });
       return Optional.of(attorney);
     } catch (DataAccessException e) {
@@ -57,10 +81,15 @@ public class AttorneysRepository {
   public Attorneys postAttorneys(Attorneys attorneys) throws RepositoryException {
     try {
       logger.info("Creating attorney: " + attorneys.getAttorneyId());
-      jdbcTemplate.update("insert into attorneys (attorney_id, first_name, last_name) values (?,?,?)",
-          attorneys.getAttorneyId(), attorneys.getFirstName(), attorneys.getLastName());
+      ObjectMapper objectMapper = new ObjectMapper();
+      PGobject jsonObject = new PGobject();
+      jsonObject.setType("json");
+      jsonObject.setValue(objectMapper.writeValueAsString(attorneys.getServicePricing()));
+      jdbcTemplate.update("insert into attorneys (attorney_id, first_name, last_name, service_pricing) " +
+              "values (?,?,?,?)",
+          attorneys.getAttorneyId(), attorneys.getFirstName(), attorneys.getLastName(), jsonObject);
       return attorneys;
-    } catch (DataAccessException e){
+    } catch (DataAccessException | JsonProcessingException | SQLException e){
       throw new RepositoryException("failed to insert attorney", e);
     }
   }
@@ -68,10 +97,15 @@ public class AttorneysRepository {
   public Attorneys updateAttorneys(Attorneys attorneys) throws RepositoryException {
     try {
       logger.info("Updating attorney: " + attorneys.getAttorneyId());
-      jdbcTemplate.update("update attorneys set first_name=?, last_name=? " +
-              "where attorney_id=?", attorneys.getFirstName(), attorneys.getLastName(), attorneys.getAttorneyId());
+      ObjectMapper objectMapper = new ObjectMapper();
+      PGobject jsonObject = new PGobject();
+      jsonObject.setType("json");
+      jsonObject.setValue(objectMapper.writeValueAsString(attorneys.getServicePricing()));
+      jdbcTemplate.update("update attorneys set first_name=?, last_name=?, service_pricing=? " +
+              "where attorney_id=?", attorneys.getFirstName(), attorneys.getLastName(), attorneys.getServicePricing(),
+          attorneys.getAttorneyId());
       return attorneys;
-    } catch (DataAccessException e) {
+    } catch (DataAccessException | JsonProcessingException | SQLException e) {
       throw new RepositoryException("failed to query for attorney", e);
     }
   }

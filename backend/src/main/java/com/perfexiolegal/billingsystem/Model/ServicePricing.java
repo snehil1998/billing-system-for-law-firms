@@ -6,16 +6,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.List;
+import java.util.UUID;
 
 @Builder
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class AttorneysWithoutId {
-  private String firstName;
-  private String lastName;
-  private List<ServicePricing> servicePricing;
-
+public class ServicePricing {
+  private UUID clientId;
+  private float price;
 }

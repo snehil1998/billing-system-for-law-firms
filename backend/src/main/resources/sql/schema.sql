@@ -1,26 +1,7 @@
 -- create database billing_system;
 \connect billing_system;
 
--- All bills
--- CREATE TABLE services
--- (
---     Service_Id UUID PRIMARY KEY,
---     Case_Id  UUID NOT NULL,
---     Client_Id   UUID NOT NULL,
---     Service   VARCHAR(500) NOT NULL,
---     Description    VARCHAR(10000),
---     Date    DATE NOT NULL,
---     Attorney_Ids   VARCHAR(10000),
---     Minutes     INTEGER NOT NULL,
---     Amount  FLOAT NOT NULL
--- );
---
--- INSERT INTO services(Service_Id, Case_Id, Client_Id, Service, Description, Date, Attorney_Ids, Minutes, Amount)
--- VALUES ('ecceccc5-d4be-4dd5-87ac-cb375c8f5ea5', '0b32333f-4d31-4d3b-89c3-b2824f8794ba', 'bc37c7ca-0175-4fdb-8b3e-a1952a271c98', 'Meeting', 'discuss patent for new AI technology', '2022-06-04', 'bc37c7ca-0175-4fdb-8b3e-a1952a271a98', 60, 300);
---
--- INSERT INTO services(Service_Id, Case_Id, Client_Id, Service, Description, Date, Attorney_Ids, Minutes, Amount)
--- VALUES ('a644294e-601d-401b-b713-a6bd061497f5', 'f35fe8ae-aa46-4305-bb3f-21fc45c8888c', 'c59df7c9-183a-422d-9113-5a9ffd4fd4ca', 'Conference', 'discuss new case', '2022-06-05', 'bc37c7ca-0175-4fdb-8b3e-a1952a271a98,bc37c7ca-0175-4fdb-8b3e-a1952a271b98', 75, 400);
-
+-- All services
 CREATE TABLE services
 (
     Service_Id UUID PRIMARY KEY,
@@ -63,14 +44,15 @@ CREATE TABLE attorneys
 (
     Attorney_Id  UUID PRIMARY KEY,
     First_Name   VARCHAR(500),
-    Last_Name   VARCHAR(500)
+    Last_Name   VARCHAR(500),
+    Service_Pricing     JSONB NOT NULL
 );
 
-INSERT INTO attorneys(Attorney_Id, First_Name, Last_Name)
-VALUES ('bc37c7ca-0175-4fdb-8b3e-a1952a271a98', 'Sanjay', 'Kumar');
+INSERT INTO attorneys(Attorney_Id, First_Name, Last_Name, Service_Pricing)
+VALUES ('bc37c7ca-0175-4fdb-8b3e-a1952a271a98', 'Sanjay', 'Kumar', '[{"clientId": "bc37c7ca-0175-4fdb-8b3e-a1952a271c98", "price": 45}, {"clientId": "c59df7c9-183a-422d-9113-5a9ffd4fd4ca", "price": 100}]');
 
-INSERT INTO attorneys(Attorney_Id, First_Name, Last_Name)
-VALUES ('bc37c7ca-0175-4fdb-8b3e-a1952a271b98', 'Arpita', 'Sawhney');
+INSERT INTO attorneys(Attorney_Id, First_Name, Last_Name, Service_Pricing)
+VALUES ('bc37c7ca-0175-4fdb-8b3e-a1952a271b98', 'Arpita', 'Sawhney', '[{"clientId": "bc37c7ca-0175-4fdb-8b3e-a1952a271c98", "price": 25}, {"clientId": "c59df7c9-183a-422d-9113-5a9ffd4fd4ca", "price": 60}]');
 
 
 -- All cases
