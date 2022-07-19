@@ -16,4 +16,7 @@ import java.util.UUID;
 public class ServicePricing {
   private UUID clientId;
   private float price;
+  public ServicePricing() {
+    super();
+  }
 }

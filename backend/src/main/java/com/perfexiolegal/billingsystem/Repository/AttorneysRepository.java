@@ -1,6 +1,9 @@
 package com.perfexiolegal.billingsystem.Repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
 import com.perfexiolegal.billingsystem.Model.Attorneys;
@@ -10,10 +13,13 @@ import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,7 +45,8 @@ public class AttorneysRepository {
             List<ServicePricing> servicePricing = null;
             try {
               servicePricing =
-                  objectMapper.readValue(resultSet.getString("service_pricing"), List.class);
+                  objectMapper.readValue(resultSet.getString("service_pricing"),
+                      new TypeReference<List<ServicePricing>>(){});
             } catch (JsonProcessingException e) {
               logger.info("can't convert from PG json to java object");
             }
@@ -62,12 +69,14 @@ public class AttorneysRepository {
             String firstName = resultSet.getString("first_name");
             String lastName = resultSet.getString("last_name");
             ObjectMapper objectMapper = new ObjectMapper();
+            JavaType type = objectMapper.getTypeFactory().constructParametricType(List.class, ServicePricing.class);
             List<ServicePricing> servicePricing = null;
             try {
               servicePricing =
-                  objectMapper.readValue(resultSet.getString("service_pricing"), List.class);
+                  objectMapper.readValue(resultSet.getString("service_pricing"),
+                      type);
             } catch (JsonProcessingException e) {
-              logger.info("can't convert from PG json to java object");
+              logger.info("cannot convert PG object to service pricing object: ", e);
             }
             return Attorneys.builder().attorneyId(attorneyId).firstName(firstName).lastName(lastName)
                 .servicePricing(servicePricing).build();
