@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -25,14 +24,31 @@ public class ServicesTransformer {
 
   public Services fromJsonWithoutIDAndAmount(ServicesWithoutIdAndAmount service)
       throws ServiceException {
-    Attorneys attorneys = attorneysService.getAttorneyById(UUID.fromString("bc37c7ca-0175-4fdb-8b3e-a1952a271a98")).get();
-//    logger.info("Updated amount for minutes: " + Math.ceil(service.getMinutes() / 60.0) * client.getServicePricing());
-    float amount = 0;
-    List<ServicePricing> map = attorneys.getServicePricing();
-//    for(Object attorney : service.getAttorneyIds()) {
-//      amount += (int)(((JSONObject) attorney).get("minutes")) / 60.0 * client.getServicePricing();
-//
-//    }
+    double[] amount = {0};
+    service.getAttorneys().stream().forEach(attorneys -> {
+      Attorneys attorney = null;
+      try {
+        attorney = attorneysService.getAttorneyById(attorneys.getId()).get();
+      } catch (ServiceException e) {
+        logger.info("Cannot retrieve attorney with id: {}", attorneys.getId());
+      }
+
+      if (attorney != null) {
+        ServicePricing filteredServicePricing = attorney.getServicePricing().stream()
+            .filter(servicePricing -> servicePricing.getClientId().equals(service.getClientId()))
+            .findAny().orElse(null);
+        if (filteredServicePricing != null) {
+          amount[0] += (filteredServicePricing.getPrice() * attorneys.getMinutes());
+        } else {
+          logger.info("Cannot find service pricing for the attorney id: {} and client id: {}",
+              attorney.getAttorneyId(), service.getClientId());
+        }
+      } else {
+        logger.info("No attorney with id: {}", attorneys.getId());
+      }
+
+    });
+
     return new Services(
         UUID.randomUUID(),
         service.getCaseId(),
@@ -41,7 +57,7 @@ public class ServicesTransformer {
         service.getDescription(),
         service.getDate(),
         service.getAttorneys(),
-        amount
+        amount[0]
     );
   }
 

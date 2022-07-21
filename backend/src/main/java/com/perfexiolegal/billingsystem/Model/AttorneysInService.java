@@ -16,4 +16,7 @@ import java.util.UUID;
 public class AttorneysInService {
   private UUID id;
   private int minutes;
+  public AttorneysInService() {
+
+  }
 }

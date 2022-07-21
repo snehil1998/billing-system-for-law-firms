@@ -1,8 +1,10 @@
 package com.perfexiolegal.billingsystem.Repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
 import com.perfexiolegal.billingsystem.Model.AttorneysInService;
+import com.perfexiolegal.billingsystem.Model.ServicePricing;
 import com.perfexiolegal.billingsystem.Model.Services;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
@@ -39,10 +41,11 @@ public class ServicesRepository {
             String description = resultSet.getString("description");
             Date date = (Date) resultSet.getObject("date");
             ObjectMapper objectMapper = new ObjectMapper();
+            JavaType type = objectMapper.getTypeFactory().constructParametricType(List.class, AttorneysInService.class);
             List<AttorneysInService> attorneys = null;
             try {
               attorneys =
-                  objectMapper.readValue(resultSet.getString("attorneys"), List.class);
+                  objectMapper.readValue(resultSet.getString("attorneys"), type);
             } catch (JsonProcessingException e) {
               logger.info("can't convert from PG json to java object");
             }
@@ -71,10 +74,11 @@ public class ServicesRepository {
             String description = resultSet.getString("description");
             Date date = (Date) resultSet.getObject("date");
             ObjectMapper objectMapper = new ObjectMapper();
+            JavaType type = objectMapper.getTypeFactory().constructParametricType(List.class, AttorneysInService.class);
             List<AttorneysInService> attorneys = null;
             try {
               attorneys =
-                  objectMapper.readValue(resultSet.getString("attorneys"), List.class);
+                  objectMapper.readValue(resultSet.getString("attorneys"), type);
               logger.info("attorneys: {}", attorneys);
             } catch (JsonProcessingException e) {
               logger.info("can't convert from PG json to java object");
@@ -104,10 +108,11 @@ public class ServicesRepository {
             String description = resultSet.getString("description");
             Date date = (Date) resultSet.getObject("date");
             ObjectMapper objectMapper = new ObjectMapper();
+            JavaType type = objectMapper.getTypeFactory().constructParametricType(List.class, AttorneysInService.class);
             List<AttorneysInService> attorneys = null;
             try {
               attorneys =
-                  objectMapper.readValue(resultSet.getString("attorneys"), List.class);
+                  objectMapper.readValue(resultSet.getString("attorneys"), type);
             } catch (JsonProcessingException e) {
               logger.info("can't convert from PG json to java object");
             }

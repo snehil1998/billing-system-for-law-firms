@@ -42,11 +42,12 @@ public class AttorneysRepository {
             String firstName = resultSet.getString("first_name");
             String lastName = resultSet.getString("last_name");
             ObjectMapper objectMapper = new ObjectMapper();
+            JavaType type = objectMapper.getTypeFactory().constructParametricType(List.class, ServicePricing.class);
             List<ServicePricing> servicePricing = null;
             try {
               servicePricing =
                   objectMapper.readValue(resultSet.getString("service_pricing"),
-                      new TypeReference<List<ServicePricing>>(){});
+                      type);
             } catch (JsonProcessingException e) {
               logger.info("can't convert from PG json to java object");
             }
