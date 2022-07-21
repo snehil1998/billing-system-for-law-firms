@@ -49,8 +49,9 @@ const AddService = () => {
                 setService("");
                 setDescription("");
                 setDate("");
-                setMinutes("");
-                setSelectedAttorneys("");
+                setMinutes({});
+                setSelectedAttorneys({});
+                setNumberOfAttorneys("0");
                 setMessage("Service created successfully");
             } else {
                 setMessage("Some error occurred");
@@ -205,7 +206,7 @@ const AddService = () => {
                         {[...Array(parseInt(numberOfAttorneys))].map((e, i) => {
                             return(
                             <div className={"attorney-"+i}>
-                                <select key={"attorney-name-selector-"+i} onChange={(event) =>
+                                <select key={"attorney-name-selector-"+i} value={selectedAttorneys[i]} onChange={(event) =>
                                     handleChangeAttorneys(event, i)}
                                            style={{width:'39vw', height:'4vh'}}>
                                     <option key={"placeholder-attorneys-"+ i} value={""}>Select attorney</option>
@@ -216,7 +217,7 @@ const AddService = () => {
                                 <input
                                     key={"attorney-minutes-input-"+i}
                                     type="number"
-                                    value={minutes.i}
+                                    value={minutes[i]}
                                     placeholder="Minutes"
                                     onChange={(e) =>
                                         setMinutes({...minutes, [i]: e.target.value})}
