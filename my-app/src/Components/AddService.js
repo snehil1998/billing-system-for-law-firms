@@ -72,17 +72,13 @@ const AddService = () => {
             .then(json => {
                 setCases(json);
             })
-    }, []);
-
-    useEffect(() => {
+        
         fetch("/clients")
             .then(response => response.json())
             .then(json => {
                 setClients(json);
             })
-    }, []);
 
-    useEffect(() => {
         fetch("/attorneys")
             .then(response => response.json())
             .then(json => {
@@ -160,8 +156,7 @@ const AddService = () => {
                                 <option key={option.value} value={option.value}>{option.label}</option>
                             ))}
                         </select>
-                        <select value={clientID} onChange={handleChangeClients} placeholder="Select an option"
-                                style={{width:'39vw', height:'4vh'}}>
+                        <select value={clientID} onChange={handleChangeClients} style={{width:'39vw', height:'4vh'}}>
                             <option key={"placeholder-client"} value={""}>Select a client</option>
                             {clientsOptions.map((option) => (
                                 <option key={option.value} value={option.value}>{option.label}</option>
@@ -194,8 +189,7 @@ const AddService = () => {
                         />
                     </div>
                     <div className="number-of-attorneys-container">
-                        <select value={numberOfAttorneys} onChange={handleNumberOfAttorneys} placeholder="Select number of attorneys"
-                                style={{width:'39vw', height:'4vh'}}>
+                        <select value={numberOfAttorneys} onChange={handleNumberOfAttorneys} style={{width:'39vw', height:'4vh'}}>
                             <option key={"placeholder-number-of-attorneys"} value={"0"}>Select number of attorneys</option>
                             {numberOfAttorneysOptions.map((option) => (
                                 <option key={option.value} value={option.value}>{option.label}</option>
@@ -207,8 +201,7 @@ const AddService = () => {
                             return(
                             <div className={"attorney-"+i}>
                                 <select key={"attorney-name-selector-"+i} value={selectedAttorneys[i]} onChange={(event) =>
-                                    handleChangeAttorneys(event, i)}
-                                           style={{width:'39vw', height:'4vh'}}>
+                                    handleChangeAttorneys(event, i)} style={{width:'39vw', height:'4vh'}}>
                                     <option key={"placeholder-attorneys-"+ i} value={""}>Select attorney</option>
                                     {attorneysOptions.map((option) => (
                                         <option key={option.value} value={option.value}>{option.label}</option>
