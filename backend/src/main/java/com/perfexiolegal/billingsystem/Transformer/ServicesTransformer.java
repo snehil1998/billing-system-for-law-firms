@@ -38,7 +38,7 @@ public class ServicesTransformer {
             .filter(servicePricing -> servicePricing.getClientId().equals(service.getClientId()))
             .findAny().orElse(null);
         if (filteredServicePricing != null) {
-          amount[0] += (filteredServicePricing.getPrice() * attorneys.getMinutes());
+          amount[0] += (filteredServicePricing.getPrice() * Math.ceil(attorneys.getMinutes()/60.0));
         } else {
           logger.info("Cannot find service pricing for the attorney id: {} and client id: {}",
               attorney.getAttorneyId(), service.getClientId());

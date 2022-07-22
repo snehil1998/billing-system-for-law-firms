@@ -3,6 +3,7 @@ import {requestServices} from "../Redux/Action";
 import {useDispatch} from "react-redux";
 import {useMemo} from "react";
 import {DefaultColumnFilter} from "./DefaultColumnFilter";
+import {defaultGlobalFilter} from "./DefaultGlobalFilter";
 import {GlobalFilter} from "./GlobalFilter";
 import MaUTable from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -35,6 +36,8 @@ export default function Table({ columns, data, type }) {
         []
     );
 
+    const filterOptions = { filteredIds: [] };
+
     const {
         getTableProps,
         getTableBodyProps,
@@ -50,12 +53,15 @@ export default function Table({ columns, data, type }) {
             columns,
             data,
             defaultColumn,
-            filterTypes
+            filterTypes,
+            getSubRows: (row: any) => row.subRows,
+            globalFilter: (rows, columnIds, filterValue) =>
+                defaultGlobalFilter(rows, columnIds, filterValue, filterOptions)
         },
         useFilters,
         useGlobalFilter,
         useSortBy,
-        useExpanded
+        useExpanded,
     );
 
     const dispatch = useDispatch();
@@ -100,7 +106,6 @@ export default function Table({ columns, data, type }) {
                                        {...column.getHeaderProps(column.getSortByToggleProps())} style={{color:"white"}}>
                                 {column.render("Header")}
                                 <span style={{color:'white'}}>{column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}</span>
-                                {/*<div>{column.canFilter ? column.render("Filter") : null}</div>*/}
                             </TableCell>
                         ))}
                         <TableCell/>
