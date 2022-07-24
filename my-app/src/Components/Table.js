@@ -103,7 +103,8 @@ export default function Table({ columns, data, type }) {
                     <TableRow className={"headers"} {...headerGroup.getHeaderGroupProps()}>
                         {headerGroup.headers.map(column => (
                             <TableCell className={"header columns"}
-                                       {...column.getHeaderProps(column.getSortByToggleProps())} style={{color:"white"}}>
+                                       {...column.getHeaderProps(column.getSortByToggleProps())} 
+                                       style={{color:"white", cursor:'pointer'}}>
                                 {column.render("Header")}
                                 <span style={{color:'white'}}>{column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}</span>
                             </TableCell>

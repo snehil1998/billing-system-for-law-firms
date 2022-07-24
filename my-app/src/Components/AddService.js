@@ -58,9 +58,9 @@ const AddService = () => {
                     setMinutes({});
                     setSelectedAttorneys({});
                     setNumberOfAttorneys("0");
-                    setMessage("Service was created successfully");
+                    setMessage("Service was created successfully!");
                 } else {
-                    setMessage("Error occurred while adding data into services");
+                    setMessage("❗ Error occurred while adding data into services");
                 }
                 dispatch(requestServices(''));
             } catch (err) {
@@ -151,7 +151,7 @@ const AddService = () => {
         })
         if(!checkValidation){
             setShouldPost(false)
-            setMessage("Please enter valid minutes which is a multiple of 6");
+            setMessage("❗ Please make sure you enter valid minutes for attorneys. They should be a multiple of 6.");
         } else {
             setShouldPost(true)
             setMessage("");
@@ -162,7 +162,8 @@ const AddService = () => {
 
     return (
         <div className="add service">
-            <p>{message}</p>
+            <p style={{fontSize:'20px', textAlign:'center', width:'100vw', 
+                backgroundColor:'white', color:'red'}}>{message}</p>
             {showAddService ?
             <div className="add-service-span-container" style={{backgroundColor:'black', width:'12vw'}}>
                 <span onClick={handleAddService} style={{cursor:'pointer', fontSize:'20px'}}>
@@ -179,13 +180,17 @@ const AddService = () => {
                 <form onSubmit={handleSubmit} style={{fontSize:15, padding:'1.5vh'}}>
                     <div className="case-client-name-container">
                         <select value={caseID} onChange={handleChangeCases} style={{width:'57.5vw', height:'4vh'}}>
-                            <option key={"placeholder-case"} value={""}>Select a case</option>
+                            <option key={"placeholder-case"} value={""} disabled={true}>
+                                Select a case
+                            </option>
                             {caseOptions.map((option) => (
                                 <option key={option.value} value={option.value}>{option.label}</option>
                             ))}
                         </select>
                         <select value={clientID} onChange={handleChangeClients} style={{width:'39vw', height:'4vh'}}>
-                            <option key={"placeholder-client"} value={""}>Select a client</option>
+                            <option key={"placeholder-client"} value={""} disabled={true}>
+                                Select a client
+                            </option>
                             {clientsOptions.map((option) => (
                                 <option key={option.value} value={option.value}>{option.label}</option>
                             ))}
@@ -225,7 +230,9 @@ const AddService = () => {
                     </div>
                     <div className="number-of-attorneys-container">
                         <select value={numberOfAttorneys} onChange={handleNumberOfAttorneys} style={{width:'39vw', height:'4vh'}}>
-                            <option key={"placeholder-number-of-attorneys"} value={"0"}>Select number of attorneys</option>
+                            <option key={"placeholder-number-of-attorneys"} value={"0"} disabled={true}>
+                                Select number of attorneys
+                            </option>
                             {numberOfAttorneysOptions.map((option) => (
                                 <option key={option.value} value={option.value}>{option.label}</option>
                             ))}
@@ -237,7 +244,9 @@ const AddService = () => {
                             <div className={"attorney-"+i}>
                                 <select key={"attorney-name-selector-"+i} value={selectedAttorneys[i]} onChange={(event) =>
                                     handleChangeAttorneys(event, i)} style={{width:'39vw', height:'4vh'}}>
-                                    <option key={"placeholder-attorneys-"+ i} value={""}>Select attorney</option>
+                                    <option key={"placeholder-attorneys-"+ i} value={""} disabled={true}>
+                                        Select attorney
+                                    </option>
                                     {attorneysOptions.map((option) => (
                                         <option key={option.value} value={option.value}>{option.label}</option>
                                     ))}
@@ -249,7 +258,7 @@ const AddService = () => {
                                     placeholder="Minutes"
                                     onChange={(e) =>
                                         setMinutes({...minutes, [i]: e.target.value})}
-                                    style={{width:'10vw', height:'4vh'}}
+                                    style={{width:'10vw', height:'3.2vh'}}
                                     onBlur={validateMinutes}
                                 />
                             </div>)
