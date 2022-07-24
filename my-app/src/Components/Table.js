@@ -10,6 +10,8 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 export default function Table({ columns, data, type }) {
 
@@ -84,6 +86,69 @@ export default function Table({ columns, data, type }) {
     function deleteAlert() {
         alert("Delete successful");
     }
+    
+    let csvRows = []
+    rows.forEach((row, index) => {
+        let csvRow = {}
+        csvRow["Sno"] = index+1
+        csvRow["Case"] = row.original.casename
+        csvRow["Client"] = row.original.clientname
+        csvRow["Service"] = row.original.service
+        csvRow["Description"] = row.original.description
+        csvRow["Date"] = row.original.date
+        csvRow["Amount"] = row.original.amount
+        csvRow["Attorneys"] = row.original.attorneys
+        csvRow["Minutes"] = row.original.minutes
+        csvRow["Hours"] = row.original.hours
+        csvRow["Pricing"] = row.original.pricing
+        csvRow["Total"] = row.original.total
+        csvRows.push(csvRow)
+        csvRow = {}
+        row.original?.subRows?.forEach(subRow => {
+            csvRow["Sno"] = ""
+            csvRow["Case"] = subRow.casename
+            csvRow["Client"] = subRow.clientname
+            csvRow["Service"] = subRow.service
+            csvRow["Description"] = subRow.description
+            csvRow["Date"] = subRow.date
+            csvRow["Amount"] = subRow.amount
+            csvRow["Attorneys"] = subRow.attorneys
+            csvRow["Minutes"] = subRow.minutes
+            csvRow["Hours"] = subRow.hours
+            csvRow["Pricing"] = subRow.pricing
+            csvRow["Total"] = subRow.total
+            csvRows.push(csvRow)
+            csvRow = {}
+        })
+    })
+    
+    const exportPDF = () => {
+        const unit = "pt";
+        const size = "A4"; // Use A1, A2, A3 or A4
+        const orientation = "landscape"; // portrait or landscape
+
+        const marginLeft = 40;
+        const doc = new jsPDF(orientation, unit, size);
+
+        doc.setFontSize(15);
+
+        const title = "Services Report";
+        const headers = [["S.No.", "Case", "Client", "Service", "Description", "Date", "Amount", "Attorney(s)",
+        "Time spent (in minutes)", "Time spent (in hours)", "Rate per hour", "Total"]];
+
+        const data = csvRows.map(row=> [row.Sno, row.Case, row.Client, row.Service, row.Description, row.Date,
+        row.Amount, row.Attorneys, row.Minutes, row.Hours, row.Pricing, row.Total]);
+
+        let content = {
+            startY: 50,
+            head: headers,
+            body: data
+        };
+
+        doc.text(title, marginLeft, 40);
+        doc.autoTable(content);
+        doc.save("report.pdf")
+    }
 
     return (
         <>
@@ -96,6 +161,9 @@ export default function Table({ columns, data, type }) {
                     preGlobalFilteredRows={preGlobalFilteredRows}
                     globalFilter={state.globalFilter}
                     setGlobalFilter={setGlobalFilter} />
+            </div>
+            <div style={{textAlign:'right', width:'99vw'}}>
+                <button style={{width:'9vw', height:'5vh', fontSize:'14px', cursor:'pointer'}} onClick={() => exportPDF()}>Generate Service Report</button>
             </div>
             <MaUTable className={"table"} {...getTableProps()}>
                 <TableHead className={"table head"}>

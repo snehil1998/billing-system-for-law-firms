@@ -157,21 +157,19 @@ const AddService = () => {
             setMessage("");
         }
     }
-    
-    console.log(date)
 
     return (
         <div className="add service">
             <p style={{fontSize:'20px', textAlign:'center', width:'100vw', 
                 backgroundColor:'white', color:'red'}}>{message}</p>
             {showAddService ?
-            <div className="add-service-span-container" style={{backgroundColor:'black', width:'12vw'}}>
+            <div className="add-service-span-container" style={{backgroundColor:'black', width:'12vw', margin:'1vw'}}>
                 <span onClick={handleAddService} style={{cursor:'pointer', fontSize:'20px'}}>
                     ADD A SERVICE   <FontAwesomeIcon icon={faCaretSquareUp} />
                 </span>
             </div>
             :
-            <div className="add-service-span-container" style={{backgroundColor:'black', width:'12vw'}}>
+            <div className="add-service-span-container" style={{backgroundColor:'black', width:'12vw', margin:'1vw'}}>
                 <span onClick={handleAddService} style={{cursor:'pointer', fontSize:'20px'}}>
                     ADD A SERVICE   <FontAwesomeIcon icon={faCaretSquareDown} />
                 </span>

@@ -201,6 +201,13 @@ const DisplayServices = () => {
             <div className={"display table container"}>
                 <div className={"table container"} style={{textAlign:'left'}}>
                     <AddService/>
+                    {/*<CSVLink*/}
+                    {/*    filename={"TableContent.csv"}*/}
+                    {/*    data={tableData}*/}
+                    {/*    className="btn btn-primary"*/}
+                    {/*>*/}
+                    {/*    Download csv*/}
+                    {/*</CSVLink>*/}
                     <Table columns={columns} data={tableData} type={'services'} />
                 </div>
             </div>
