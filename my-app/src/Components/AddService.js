@@ -213,6 +213,7 @@ const AddService = () => {
                             onChange={setSelectedDate}
                             inputPlaceholder="Select a date"
                             shouldHighlightWeekends
+                            wrapperClassName={'DatePicker__input'}
                         />
                         {/*<input*/}
                         {/*    type="text"*/}
