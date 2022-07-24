@@ -1,5 +1,4 @@
 export const defaultGlobalFilter = (rows, columnIds, filterValue, options) => {
-    console.log("defaultGlobalFilter");
     // Do not filter
     if (filterValue === "" || filterValue === null || filterValue === undefined) {
         return rows;
@@ -10,7 +9,6 @@ export const defaultGlobalFilter = (rows, columnIds, filterValue, options) => {
     }
     const textSearchValues = filterValue.trim().toLocaleLowerCase();
     const arraySearchValues = textSearchValues.split(" "); // Transform it to array of separate words
-    console.log("options", options);
     return rows.filter((row) => {
         // If the id exists in options then the parent was filtred
         // And we want to display the children as well

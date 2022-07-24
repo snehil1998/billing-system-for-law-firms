@@ -21,7 +21,7 @@ const DisplayServices = () => {
                 id: 'expander', // Make sure it has an ID
                 Header: ({ getToggleAllRowsExpandedProps, isAllRowsExpanded }) => (
                     <span {...getToggleAllRowsExpandedProps()}>
-                        {isAllRowsExpanded ? '👇' : '👉'}
+                        {isAllRowsExpanded ? '⬇️' : '➡️'}
                     </span>
                 ),
                 Cell: ({ row }) =>
@@ -33,7 +33,7 @@ const DisplayServices = () => {
                                 },
                             })}
                         >
-                            {row.isExpanded ? '👇' : '👉'}
+                            {row.isExpanded ? '⬇️' : '➡️'}
                         </span>
                     ) : null,
             },
@@ -83,8 +83,26 @@ const DisplayServices = () => {
 
                     },
                     {
-                        Header: 'Minutes',
+                        Header: 'Time Spent (in Minutes)',
                         accessor: 'minutes',
+                        sortType: "basic",
+                        filter: "numeric"
+                    },
+                    {
+                        Header: 'Time Spent (in hours)',
+                        accessor: 'hours',
+                        sortType: "basic",
+                        filter: "numeric"
+                    },
+                    {
+                        Header: 'Rate per hour',
+                        accessor: 'pricing',
+                        sortType: "basic",
+                        filter: "numeric"
+                    },
+                    {
+                        Header: 'Total',
+                        accessor: 'total',
                         sortType: "basic",
                         filter: "numeric"
                     }
@@ -118,19 +136,31 @@ const DisplayServices = () => {
 
 
     let tableData = [];
-    data.map((service) => {
+    data.forEach((service) => {
         const filterCases = Object.values(cases).filter(filteredCase => filteredCase.caseId === service.caseId);
         const filterClients = Object.values(clients).filter(filteredClient => filteredClient.clientId === service.clientId)
         const filterAttorneys = []
         const minutes = []
+        const hours = []
+        const total = []
         service.attorneys.map(serviceAttorney => {
             filterAttorneys.push(Object.values(attorneys).filter(filteredAttorney => filteredAttorney.attorneyId ===
                 serviceAttorney.id));
             minutes.push(serviceAttorney.minutes);
             return 0;
         })
+        
         const attorneyNamesList = []
-            filterAttorneys.map(attorney => attorneyNamesList.push(attorney[0]?.firstName + " " + attorney[0]?.lastName))
+        const attorneyPricingList = []
+        filterAttorneys.forEach(attorney => {
+            attorneyNamesList.push(attorney[0]?.firstName + " " + attorney[0]?.lastName)
+            attorney[0]?.servicePricing.filter(price => price.clientId === service.clientId)
+                .forEach(price => attorneyPricingList.push(price.price))
+        })
+        
+        minutes.forEach(minute => hours.push((minute/60.0).toFixed(2)))
+        hours.forEach((hour, index) => total.push(Math.ceil(hour) * attorneyPricingList[index]))
+        
         tableData.push(
             {
                 serviceid: service.serviceId,
@@ -141,7 +171,10 @@ const DisplayServices = () => {
                 date: service.date,
                 attorneys: attorneyNamesList.toString(),
                 minutes: minutes.toString(),
+                hours: hours.toString(),
                 amount: service.amount,
+                pricing: attorneyPricingList.toString(),
+                total: total.toString(),
                 subRows: attorneyNamesList.length <= 1
                     ? null : attorneyNamesList.map((name, index) => {
                     return {
@@ -153,11 +186,13 @@ const DisplayServices = () => {
                         date: "",
                         attorneys: name,
                         minutes: minutes[index],
+                        hours: hours[index],
                         amount: "",
+                        pricing: attorneyPricingList[index],
+                        total: total[index]
                     };
                 }),
             })
-        return 0;
     });
 
     return (

@@ -4,6 +4,8 @@ import {requestServices} from "../Redux/Action";
 import  './MultiselectDropdown.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
+import '@amir04lm26/react-modern-calendar-date-picker/lib/DatePicker.css';
+import DatePicker from '@amir04lm26/react-modern-calendar-date-picker';
 
 const AddService = () => {
     const [caseID, setCaseID] = useState("");
@@ -11,6 +13,7 @@ const AddService = () => {
     const [service, setService] = useState("");
     const [description, setDescription] = useState("");
     const [date, setDate] = useState("");
+    const [selectedDate, setSelectedDate] = useState(null);
     const [minutes, setMinutes] = useState({});
     const [message, setMessage] = useState("");
     const [cases, setCases] = useState([]);
@@ -19,50 +22,50 @@ const AddService = () => {
     const [selectedAttorneys, setSelectedAttorneys] = useState({});
     const [showAddService, setShowAddService] = useState(false);
     const [numberOfAttorneys, setNumberOfAttorneys] = useState("0");
+    const [shouldPost, setShouldPost] = useState(true);
 
     const dispatch = useDispatch();
     let handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            let attorneysList = []
-            Object.keys(selectedAttorneys).forEach( index => {
-                attorneysList.push({id: selectedAttorneys[index], minutes: parseInt(minutes[index])})
-            })
-            let res = await fetch("/services", {
-                method: "POST",
-                headers: {
-                    'Accept': 'application/json, text/plain, */*',
-                    'Content-Type': 'application/json; charset=utf-8'
-                },
-                body: JSON.stringify({
-                    caseId: caseID,
-                    clientId: clientID,
-                    service: service,
-                    description: description,
-                    date: date,
-                    attorneys: attorneysList,
-                }),
-            });
-            if (res.status === 200 || res.status === 201) {
-                setCaseID("");
-                setClientID("");
-                setService("");
-                setDescription("");
-                setDate("");
-                setMinutes({});
-                setSelectedAttorneys({});
-                setNumberOfAttorneys("0");
-                setMessage("Service created successfully");
-            } else {
-                setMessage("Some error occurred");
+        if(shouldPost){
+            try {
+                let attorneysList = []
+                Object.keys(selectedAttorneys).forEach( index => {
+                    attorneysList.push({id: selectedAttorneys[index], minutes: parseInt(minutes[index])})
+                })
+                let res = await fetch("/services", {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json; charset=utf-8'
+                    },
+                    body: JSON.stringify({
+                        caseId: caseID,
+                        clientId: clientID,
+                        service: service,
+                        description: description,
+                        date: date,
+                        attorneys: attorneysList,
+                    }),
+                });
+                if (res.status === 200 || res.status === 201) {
+                    setCaseID("");
+                    setClientID("");
+                    setService("");
+                    setDescription("");
+                    setDate("");
+                    setSelectedDate(null);
+                    setMinutes({});
+                    setSelectedAttorneys({});
+                    setNumberOfAttorneys("0");
+                    setMessage("Service was created successfully");
+                } else {
+                    setMessage("Error occurred while adding data into services");
+                }
+                dispatch(requestServices(''));
+            } catch (err) {
+                console.log("Error posting data into services: ", err);
             }
-            dispatch(requestServices(''));
-            setTimeout(() => {
-                alert(message);
-            }, 2000);
-
-        } catch (err) {
-            console.log(err);
         }
     };
 
@@ -85,6 +88,12 @@ const AddService = () => {
                 setAttorneys(json);
             })
     }, []);
+
+    useEffect(() => {
+        setDate(selectedDate?.year+'-'+
+            selectedDate?.month.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})+'-'
+            +selectedDate?.day.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}))
+    }, [selectedDate])
 
     const caseOptions = cases.map(eachCase => {
             return { label: eachCase.caseName, value: eachCase.caseId }
@@ -132,9 +141,28 @@ const AddService = () => {
     const handleNumberOfAttorneys = (event) => {
         setNumberOfAttorneys(event.target.value);
     };
+    
+    const validateMinutes = () => {
+        let checkValidation = true;
+        Object.keys(minutes).forEach(index => {
+            if(parseInt(minutes[index]) % 6 !== 0) {
+                checkValidation = false;
+            }
+        })
+        if(!checkValidation){
+            setShouldPost(false)
+            setMessage("Please enter valid minutes which is a multiple of 6");
+        } else {
+            setShouldPost(true)
+            setMessage("");
+        }
+    }
+    
+    console.log(date)
 
     return (
         <div className="add service">
+            <p>{message}</p>
             {showAddService ?
             <div className="add-service-span-container" style={{backgroundColor:'black', width:'12vw'}}>
                 <span onClick={handleAddService} style={{cursor:'pointer', fontSize:'20px'}}>
@@ -179,14 +207,20 @@ const AddService = () => {
                             style={{width:'60.5vw', height:'4vh'}}
                         />
                     </div>
-                    <div className="date-minutes-container">
-                        <input
-                            type="text"
-                            value={date}
-                            placeholder="Date"
-                            onChange={(e) => setDate(e.target.value)}
-                            style={{width:'15vw', height:'4vh'}}
+                    <div className="date-container">
+                        <DatePicker
+                            value={selectedDate}
+                            onChange={setSelectedDate}
+                            inputPlaceholder="Select a date"
+                            shouldHighlightWeekends
                         />
+                        {/*<input*/}
+                        {/*    type="text"*/}
+                        {/*    value={date}*/}
+                        {/*    placeholder="Date"*/}
+                        {/*    onChange={(e) => setDate(e.target.value)}*/}
+                        {/*    style={{width:'15vw', height:'4vh'}}*/}
+                        {/*/>*/}
                     </div>
                     <div className="number-of-attorneys-container">
                         <select value={numberOfAttorneys} onChange={handleNumberOfAttorneys} style={{width:'39vw', height:'4vh'}}>
@@ -215,6 +249,7 @@ const AddService = () => {
                                     onChange={(e) =>
                                         setMinutes({...minutes, [i]: e.target.value})}
                                     style={{width:'10vw', height:'4vh'}}
+                                    onBlur={validateMinutes}
                                 />
                             </div>)
                         })}
