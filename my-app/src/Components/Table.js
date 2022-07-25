@@ -87,45 +87,55 @@ export default function Table({ columns, data, type }) {
         alert("Delete successful");
     }
     
-    let csvRows = []
-    rows.forEach((row, index) => {
-        let csvRow = {}
-        csvRow["Sno"] = index+1
-        csvRow["Case"] = row.original.casename
-        csvRow["Client"] = row.original.clientname
-        csvRow["Service"] = row.original.service
-        csvRow["Description"] = row.original.description
-        csvRow["Date"] = row.original.date
-        csvRow["Amount"] = row.original.amount
-        csvRow["Attorneys"] = row.original.attorneys
-        csvRow["Minutes"] = row.original.minutes
-        csvRow["Hours"] = row.original.hours
-        csvRow["Pricing"] = row.original.pricing
-        csvRow["Total"] = row.original.total
-        csvRows.push(csvRow)
-        csvRow = {}
-        row.original?.subRows?.forEach(subRow => {
-            csvRow["Sno"] = ""
-            csvRow["Case"] = subRow.casename
-            csvRow["Client"] = subRow.clientname
-            csvRow["Service"] = subRow.service
-            csvRow["Description"] = subRow.description
-            csvRow["Date"] = subRow.date
-            csvRow["Amount"] = subRow.amount
-            csvRow["Attorneys"] = subRow.attorneys
-            csvRow["Minutes"] = subRow.minutes
-            csvRow["Hours"] = subRow.hours
-            csvRow["Pricing"] = subRow.pricing
-            csvRow["Total"] = subRow.total
+    const exportPDF = () => {
+        let csvRows = []
+        rows.forEach((row, index) => {
+            let csvRow = {}
+            csvRow["Sno"] = index+1
+            csvRow["Case"] = row.original.casename
+            csvRow["Client"] = row.original.clientname
+            csvRow["Service"] = row.original.service
+            csvRow["Description"] = row.original.description
+            csvRow["Date"] = row.original.date
+            csvRow["Amount"] = row.original.amount
+            if(row.canExpand){
+                console.log(index)
+                csvRow["Attorneys"] = row.original?.subRows[0].attorneys
+                csvRow["Minutes"] = row.original?.subRows[0].minutes
+                csvRow["Hours"] = row.original?.subRows[0].hours
+                csvRow["Pricing"] = row.original?.subRows[0].pricing
+                csvRow["Total"] = row.original?.subRows[0].total
+            } else {
+                csvRow["Attorneys"] = row.original.attorneys
+                csvRow["Minutes"] = row.original.minutes
+                csvRow["Hours"] = row.original.hours
+                csvRow["Pricing"] = row.original.pricing
+                csvRow["Total"] = row.original.total
+            }
             csvRows.push(csvRow)
             csvRow = {}
+            row.original?.subRows?.forEach((subRow, index) => {
+                if (index > 0){
+                    csvRow["Sno"] = ""
+                    csvRow["Case"] = subRow.casename
+                    csvRow["Client"] = subRow.clientname
+                    csvRow["Service"] = subRow.service
+                    csvRow["Description"] = subRow.description
+                    csvRow["Date"] = subRow.date
+                    csvRow["Amount"] = subRow.amount
+                    csvRow["Attorneys"] = subRow.attorneys
+                    csvRow["Minutes"] = subRow.minutes
+                    csvRow["Hours"] = subRow.hours
+                    csvRow["Pricing"] = subRow.pricing
+                    csvRow["Total"] = subRow.total
+                    csvRows.push(csvRow)
+                    csvRow = {}
+                }
+            })
         })
-    })
-    
-    const exportPDF = () => {
         const unit = "pt";
-        const size = "A4"; // Use A1, A2, A3 or A4
-        const orientation = "landscape"; // portrait or landscape
+        const size = "A4";
+        const orientation = "landscape";
 
         const marginLeft = 40;
         const doc = new jsPDF(orientation, unit, size);
@@ -133,8 +143,8 @@ export default function Table({ columns, data, type }) {
         doc.setFontSize(15);
 
         const title = "Services Report";
-        const headers = [["S.No.", "Case", "Client", "Service", "Description", "Date", "Amount", "Attorney(s)",
-        "Time spent (in minutes)", "Time spent (in hours)", "Rate per hour", "Total"]];
+        const headers = [["S.No.", "Case", "Client", "Service", "Description", "Date", "Service Fee", "Attorney(s)",
+        "Time spent (in minutes)", "Time spent (in hours)", "Rate per hour", "Amount for Attorney"]];
 
         const data = csvRows.map(row=> [row.Sno, row.Case, row.Client, row.Service, row.Description, row.Date,
         row.Amount, row.Attorneys, row.Minutes, row.Hours, row.Pricing, row.Total]);

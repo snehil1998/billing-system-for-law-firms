@@ -242,7 +242,7 @@ const AddService = () => {
                             <div className={"attorney-"+i}>
                                 <select key={"attorney-name-selector-"+i} value={selectedAttorneys[i]} onChange={(event) =>
                                     handleChangeAttorneys(event, i)} style={{width:'39vw', height:'4vh'}}>
-                                    <option key={"placeholder-attorneys-"+ i} value={""} disabled={true}>
+                                    <option key={"placeholder-attorneys-"+ i} value={""}>
                                         Select attorney
                                     </option>
                                     {attorneysOptions.map((option) => (

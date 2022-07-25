@@ -1,6 +1,6 @@
 import './App.css';
 import DisplayServices from "./Pages/Services/DisplayServices";
-import MyImage from './logo.svg'
+// import MyImage from './logo.svg'
 
 function App() {
   return (

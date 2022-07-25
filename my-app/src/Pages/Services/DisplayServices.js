@@ -159,7 +159,7 @@ const DisplayServices = () => {
         })
         
         minutes.forEach(minute => hours.push((minute/60.0).toFixed(2)))
-        hours.forEach((hour, index) => total.push(Math.ceil(hour) * attorneyPricingList[index]))
+        hours.forEach((hour, index) => total.push(hour * attorneyPricingList[index]))
         
         tableData.push(
             {
