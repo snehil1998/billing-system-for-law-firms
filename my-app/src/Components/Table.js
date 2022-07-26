@@ -99,7 +99,6 @@ export default function Table({ columns, data, type }) {
             csvRow["Date"] = row.original.date
             csvRow["Amount"] = row.original.amount
             if(row.canExpand){
-                console.log(index)
                 csvRow["Attorneys"] = row.original?.subRows[0].attorneys
                 csvRow["Minutes"] = row.original?.subRows[0].minutes
                 csvRow["Hours"] = row.original?.subRows[0].hours
@@ -143,6 +142,9 @@ export default function Table({ columns, data, type }) {
         doc.setFontSize(15);
 
         const title = "Services Report";
+        const report = "Report"
+        const client = "Client: " + csvRows[0]['Client']
+        const period = "Period: " + "Date to date"
         const headers = [["S.No.", "Case", "Client", "Service", "Description", "Date", "Service Fee", "Attorney(s)",
         "Time spent (in minutes)", "Time spent (in hours)", "Rate per hour", "Amount for Attorney"]];
 
@@ -150,12 +152,15 @@ export default function Table({ columns, data, type }) {
         row.Amount, row.Attorneys, row.Minutes, row.Hours, row.Pricing, row.Total]);
 
         let content = {
-            startY: 50,
+            startY: 150,
             head: headers,
             body: data
         };
 
         doc.text(title, marginLeft, 40);
+        doc.text(report, marginLeft, 70);
+        doc.text(client, marginLeft, 100);
+        doc.text(period, marginLeft, 130);
         doc.autoTable(content);
         doc.save("report.pdf")
     }
