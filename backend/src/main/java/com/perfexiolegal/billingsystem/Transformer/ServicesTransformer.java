@@ -54,7 +54,6 @@ public class ServicesTransformer {
         service.getCaseId(),
         service.getClientId(),
         service.getService(),
-        service.getDescription(),
         service.getDate(),
         service.getAttorneys(),
         amount[0]
@@ -67,7 +66,6 @@ public class ServicesTransformer {
         service.getCaseId(),
         service.getClientId(),
         service.getService(),
-        service.getDescription(),
         service.getDate(),
         service.getAttorneys(),
         service.getAmount()

@@ -21,7 +21,6 @@ public class ServicesWithoutIdAndAmount {
   private UUID caseId;
   private UUID clientId;
   private String service;
-  private String description;
   private Date date;
   private List<AttorneysInService> attorneys;
 }

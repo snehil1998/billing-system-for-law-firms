@@ -38,7 +38,6 @@ public class ServicesRepository {
             UUID caseId = (UUID) resultSet.getObject("case_id");
             UUID clientId = (UUID) resultSet.getObject("client_id");
             String service = resultSet.getString("service");
-            String description = resultSet.getString("description");
             Date date = (Date) resultSet.getObject("date");
             ObjectMapper objectMapper = new ObjectMapper();
             JavaType type = objectMapper.getTypeFactory().constructParametricType(List.class, AttorneysInService.class);
@@ -49,10 +48,9 @@ public class ServicesRepository {
             } catch (JsonProcessingException e) {
               logger.info("can't convert from PG json to java object");
             }
-//            int minutes = resultSet.getInt("minutes");
             float amount = resultSet.getFloat("amount");
             return Services.builder().serviceId(serviceId).caseId(caseId)
-                .clientId(clientId).service(service).description(description).date(date)
+                .clientId(clientId).service(service).date(date)
                 .attorneys(attorneys).amount(amount).build();
           });
       return Optional.of(servicesList);
@@ -71,7 +69,6 @@ public class ServicesRepository {
             UUID caseId = (UUID) resultSet.getObject("case_id");
             UUID clientId = (UUID) resultSet.getObject("client_id");
             String service = resultSet.getString("service");
-            String description = resultSet.getString("description");
             Date date = (Date) resultSet.getObject("date");
             ObjectMapper objectMapper = new ObjectMapper();
             JavaType type = objectMapper.getTypeFactory().constructParametricType(List.class, AttorneysInService.class);
@@ -86,7 +83,7 @@ public class ServicesRepository {
             //            int minutes = resultSet.getInt("minutes");
             float amount = resultSet.getFloat("amount");
             return Services.builder().serviceId(serviceId).caseId(caseId)
-                .clientId(clientId).service(service).description(description).date(date)
+                .clientId(clientId).service(service).date(date)
                 .attorneys(attorneys).amount(amount).build();
           });
       return Optional.of(servicesForCaseList);
@@ -105,7 +102,6 @@ public class ServicesRepository {
             UUID caseId = (UUID) resultSet.getObject("case_id");
             UUID clientId = (UUID) resultSet.getObject("client_id");
             String service = resultSet.getString("service");
-            String description = resultSet.getString("description");
             Date date = (Date) resultSet.getObject("date");
             ObjectMapper objectMapper = new ObjectMapper();
             JavaType type = objectMapper.getTypeFactory().constructParametricType(List.class, AttorneysInService.class);
@@ -116,11 +112,9 @@ public class ServicesRepository {
             } catch (JsonProcessingException e) {
               logger.info("can't convert from PG json to java object");
             }
-            //            String attorneyIDs = resultSet.getString("attorney_ids");
-//            int minutes = resultSet.getInt("minutes");
             float amount = resultSet.getFloat("amount");
             return Services.builder().serviceId(serviceId).caseId(caseId)
-                .clientId(clientId).service(service).description(description).date(date)
+                .clientId(clientId).service(service).date(date)
                 .attorneys(attorneys).amount(amount).build();
           });
       return Optional.of(serviceFromId);
@@ -137,8 +131,8 @@ public class ServicesRepository {
       jsonObject.setType("json");
       jsonObject.setValue(objectMapper.writeValueAsString(service.getAttorneys()));
       logger.info("Creating service with attorneys: " + jsonObject);
-      jdbcTemplate.update("insert into services (Service_Id, Case_Id, Client_Id, Service, Description, Date, Attorneys, Amount) values (?,?,?,?,?,?,?,?)",
-          service.getServiceId(), service.getCaseId(), service.getClientId(), service.getService(), service.getDescription(),
+      jdbcTemplate.update("insert into services (Service_Id, Case_Id, Client_Id, Service, Date, Attorneys, Amount) values (?,?,?,?,?,?,?)",
+          service.getServiceId(), service.getCaseId(), service.getClientId(), service.getService(),
           service.getDate(), jsonObject, service.getAmount());
       return service;
     } catch (DataAccessException | JsonProcessingException | SQLException e){
@@ -153,9 +147,9 @@ public class ServicesRepository {
       PGobject jsonObject = new PGobject();
       jsonObject.setType("json");
       jsonObject.setValue(objectMapper.writeValueAsString(service.getAttorneys()));
-      jdbcTemplate.update("update services set case_id=?, client_id=?, service=?, description=?, " +
+      jdbcTemplate.update("update services set case_id=?, client_id=?, service=?, " +
               "date=?, attorneys=?, amount=? where service_id=?", service.getCaseId(), service.getClientId(),
-          service.getService(), service.getDescription(), service.getDate(), jsonObject,
+          service.getService(), service.getDate(), jsonObject,
           service.getAmount(), service.getServiceId());
       return service;
     } catch (DataAccessException | JsonProcessingException | SQLException e) {
