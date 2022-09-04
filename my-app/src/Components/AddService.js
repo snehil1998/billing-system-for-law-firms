@@ -11,7 +11,6 @@ const AddService = () => {
     const [caseID, setCaseID] = useState("");
     const [clientID, setClientID] = useState("");
     const [service, setService] = useState("");
-    const [description, setDescription] = useState("");
     const [date, setDate] = useState("");
     const [selectedDate, setSelectedDate] = useState(null);
     const [minutes, setMinutes] = useState({});
@@ -43,7 +42,6 @@ const AddService = () => {
                         caseId: caseID,
                         clientId: clientID,
                         service: service,
-                        description: description,
                         date: date,
                         attorneys: attorneysList,
                     }),
@@ -52,7 +50,6 @@ const AddService = () => {
                     setCaseID("");
                     setClientID("");
                     setService("");
-                    setDescription("");
                     setDate("");
                     setSelectedDate(null);
                     setMinutes({});
@@ -194,20 +191,13 @@ const AddService = () => {
                             ))}
                         </select>
                     </div>
-                    <div className="service-description-container">
+                    <div className="service-container">
                         <input
                             type="text"
                             value={service}
                             placeholder="Service"
                             onChange={(e) => setService(e.target.value)}
                             style={{width:'35vw', height:'4vh'}}
-                        />
-                        <input
-                            type="text"
-                            value={description}
-                            placeholder="Description"
-                            onChange={(e) => setDescription(e.target.value)}
-                            style={{width:'60.5vw', height:'4vh'}}
                         />
                     </div>
                     <div className="date-container">
@@ -218,13 +208,6 @@ const AddService = () => {
                             shouldHighlightWeekends
                             wrapperClassName={'DatePicker__input'}
                         />
-                        {/*<input*/}
-                        {/*    type="text"*/}
-                        {/*    value={date}*/}
-                        {/*    placeholder="Date"*/}
-                        {/*    onChange={(e) => setDate(e.target.value)}*/}
-                        {/*    style={{width:'15vw', height:'4vh'}}*/}
-                        {/*/>*/}
                     </div>
                     <div className="number-of-attorneys-container">
                         <select value={numberOfAttorneys} onChange={handleNumberOfAttorneys} style={{width:'39vw', height:'4vh'}}>

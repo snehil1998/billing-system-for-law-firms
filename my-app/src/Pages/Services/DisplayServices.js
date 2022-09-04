@@ -56,11 +56,6 @@ const DisplayServices = () => {
                         sortType: "basic",
                         filter: "text"
                     }, {
-                        Header: 'Description',
-                        accessor: 'description',
-                        sortType: "basic",
-                        filter: "text"
-                    }, {
                         Header: 'Date',
                         accessor: 'date',
                         sortType: "basic",
@@ -167,7 +162,6 @@ const DisplayServices = () => {
                 casename: filterCases[0]?.caseName,
                 clientname: filterClients[0]?.clientName,
                 service: service.service,
-                description: service.description,
                 date: service.date,
                 attorneys: attorneyNamesList.toString(),
                 minutes: minutes.toString(),
@@ -182,7 +176,6 @@ const DisplayServices = () => {
                         casename: "",
                         clientname: "",
                         service: "",
-                        description: "",
                         date: "",
                         attorneys: name,
                         minutes: minutes[index],

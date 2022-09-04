@@ -95,7 +95,6 @@ export default function Table({ columns, data, type }) {
             csvRow["Case"] = row.original.casename
             csvRow["Client"] = row.original.clientname
             csvRow["Service"] = row.original.service
-            csvRow["Description"] = row.original.description
             csvRow["Date"] = row.original.date
             csvRow["Amount"] = row.original.amount
             if(row.canExpand){
@@ -119,7 +118,6 @@ export default function Table({ columns, data, type }) {
                     csvRow["Case"] = subRow.casename
                     csvRow["Client"] = subRow.clientname
                     csvRow["Service"] = subRow.service
-                    csvRow["Description"] = subRow.description
                     csvRow["Date"] = subRow.date
                     csvRow["Amount"] = subRow.amount
                     csvRow["Attorneys"] = subRow.attorneys
@@ -145,10 +143,10 @@ export default function Table({ columns, data, type }) {
         const report = "Report"
         const client = "Client: " + csvRows[0]['Client']
         const period = "Period: " + "Date to date"
-        const headers = [["S.No.", "Case", "Client", "Service", "Description", "Date", "Service Fee", "Attorney(s)",
+        const headers = [["S.No.", "Case", "Client", "Service", "Date", "Service Fee", "Attorney(s)",
         "Time spent (in minutes)", "Time spent (in hours)", "Rate per hour", "Amount for Attorney"]];
 
-        const data = csvRows.map(row=> [row.Sno, row.Case, row.Client, row.Service, row.Description, row.Date,
+        const data = csvRows.map(row=> [row.Sno, row.Case, row.Client, row.Service, row.Date,
         row.Amount, row.Attorneys, row.Minutes, row.Hours, row.Pricing, row.Total]);
 
         let content = {
