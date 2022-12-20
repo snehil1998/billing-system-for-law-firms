@@ -160,20 +160,23 @@ const AddService = () => {
             <p style={{fontSize:'20px', textAlign:'center', width:'100vw', 
                 backgroundColor:'white', color:'red'}}>{message}</p>
             {showAddService ?
-            <div className="add-service-span-container" style={{backgroundColor:'black', width:'12vw', margin:'1vw'}}>
-                <span onClick={handleAddService} style={{cursor:'pointer', fontSize:'20px'}}>
+            <div className="add-service-span-container" style={{backgroundColor:'black', width:'13vw', marginLeft:'1vw'}}>
+                <span onClick={handleAddService} style={{cursor:'pointer', fontSize:'20px', marginLeft:'1vw'}}>
                     ADD A SERVICE   <FontAwesomeIcon icon={faCaretSquareUp} />
                 </span>
             </div>
             :
-            <div className="add-service-span-container" style={{backgroundColor:'black', width:'12vw', margin:'1vw'}}>
-                <span onClick={handleAddService} style={{cursor:'pointer', fontSize:'20px'}}>
+            <div className="add-service-span-container" style={{backgroundColor:'black', width:'13vw', marginLeft: '1vw'}}>
+                <span onClick={handleAddService} style={{cursor:'pointer', fontSize:'20px', marginLeft:'1vw'}}>
                     ADD A SERVICE   <FontAwesomeIcon icon={faCaretSquareDown} />
                 </span>
             </div>}
-            {showAddService ?
-                <form onSubmit={handleSubmit} style={{fontSize:15, padding:'1.5vh'}}>
-                    <div className="case-client-name-container">
+            {showAddService && <form onSubmit={handleSubmit} style={{fontSize:'15px', marginLeft:'1vw',
+                backgroundColor:'grey', height:'60vh'}}>
+                    <div className="case-name-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
+                        <div className={'case-name-translation'} style={{fontSize: '17px'}}>
+                            {'Case: '}
+                        </div>
                         <select value={caseID} onChange={handleChangeCases} style={{width:'57.5vw', height:'4vh'}}>
                             <option key={"placeholder-case"} value={""} disabled={true}>
                                 Select a case
@@ -182,6 +185,11 @@ const AddService = () => {
                                 <option key={option.value} value={option.value}>{option.label}</option>
                             ))}
                         </select>
+                    </div>
+                    <div className="client-name-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
+                        <div className={'client-name-translation'} style={{fontSize: '17px'}}>
+                            {'Client: '}
+                        </div>
                         <select value={clientID} onChange={handleChangeClients} style={{width:'39vw', height:'4vh'}}>
                             <option key={"placeholder-client"} value={""} disabled={true}>
                                 Select a client
@@ -191,7 +199,10 @@ const AddService = () => {
                             ))}
                         </select>
                     </div>
-                    <div className="service-container">
+                    <div className="service-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
+                        <div className={'service-translation'} style={{fontSize: '17px'}}>
+                            {'Service: '}
+                        </div>
                         <input
                             type="text"
                             value={service}
@@ -200,7 +211,10 @@ const AddService = () => {
                             style={{width:'35vw', height:'4vh'}}
                         />
                     </div>
-                    <div className="date-container">
+                    <div className="date-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
+                        <div className={'date-translation'} style={{fontSize: '17px'}}>
+                            {'Date: '}
+                        </div>
                         <DatePicker
                             value={selectedDate}
                             onChange={setSelectedDate}
@@ -209,7 +223,10 @@ const AddService = () => {
                             wrapperClassName={'DatePicker__input'}
                         />
                     </div>
-                    <div className="number-of-attorneys-container">
+                    <div className="number-of-attorneys-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
+                        <div className={'number-of-attorneys-translation'} style={{fontSize: '17px'}}>
+                            {'Number of attorneys: '}
+                        </div>
                         <select value={numberOfAttorneys} onChange={handleNumberOfAttorneys} style={{width:'39vw', height:'4vh'}}>
                             <option key={"placeholder-number-of-attorneys"} value={"0"} disabled={true}>
                                 Select number of attorneys
@@ -219,10 +236,13 @@ const AddService = () => {
                             ))}
                         </select>
                     </div>
-                    <div className="attorneys-container">
+                    <div className="attorneys-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
                         {[...Array(parseInt(numberOfAttorneys))].map((e, i) => {
                             return(
                             <div className={"attorney-"+i}>
+                                <div className={'attorney' + i + '-translation'} style={{fontSize: '17px'}}>
+                                    {'Attorney ' + (i+1).toString() + ': '}
+                                </div>
                                 <select key={"attorney-name-selector-"+i} value={selectedAttorneys[i]} onChange={(event) =>
                                     handleChangeAttorneys(event, i)} style={{width:'39vw', height:'4vh'}}>
                                     <option key={"placeholder-attorneys-"+ i} value={""}>
@@ -246,9 +266,8 @@ const AddService = () => {
                         })}
                     </div>
                     <button type="submit" className="add-button-container"
-                            style={{width:'5vw', height:'4vh', fontSize:'15px'}}>Add</button>
-            </form>
-                    :""}
+                            style={{width:'5vw', height:'4vh', fontSize:'15px', marginLeft: '1vw', marginTop: '2vh'}}>Add</button>
+            </form>}
         </div>
     );
 }

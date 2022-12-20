@@ -81,6 +81,23 @@ public class ServicesController {
     }
   }
 
+  @GetMapping(value = "/services/client={clientID}")
+  public ResponseEntity<Services> getServicesForClient(@PathVariable("clientID") UUID clientID) {
+    try{
+      logger.info("retrieving service from controller with clientID: " + clientID);
+      Optional<List<Services>> listOfServices = servicesService.getServicesForClient(clientID);
+      List<Services> services = listOfServices.get();
+      if (services.size() == 0) {
+        Map<String, Object> message = new HashMap<>();
+        message.put("message", "No data for the request");
+        return new ResponseEntity(List.of(message), HttpStatus.OK);
+      }
+      return new ResponseEntity(listOfServices, HttpStatus.OK);
+    } catch (ServiceException e) {
+      return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   @PostMapping(value = "/services", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<String> createNewService(@RequestBody ServicesWithoutIdAndAmount serviceJSON) {
     try {

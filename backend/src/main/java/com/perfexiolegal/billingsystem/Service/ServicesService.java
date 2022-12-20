@@ -32,7 +32,15 @@ public class ServicesService {
     try {
       return servicesRepository.getServicesForCase(caseID);
     } catch (RepositoryException e) {
-      throw new ServiceException("unable to retrieve all services", e);
+      throw new ServiceException("unable to retrieve all services for case", e);
+    }
+  }
+
+  public Optional<List<Services>> getServicesForClient(UUID clientID) throws ServiceException {
+    try {
+      return servicesRepository.getServicesForClient(clientID);
+    } catch (RepositoryException e) {
+      throw new ServiceException("unable to retrieve all services for client", e);
     }
   }
 

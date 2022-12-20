@@ -92,6 +92,39 @@ public class ServicesRepository {
     }
   }
 
+  public Optional<List<Services>> getServicesForClient(UUID clientID) throws RepositoryException {
+    try {
+      String sql = "SELECT * FROM services where client_id = '" + clientID + "'";
+      logger.info("Retrieving data for bill with client ID: " + clientID);
+      List<Services> servicesForClientList = jdbcTemplate.query(sql,
+          (resultSet, i) -> {
+            UUID serviceId = (UUID) resultSet.getObject("service_id");
+            UUID caseId = (UUID) resultSet.getObject("case_id");
+            UUID clientId = (UUID) resultSet.getObject("client_id");
+            String service = resultSet.getString("service");
+            Date date = (Date) resultSet.getObject("date");
+            ObjectMapper objectMapper = new ObjectMapper();
+            JavaType type = objectMapper.getTypeFactory().constructParametricType(List.class, AttorneysInService.class);
+            List<AttorneysInService> attorneys = null;
+            try {
+              attorneys =
+                  objectMapper.readValue(resultSet.getString("attorneys"), type);
+              logger.info("attorneys: {}", attorneys);
+            } catch (JsonProcessingException e) {
+              logger.info("can't convert from PG json to java object");
+            }
+            //            int minutes = resultSet.getInt("minutes");
+            float amount = resultSet.getFloat("amount");
+            return Services.builder().serviceId(serviceId).caseId(caseId)
+                .clientId(clientId).service(service).date(date)
+                .attorneys(attorneys).amount(amount).build();
+          });
+      return Optional.of(servicesForClientList);
+    } catch (DataAccessException e) {
+      throw new RepositoryException("Error in accessing the products in the repository", e);
+    }
+  }
+
   public Optional<Services> getServiceFromId(UUID serviceID) throws RepositoryException {
     try {
       String sql = "SELECT * FROM services where service_id = '" + serviceID + "'";

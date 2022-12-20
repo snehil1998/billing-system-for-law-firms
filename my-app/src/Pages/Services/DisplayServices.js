@@ -1,11 +1,12 @@
 import React, {useEffect, useMemo, useState} from "react";
-import { useSelector, useDispatch } from "react-redux";
+import {connect, useDispatch} from "react-redux";
 import {requestServices} from "../../Redux/Action";
 import Table from "../../Components/Table";
 import AddService from "../../Components/AddService";
+import {getFilteredServiceData, getServiceIsLoading} from "../../Redux/Selectors";
+import PropTypes from 'prop-types';
 
-const DisplayServices = () => {
-    const { data, isLoading } = useSelector((state) => state);
+const DisplayServices = (props) => {
     const [ cases, setCases ] = useState("");
     const [ clients, setClients ] = useState("");
     const [attorneys, setAttorneys] = useState("");
@@ -131,7 +132,7 @@ const DisplayServices = () => {
 
 
     let tableData = [];
-    data.forEach((service) => {
+    props.data.forEach((service) => {
         const filterCases = Object.values(cases).filter(filteredCase => filteredCase.caseId === service.caseId);
         const filterClients = Object.values(clients).filter(filteredClient => filteredClient.clientId === service.clientId)
         const filterAttorneys = []
@@ -190,17 +191,10 @@ const DisplayServices = () => {
 
     return (
         <>
-        {isLoading && <div className="loading">Data loading...</div>}
+        {props.isLoading && <div className="loading">Data loading...</div>}
             <div className={"display table container"}>
                 <div className={"table container"} style={{textAlign:'left'}}>
                     <AddService/>
-                    {/*<CSVLink*/}
-                    {/*    filename={"TableContent.csv"}*/}
-                    {/*    data={tableData}*/}
-                    {/*    className="btn btn-primary"*/}
-                    {/*>*/}
-                    {/*    Download csv*/}
-                    {/*</CSVLink>*/}
                     <Table columns={columns} data={tableData} type={'services'} />
                 </div>
             </div>
@@ -208,4 +202,16 @@ const DisplayServices = () => {
     );
 };
 
-export default DisplayServices;
+DisplayServices.propTypes = {
+    data: PropTypes.array.isRequired,
+    isLoading: PropTypes.bool.isRequired,
+}
+
+const mapStateToProps = state => {
+    return {
+        data: getFilteredServiceData(state),
+        isLoading: getServiceIsLoading(state),
+    }
+}
+
+export default connect(mapStateToProps, null)(DisplayServices);

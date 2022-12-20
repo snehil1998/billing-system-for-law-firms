@@ -10,10 +10,10 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
+import Filters from "./Filters"
+import PropTypes from "prop-types";
 
-export default function Table({ columns, data, type }) {
+function Table(props) {
 
     const filterTypes = useMemo(
         () => ({
@@ -52,8 +52,8 @@ export default function Table({ columns, data, type }) {
         setGlobalFilter,
     } = useTable(
         {
-            columns,
-            data,
+            columns: props.columns,
+            data: props.data,
             defaultColumn,
             filterTypes,
             getSubRows: (row: any) => row.subRows,
@@ -70,7 +70,7 @@ export default function Table({ columns, data, type }) {
     const handleDelete = (serviceID) => {
         fetch("/services="+serviceID, { method: 'DELETE' })
                 .then(async response => {
-                    if (type === 'services') {
+                    if (props.type === 'services') {
                         dispatch(requestServices(''));
                     }
                     setTimeout(deleteAlert, 1000)
@@ -86,82 +86,6 @@ export default function Table({ columns, data, type }) {
     function deleteAlert() {
         alert("Delete successful");
     }
-    
-    const exportPDF = () => {
-        let csvRows = []
-        rows.forEach((row, index) => {
-            let csvRow = {}
-            csvRow["Sno"] = index+1
-            csvRow["Case"] = row.original.casename
-            csvRow["Client"] = row.original.clientname
-            csvRow["Service"] = row.original.service
-            csvRow["Date"] = row.original.date
-            csvRow["Amount"] = row.original.amount
-            if(row.canExpand){
-                csvRow["Attorneys"] = row.original?.subRows[0].attorneys
-                csvRow["Minutes"] = row.original?.subRows[0].minutes
-                csvRow["Hours"] = row.original?.subRows[0].hours
-                csvRow["Pricing"] = row.original?.subRows[0].pricing
-                csvRow["Total"] = row.original?.subRows[0].total
-            } else {
-                csvRow["Attorneys"] = row.original.attorneys
-                csvRow["Minutes"] = row.original.minutes
-                csvRow["Hours"] = row.original.hours
-                csvRow["Pricing"] = row.original.pricing
-                csvRow["Total"] = row.original.total
-            }
-            csvRows.push(csvRow)
-            csvRow = {}
-            row.original?.subRows?.forEach((subRow, index) => {
-                if (index > 0){
-                    csvRow["Sno"] = ""
-                    csvRow["Case"] = subRow.casename
-                    csvRow["Client"] = subRow.clientname
-                    csvRow["Service"] = subRow.service
-                    csvRow["Date"] = subRow.date
-                    csvRow["Amount"] = subRow.amount
-                    csvRow["Attorneys"] = subRow.attorneys
-                    csvRow["Minutes"] = subRow.minutes
-                    csvRow["Hours"] = subRow.hours
-                    csvRow["Pricing"] = subRow.pricing
-                    csvRow["Total"] = subRow.total
-                    csvRows.push(csvRow)
-                    csvRow = {}
-                }
-            })
-        })
-        const unit = "pt";
-        const size = "A4";
-        const orientation = "landscape";
-
-        const marginLeft = 40;
-        const doc = new jsPDF(orientation, unit, size);
-
-        doc.setFontSize(15);
-
-        const title = "Services Report";
-        const report = "Report"
-        const client = "Client: " + csvRows[0]['Client']
-        const period = "Period: " + "Date to date"
-        const headers = [["S.No.", "Case", "Client", "Service", "Date", "Service Fee", "Attorney(s)",
-        "Time spent (in minutes)", "Time spent (in hours)", "Rate per hour", "Amount for Attorney"]];
-
-        const data = csvRows.map(row=> [row.Sno, row.Case, row.Client, row.Service, row.Date,
-        row.Amount, row.Attorneys, row.Minutes, row.Hours, row.Pricing, row.Total]);
-
-        let content = {
-            startY: 150,
-            head: headers,
-            body: data
-        };
-
-        doc.text(title, marginLeft, 40);
-        doc.text(report, marginLeft, 70);
-        doc.text(client, marginLeft, 100);
-        doc.text(period, marginLeft, 130);
-        doc.autoTable(content);
-        doc.save("report.pdf")
-    }
 
     return (
         <>
@@ -170,13 +94,11 @@ export default function Table({ columns, data, type }) {
                 style={{
                     textAlign: "left"
                 }}>
+                <Filters rows={rows}/>
                 <GlobalFilter
                     preGlobalFilteredRows={preGlobalFilteredRows}
                     globalFilter={state.globalFilter}
                     setGlobalFilter={setGlobalFilter} />
-            </div>
-            <div style={{textAlign:'right', width:'99vw'}}>
-                <button style={{width:'9vw', height:'5vh', fontSize:'14px', cursor:'pointer'}} onClick={() => exportPDF()}>Generate Service Report</button>
             </div>
             <MaUTable className={"table"} {...getTableProps()}>
                 <TableHead className={"table head"}>
@@ -211,3 +133,11 @@ export default function Table({ columns, data, type }) {
         </>
     );
 }
+
+Table.propTypes = {
+    columns: PropTypes.number.isRequired,
+    data: PropTypes.array.isRequired,
+    type: PropTypes.string.isRequired,
+}
+
+export default Table;

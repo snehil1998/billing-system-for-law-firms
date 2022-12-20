@@ -1,11 +1,11 @@
 import SERVICES from "./Constants";
 
-export const requestServices = (caseID) => async (dispatch) => {
+export const requestServices = (clientID) => async (dispatch) => {
     dispatch({
         type: SERVICES.LOAD,
     });
     try {
-        if(caseID === ''){
+        if(clientID === ''){
             await fetch("/services")
                 .then(response => response.json())
                 .then(json => {
@@ -15,7 +15,7 @@ export const requestServices = (caseID) => async (dispatch) => {
                         isError: false,
                     })})
         } else{
-            await fetch("/services/case="+caseID)
+            await fetch("/services/client="+clientID)
                 .then(response => response.json())
                 .then(json =>
                     dispatch({
@@ -32,4 +32,18 @@ export const requestServices = (caseID) => async (dispatch) => {
             isError: true,
         });
     }
+};
+
+export const addFromSearchDate = (fromSearchDate) => async (dispatch) => {
+    dispatch({
+        type: SERVICES.ADD_FROM_SEARCH_DATE,
+        fromSearchDate,
+    });
+};
+
+export const addToSearchDate = (toSearchDate) => async (dispatch) => {
+    dispatch({
+        type: SERVICES.ADD_TO_SEARCH_DATE,
+        toSearchDate,
+    });
 };
