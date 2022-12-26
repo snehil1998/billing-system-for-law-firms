@@ -1,9 +1,9 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {connect, useDispatch} from "react-redux";
-import {requestServices} from "../../Redux/Action";
+import {requestServices} from "../../Redux/Services/Action";
 import Table from "../../Components/Table";
 import AddService from "../../Components/AddService";
-import {getFilteredServiceData, getServiceIsLoading} from "../../Redux/Selectors";
+import {getFilteredServiceData, getServiceIsLoading} from "../../Redux/Services/Selectors";
 import PropTypes from 'prop-types';
 
 const DisplayServices = (props) => {

@@ -29,7 +29,7 @@ function filterDataByDate(fromDate, toDate, data){
     return filteredData;
 }
 
-const Reducer = (state = initalState, action) => {
+const ServicesReducer = (state = initalState, action) => {
     switch (action.type) {
         case SERVICES.LOAD:
             return {
@@ -69,4 +69,4 @@ const Reducer = (state = initalState, action) => {
     }
 };
 
-export default Reducer;
+export default ServicesReducer;

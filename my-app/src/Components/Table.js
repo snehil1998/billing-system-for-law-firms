@@ -1,5 +1,5 @@
 import {useTable, useSortBy, useFilters, useGlobalFilter, useExpanded} from "react-table";
-import {requestServices} from "../Redux/Action";
+import {requestServices} from "../Redux/Services/Action";
 import {useDispatch} from "react-redux";
 import {useMemo} from "react";
 import {DefaultColumnFilter} from "./DefaultColumnFilter";
