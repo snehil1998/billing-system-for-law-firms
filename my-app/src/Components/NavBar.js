@@ -3,22 +3,17 @@ import {  Link } from "react-router-dom";
 
 const NavBar = () => {
     return (
-        <div>
-            <li>
-                <Link to="/">Home</Link>
-            </li>
-            <li>
-                <Link to="/services">Services</Link>
-            </li>
-            <li>
-                <Link to="/clients">Clients</Link>
-            </li>
-            <li>
-                <Link to="/cases">Cases</Link>
-            </li>
-            <li>
-                <Link to="/disbursements">Disbursements</Link>
-            </li>
+        <div style={{display: 'flex', height:'14.7vh'}}>
+            <Link to="/" style={{width:'20%', paddingTop:'5vh', backgroundColor:'gray', color:'white',
+                textDecoration:'none', border:'1px solid white'}}>HOME</Link>
+            <Link to="/services" style={{width: '20%', paddingTop: '5vh', backgroundColor: 'gray', color:'white',
+                textDecoration: 'none', border:'1px solid white'}}>SERVICES</Link>
+            <Link to="/clients" style={{width: '20%', paddingTop: '5vh', backgroundColor: 'gray', color:'white',
+                textDecoration: 'none', border:'1px solid white'}}>CLIENTS</Link>
+            <Link to="/cases" style={{width: '20%', paddingTop: '5vh', backgroundColor: 'gray', color:'white',
+                textDecoration: 'none', border:'1px solid white'}}>CASES</Link>
+            <Link to="/disbursements" style={{width: '20%', paddingTop: '5vh', backgroundColor: 'gray', color:'white',
+                textDecoration: 'none', border:'1px solid white'}}>DISBURSEMENTS</Link>
         </div>
     );
 }

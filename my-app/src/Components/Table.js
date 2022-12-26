@@ -56,7 +56,7 @@ function Table(props) {
             data: props.data,
             defaultColumn,
             filterTypes,
-            getSubRows: (row: any) => row.subRows,
+            getSubRows: (row) => row.subRows,
             globalFilter: (rows, columnIds, filterValue) =>
                 defaultGlobalFilter(rows, columnIds, filterValue, filterOptions)
         },

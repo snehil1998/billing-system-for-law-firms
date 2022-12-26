@@ -11,7 +11,7 @@ function App() {
           <div className={'logo-container'} style={{width:'15vw', textAlign:'left'}}>
               <img src={MyImage} alt="horse" style={{height:'15vh', width:'10vw', textAlign:'left'}}/>
           </div>
-          <div className={'navbar-container'} style={{width:'135vw', height:'15vh', border:'1px solid black'}}>
+          <div className={'navbar-container'} style={{width:'135vw', height:'15vh'}}>
               <Router>
                   <NavBar />
                   <Routes>

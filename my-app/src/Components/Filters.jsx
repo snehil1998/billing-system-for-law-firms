@@ -39,21 +39,18 @@ function Filters(props) {
             setShowFilter(true)
         }
     }
+
+    const caCaretSquare = () => {
+        return showFilter ? <FontAwesomeIcon icon={faCaretSquareUp} /> : <FontAwesomeIcon icon={faCaretSquareDown} />
+    }
     
     return (
       <div className={'filters-container'} style={{textAlign:'left', margin:'1vw'}}>
-          {showFilter ?
-              <div className="show-filter-span-container" style={{backgroundColor:'black', width:'23vw'}}>
-                <span onClick={handleShowFilter} style={{cursor:'pointer', fontSize:'20px', marginLeft:'1vw'}}>
-                    FILTER AND GENERATE REPORT   <FontAwesomeIcon icon={faCaretSquareUp} />
-                </span>
-              </div>
-              :
-              <div className="add-service-span-container" style={{backgroundColor:'black', width:'23vw'}}>
-                <span onClick={handleShowFilter} style={{cursor:'pointer', fontSize:'20px', marginLeft:'1vw'}}>
-                    FILTER AND GENERATE REPORT   <FontAwesomeIcon icon={faCaretSquareDown} />
-                </span>
-              </div>}
+          <div className="show-filter-span-container" style={{backgroundColor:'black', width:'23vw'}}>
+            <span onClick={handleShowFilter} style={{cursor:'pointer', fontSize:'20px', marginLeft:'1vw'}}>
+                FILTER AND GENERATE REPORT   {caCaretSquare()}
+            </span>
+          </div>
           {showFilter && <div className={'filter-form-container'} style={{backgroundColor: 'grey', height: '35vh', width: '22.9vw'}}>
               <div className={'date-from-container'} style={{marginLeft: '1vw', paddingTop: '1vh'}}>
                   <div className={'from-translation'} style={{fontSize: '17px'}}>

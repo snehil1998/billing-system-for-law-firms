@@ -155,24 +155,21 @@ const AddService = () => {
         }
     }
 
+    const faCaretSquare = () => {
+        return showAddService ? <FontAwesomeIcon icon={faCaretSquareUp} /> : <FontAwesomeIcon icon={faCaretSquareDown} />
+    }
+
     return (
         <div className="add service">
             <p style={{fontSize:'20px', textAlign:'center', width:'100vw', 
                 backgroundColor:'white', color:'red'}}>{message}</p>
-            {showAddService ?
             <div className="add-service-span-container" style={{backgroundColor:'black', width:'13vw', marginLeft:'1vw'}}>
                 <span onClick={handleAddService} style={{cursor:'pointer', fontSize:'20px', marginLeft:'1vw'}}>
-                    ADD A SERVICE   <FontAwesomeIcon icon={faCaretSquareUp} />
+                    ADD A SERVICE   {faCaretSquare()}
                 </span>
             </div>
-            :
-            <div className="add-service-span-container" style={{backgroundColor:'black', width:'13vw', marginLeft: '1vw'}}>
-                <span onClick={handleAddService} style={{cursor:'pointer', fontSize:'20px', marginLeft:'1vw'}}>
-                    ADD A SERVICE   <FontAwesomeIcon icon={faCaretSquareDown} />
-                </span>
-            </div>}
             {showAddService && <form onSubmit={handleSubmit} style={{fontSize:'15px', marginLeft:'1vw',
-                backgroundColor:'grey', height:'60vh'}}>
+                backgroundColor:'grey', height:(50+(parseInt(numberOfAttorneys)*6)).toString()+'vh', width:'98vw'}}>
                     <div className="case-name-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
                         <div className={'case-name-translation'} style={{fontSize: '17px'}}>
                             {'Case: '}
