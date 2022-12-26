@@ -70,10 +70,11 @@ public class ClientsController {
   }
 
   @PostMapping(value = "/clients", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<String> createNewCase(@RequestBody Clients client) {
+  public ResponseEntity<String> createNewCase(@RequestBody ClientsWithoutId client) {
     try {
-      logger.info("Creating client with clientID: " + client.getClientId());
-      clientsService.postClients(client);
+      UUID uuid = UUID.randomUUID();
+      logger.info("Creating client with clientID: " + uuid);
+      clientsService.postClients(clientsTransformer.update(client, uuid));
       return new ResponseEntity<>("Client was created successfully.", HttpStatus.CREATED);
     } catch (ServiceException e) {
       return new ResponseEntity<>("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);

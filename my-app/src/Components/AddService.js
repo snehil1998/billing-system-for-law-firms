@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react"
 import {useDispatch} from "react-redux";
-import {requestServices} from "../Redux/Services/Action";
+import {requestServices} from "../Redux/Services/ServicesActions";
 import  './MultiselectDropdown.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';

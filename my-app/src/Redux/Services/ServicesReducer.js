@@ -1,4 +1,4 @@
-import SERVICES from "./Constants";
+import SERVICES from "./ServicesConstants";
 
 const initalState = {
     data: [],

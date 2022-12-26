@@ -1,5 +1,5 @@
 import {useTable, useSortBy, useFilters, useGlobalFilter, useExpanded} from "react-table";
-import {requestServices} from "../Redux/Services/Action";
+import {requestServices} from "../Redux/Services/ServicesActions";
 import {useDispatch} from "react-redux";
 import {useMemo} from "react";
 import {DefaultColumnFilter} from "./DefaultColumnFilter";
@@ -12,6 +12,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Filters from "./Filters"
 import PropTypes from "prop-types";
+import {requestClients} from "../Redux/Clients/ClientsActions";
 
 function Table(props) {
 
@@ -67,11 +68,20 @@ function Table(props) {
     );
 
     const dispatch = useDispatch();
-    const handleDelete = (serviceID) => {
-        fetch("/services="+serviceID, { method: 'DELETE' })
+    const handleDelete = (rows) => {
+        let id = '';
+        if(props.type === 'services'){
+            id = rows.serviceid;
+        } else if(props.type === 'clients'){
+            id = rows.clientid;
+        }
+        fetch("/" + props.type + "=" + id, { method: 'DELETE' })
                 .then(async response => {
                     if (props.type === 'services') {
                         dispatch(requestServices(''));
+                    }
+                    if (props.type === 'clients') {
+                        dispatch(requestClients(''));
                     }
                     setTimeout(deleteAlert, 1000)
                     const data = await response.json();
@@ -94,7 +104,7 @@ function Table(props) {
                 style={{
                     textAlign: "left"
                 }}>
-                <Filters rows={rows}/>
+                {(props.type === 'services' || props.type === 'disbursements') && <Filters rows={rows}/>}
                 <GlobalFilter
                     preGlobalFilteredRows={preGlobalFilteredRows}
                     globalFilter={state.globalFilter}
@@ -124,7 +134,7 @@ function Table(props) {
                             {row.cells.map(cell => {
                                 return <TableCell {...cell.getCellProps()} style={{color:'white'}}>{cell.render("Cell")}</TableCell>;
                             })}
-                            {!row.id.includes(".") && <TableCell><button onClick={() => handleDelete(row.original.serviceid)}>X</button></TableCell>}
+                            {!row.id.includes(".") && <TableCell><button onClick={() => handleDelete(row.original)}>X</button></TableCell>}
                         </TableRow>
                     );
                 })}

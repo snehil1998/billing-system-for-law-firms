@@ -1,9 +1,9 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {connect, useDispatch} from "react-redux";
-import {requestServices} from "../../Redux/Services/Action";
+import {requestServices} from "../../Redux/Services/ServicesActions";
 import Table from "../../Components/Table";
 import AddService from "../../Components/AddService";
-import {getFilteredServiceData, getServiceIsLoading} from "../../Redux/Services/Selectors";
+import {getFilteredServiceData, getServiceIsLoading} from "../../Redux/Services/ServicesSelectors";
 import PropTypes from 'prop-types';
 
 const DisplayServices = (props) => {
@@ -11,9 +11,8 @@ const DisplayServices = (props) => {
     const [ clients, setClients ] = useState("");
     const [attorneys, setAttorneys] = useState("");
     const dispatch = useDispatch();
-    const caseID = '';
     useEffect(() => {
-        dispatch(requestServices(caseID));
+        dispatch(requestServices(''));
     }, [dispatch]);
 
     const columns = useMemo(

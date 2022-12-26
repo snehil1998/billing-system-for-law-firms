@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import '@amir04lm26/react-modern-calendar-date-picker/lib/DatePicker.css';
 import DatePicker from '@amir04lm26/react-modern-calendar-date-picker';
-import {addFromSearchDate, addToSearchDate, requestServices} from "../Redux/Services/Action";
+import {addFromSearchDate, addToSearchDate, requestServices} from "../Redux/Services/ServicesActions";
 import {connect} from "react-redux";
 import ExportServicesPDF from "../CSVExporter/ExportServicesPDF";
 import PropTypes from "prop-types";

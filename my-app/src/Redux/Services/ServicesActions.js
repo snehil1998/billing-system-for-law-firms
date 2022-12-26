@@ -1,4 +1,4 @@
-import SERVICES from "./Constants";
+import SERVICES from "./ServicesConstants";
 
 export const requestServices = (clientID) => async (dispatch) => {
     dispatch({
