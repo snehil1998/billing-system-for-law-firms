@@ -154,7 +154,7 @@ const DisplayServices = (props) => {
         })
         
         minutes.forEach(minute => hours.push((minute/60.0).toFixed(2)))
-        hours.forEach((hour, index) => total.push(hour * attorneyPricingList[index]))
+        hours.forEach((hour, index) => total.push((hour * attorneyPricingList[index]).toFixed(2)))
         
         tableData.push(
             {
@@ -166,7 +166,7 @@ const DisplayServices = (props) => {
                 attorneys: attorneyNamesList.toString(),
                 minutes: minutes.toString(),
                 hours: hours.toString(),
-                amount: service.amount,
+                amount: service.amount.toFixed(2),
                 pricing: attorneyPricingList.toString(),
                 total: total.toString(),
                 subRows: attorneyNamesList.length <= 1
@@ -191,7 +191,7 @@ const DisplayServices = (props) => {
     return (
         <>
         {props.isLoading && <div className="loading">Data loading...</div>}
-            <div className={"display table container"}>
+            <div className={"display table container"} style={{backgroundColor:'maroon'}}>
                 <div className={"table container"} style={{textAlign:'left'}}>
                     <AddService/>
                     <Table columns={columns} data={tableData} type={'services'} />

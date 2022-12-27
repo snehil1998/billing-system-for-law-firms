@@ -1,0 +1,8 @@
+
+const CASES = {
+    LOAD: "REQUEST_CASES_DATA",
+    LOAD_SUCCESS: "RECEIVE_CASES_DATA",
+    POST_SUCCESS: "POST_CASES_DATA",
+};
+
+export default CASES;

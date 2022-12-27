@@ -3,6 +3,8 @@ import DisplayServices from "./Pages/Services/DisplayServices";
 import NavBar from './Components/NavBar';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import DisplayClients from "./Pages/Clients/DisplayClients";
+import DisplayCases from "./Pages/Cases/DisplayCases";
+
 
 function App() {
   return (
@@ -15,7 +17,7 @@ function App() {
                       <Route path='/' exact element={<DisplayServices />} />
                       <Route path='/attorneys' element={<DisplayServices />} />
                       <Route path='/clients' element={<DisplayClients />} />
-                      <Route path='/cases' element={<DisplayServices />} />
+                      <Route path='/cases' element={<DisplayCases />} />
                       <Route path='/disbursements' element={<DisplayServices />} />
                       <Route path='/services' element={<DisplayServices />} />
                   </Routes>
