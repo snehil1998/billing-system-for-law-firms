@@ -1,15 +1,15 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo} from "react";
 import {connect, useDispatch} from "react-redux";
 import {requestServices} from "../../Redux/Services/ServicesActions";
 import Table from "../../Components/Table";
 import AddService from "../../Components/AddService";
 import {getFilteredServiceData, getServiceIsLoading} from "../../Redux/Services/ServicesSelectors";
 import PropTypes from 'prop-types';
+import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
+import {getCasesData} from "../../Redux/Cases/CasesSelectors";
+import {getAttorneysData} from "../../Redux/Attorneys/AttorneysSelectors";
 
 const DisplayServices = (props) => {
-    const [ cases, setCases ] = useState("");
-    const [ clients, setClients ] = useState("");
-    const [attorneys, setAttorneys] = useState("");
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(requestServices(''));
@@ -105,41 +105,16 @@ const DisplayServices = (props) => {
             }
     ], []);
 
-    useEffect(() => {
-        fetch("/cases")
-            .then(response => response.json())
-            .then(json => {
-                setCases(json);
-            })
-    }, []);
-
-    useEffect(() => {
-        fetch("/clients")
-            .then(response => response.json())
-            .then(json => {
-                setClients(json);
-            })
-    }, []);
-
-    useEffect(() => {
-        fetch("/attorneys")
-            .then(response => response.json())
-            .then(json => {
-                setAttorneys(json);
-            })
-    }, []);
-
-
     let tableData = [];
     props.data.forEach((service) => {
-        const filterCases = Object.values(cases).filter(filteredCase => filteredCase.caseId === service.caseId);
-        const filterClients = Object.values(clients).filter(filteredClient => filteredClient.clientId === service.clientId)
+        const filterCases = Object.values(props.casesData).filter(filteredCase => filteredCase.caseId === service.caseId);
+        const filterClients = Object.values(props.clientsData).filter(filteredClient => filteredClient.clientId === service.clientId)
         const filterAttorneys = []
         const minutes = []
         const hours = []
         const total = []
         service.attorneys.map(serviceAttorney => {
-            filterAttorneys.push(Object.values(attorneys).filter(filteredAttorney => filteredAttorney.attorneyId ===
+            filterAttorneys.push(Object.values(props.attorneysData).filter(filteredAttorney => filteredAttorney.attorneyId ===
                 serviceAttorney.id));
             minutes.push(serviceAttorney.minutes);
             return 0;
@@ -190,7 +165,7 @@ const DisplayServices = (props) => {
 
     return (
         <>
-        {props.isLoading && <div className="loading">Data loading...</div>}
+        {/*{props.isLoading && <div className="loading">Data loading...</div>}*/}
             <div className={"display table container"} style={{backgroundColor:'maroon'}}>
                 <div className={"table container"} style={{textAlign:'left'}}>
                     <AddService/>
@@ -204,12 +179,19 @@ const DisplayServices = (props) => {
 DisplayServices.propTypes = {
     data: PropTypes.array.isRequired,
     isLoading: PropTypes.bool.isRequired,
+    clientsData: PropTypes.array.isRequired,
+    casesData: PropTypes.array.isRequired,
+    attorneysData: PropTypes.array.isRequired,
 }
 
 const mapStateToProps = state => {
     return {
         data: getFilteredServiceData(state),
         isLoading: getServiceIsLoading(state),
+        clientsData: getClientsData(state),
+        casesData: getCasesData(state),
+        attorneysData: getAttorneysData(state),
+
     }
 }
 

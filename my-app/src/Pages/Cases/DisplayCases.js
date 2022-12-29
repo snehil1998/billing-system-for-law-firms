@@ -2,9 +2,9 @@ import React, {useEffect, useMemo} from "react";
 import {connect, useDispatch} from "react-redux";
 import Table from "../../Components/Table";
 import PropTypes from 'prop-types';
-import AddClient from "../../Components/AddClient";
 import {requestCases} from "../../Redux/Cases/CasesActions";
 import {getCasesData, getCasesIsLoading} from "../../Redux/Cases/CasesSelectors";
+import AddCase from "../../Components/AddCase";
 
 const DisplayCases = (props) => {
     const dispatch = useDispatch();
@@ -56,11 +56,11 @@ const DisplayCases = (props) => {
 
     return (
         <>
-            {props.isLoading && <div className="loading">Data loading...</div>}
+            {/*{props.isLoading && <div className="loading">Data loading...</div>}*/}
             <div className={"display table container"}>
                 <div className={"table container"} style={{textAlign:'left'}}>
-                    <AddClient/>
-                    <Table columns={columns} data={tableData} type={'clients'} />
+                    <AddCase/>
+                    <Table columns={columns} data={tableData} type={'casesdispla'} />
                 </div>
             </div>
         </>

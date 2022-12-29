@@ -112,7 +112,7 @@ public class AttorneysRepository {
       jsonObject.setType("json");
       jsonObject.setValue(objectMapper.writeValueAsString(attorneys.getServicePricing()));
       jdbcTemplate.update("update attorneys set first_name=?, last_name=?, service_pricing=? " +
-              "where attorney_id=?", attorneys.getFirstName(), attorneys.getLastName(), attorneys.getServicePricing(),
+              "where attorney_id=?", attorneys.getFirstName(), attorneys.getLastName(), jsonObject,
           attorneys.getAttorneyId());
       return attorneys;
     } catch (DataAccessException | JsonProcessingException | SQLException e) {

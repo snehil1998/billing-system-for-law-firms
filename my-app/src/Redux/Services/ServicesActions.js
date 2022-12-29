@@ -1,4 +1,7 @@
 import SERVICES from "./ServicesConstants";
+import {requestCases} from "../Cases/CasesActions";
+import {requestClients} from "../Clients/ClientsActions";
+import {requestAttorneys} from "../Attorneys/AttorneysActions";
 
 export const requestServices = (clientID) => async (dispatch) => {
     dispatch({
@@ -9,6 +12,9 @@ export const requestServices = (clientID) => async (dispatch) => {
             await fetch("/services")
                 .then(response => response.json())
                 .then(json => {
+                    dispatch(requestCases(''));
+                    dispatch(requestClients(''));
+                    dispatch(requestAttorneys(''));
                     dispatch({
                         type: SERVICES.LOAD_SUCCESS,
                         data: json,

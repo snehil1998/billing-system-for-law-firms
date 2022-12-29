@@ -23,12 +23,22 @@ public class AttorneysTransformer {
   public Attorneys update(AttorneysWithoutId attorney, UUID attorneyID) throws ServiceException {
     List<ServicePricing> servicePricingList = attorneysService.getAttorneyById(attorneyID).get()
         .getServicePricing();
-    attorney.getServicePricing().stream().map(servicePricingList::add);
+    servicePricingList.add(attorney.getServicePricing().get(0));
+//    attorney.getServicePricing().stream().map(servicePricingList::add);
     return new Attorneys(
         attorneyID,
         attorney.getFirstName(),
         attorney.getLastName(),
         servicePricingList
+    );
+  }
+
+  public Attorneys updateWithUUID(AttorneysWithoutId attorney, UUID attorneyID) {
+    return new Attorneys(
+        attorneyID,
+        attorney.getFirstName(),
+        attorney.getLastName(),
+        attorney.getServicePricing()
     );
   }
 }

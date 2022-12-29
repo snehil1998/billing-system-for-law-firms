@@ -73,10 +73,11 @@ public class CasesController {
   }
 
   @PostMapping(value = "/cases", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<String> createNewCase(@RequestBody Cases newCase) {
+  public ResponseEntity<String> createNewCase(@RequestBody CasesWithoutId newCase) {
     try {
-      logger.info("Creating case with name: " + newCase.getCaseId());
-      casesService.postCases(newCase);
+      UUID uuid = UUID.randomUUID();
+      logger.info("Creating case with name: " + uuid);
+      casesService.postCases(casesTransformer.update(newCase, uuid));
       return new ResponseEntity<>("Case was created successfully.", HttpStatus.CREATED);
     } catch (ServiceException e) {
       return new ResponseEntity<>("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);

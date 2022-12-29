@@ -13,6 +13,8 @@ import TableRow from "@material-ui/core/TableRow";
 import Filters from "./Filters"
 import PropTypes from "prop-types";
 import {requestClients} from "../Redux/Clients/ClientsActions";
+import {requestAttorneys} from "../Redux/Attorneys/AttorneysActions";
+import {requestCases} from "../Redux/Cases/CasesActions";
 
 function Table(props) {
 
@@ -74,6 +76,10 @@ function Table(props) {
             id = rows.serviceid;
         } else if(props.type === 'clients'){
             id = rows.clientid;
+        } else if(props.type === 'attorneys'){
+            id = rows.attorneyid;
+        } else if(props.type === 'cases'){
+            id = rows.caseid;
         }
         fetch("/" + props.type + "=" + id, { method: 'DELETE' })
                 .then(async response => {
@@ -82,6 +88,12 @@ function Table(props) {
                     }
                     if (props.type === 'clients') {
                         dispatch(requestClients(''));
+                    }
+                    if (props.type === 'attorneys') {
+                        dispatch(requestAttorneys(''));
+                    }
+                    if (props.type === 'cases') {
+                        dispatch(requestCases(''));
                     }
                     setTimeout(deleteAlert, 1000)
                     const data = await response.json();

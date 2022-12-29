@@ -74,10 +74,11 @@ public class AttorneysController {
   }
 
   @PostMapping(value = "/attorneys", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<String> createNewAttorney(@RequestBody Attorneys attorney) {
+  public ResponseEntity<String> createNewAttorney(@RequestBody AttorneysWithoutId attorney) {
     try {
-      logger.info("Creating attorney with attorneyID: " + attorney.getAttorneyId());
-      attorneysService.postAttorneys(attorney);
+      UUID uuid = UUID.randomUUID();
+      logger.info("Creating attorney with attorneyID: " + uuid);
+      attorneysService.postAttorneys(attorneysTransformer.updateWithUUID(attorney, uuid));
       return new ResponseEntity<>("Attorney was created successfully.", HttpStatus.CREATED);
     } catch (ServiceException e) {
       return new ResponseEntity<>("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
