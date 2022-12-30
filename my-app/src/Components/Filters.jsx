@@ -7,6 +7,7 @@ import ExportServicesPDF from "../CSVExporter/ExportServicesPDF";
 import PropTypes from "prop-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCaretSquareDown, faCaretSquareUp} from "@fortawesome/free-solid-svg-icons";
+import {getFromSearchDate, getToSearchDate} from "../Redux/Services/ServicesSelectors";
 
 function Filters(props) {
     const [selectedFromDate, setSelectedFromDate] = useState(null);
@@ -120,12 +121,15 @@ Filters.propTypes = {
         month: PropTypes.number.isRequired,
         year: PropTypes.number.isRequired,
     }),
+    addFromSearchDate: PropTypes.func.isRequired,
+    addToSearchDate: PropTypes.func.isRequired,
+    requestServices: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = state => {
     return {
-        fromDate: state.services.fromSearchDate !== null ? state.services.fromSearchDate : {day: '', month: '', year: ''},
-        toDate: state.services.toSearchDate !== null ? state.services.toSearchDate : {day: '', month: '', year: ''},
+        fromDate: getFromSearchDate(state) !== null ? getFromSearchDate(state) : {day: '', month: '', year: ''},
+        toDate: getToSearchDate(state) !== null ? getToSearchDate(state) : {day: '', month: '', year: ''},
     }
 }
 

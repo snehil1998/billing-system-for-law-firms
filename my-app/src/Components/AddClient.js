@@ -1,18 +1,18 @@
 import React, {useState} from "react"
-import {useDispatch} from "react-redux";
+import {connect} from "react-redux";
 import  './MultiselectDropdown.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
 import {requestClients} from "../Redux/Clients/ClientsActions";
+import PropTypes from "prop-types";
 
-const AddClient = () => {
+const AddClient = (props) => {
     const [clientName, setClientName] = useState("");
     const [currencyCode, setCurrencyCode] = useState("");
     const [amount, setAmount] = useState(0);
     const [showAddService, setShowAddService] = useState(false);
     const [message, setMessage] = useState("");
 
-    const dispatch = useDispatch();
     let handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -36,7 +36,7 @@ const AddClient = () => {
             } else {
                 setMessage("❗ Error occurred while adding data into clients");
             }
-            dispatch(requestClients(''));
+            props.requestClients('');
         } catch (err) {
             console.log("Error posting data into clients: ", err);
         }
@@ -107,4 +107,15 @@ const AddClient = () => {
         </div>
     );
 }
-export default AddClient
+
+AddClient.propTypes = {
+    requestClients: PropTypes.func.isRequired,
+}
+
+const mapDispatchToProps = dispatch => ({
+    requestClients: (clientID) => {
+        dispatch(requestClients(clientID))
+    }
+});
+
+export default connect(null, mapDispatchToProps)(AddClient)

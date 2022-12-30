@@ -1,21 +1,21 @@
-import React, {useEffect, useState} from "react"
-import {useDispatch} from "react-redux";
+import React, {useState} from "react"
+import {connect} from "react-redux";
 import  './MultiselectDropdown.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
 import {requestAttorneys} from "../Redux/Attorneys/AttorneysActions";
+import PropTypes from "prop-types";
+import {getClientsData} from "../Redux/Clients/ClientsSelectors";
 
-const AddAttorney = () => {
+const AddAttorney = (props) => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [clientIdList, setClientIdList] = useState({});
-    const [clients, setClients] = useState([]);
     const [priceList, setPriceList] = useState({});
     const [showAddService, setShowAddService] = useState(false);
     const [numberOfServicePricing, setNumberOfServicePricing] = useState("0");
     const [message, setMessage] = useState("");
 
-    const dispatch = useDispatch();
     let handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -45,26 +45,18 @@ const AddAttorney = () => {
             } else {
                 setMessage("❗ Error occurred while adding data into attorneys");
             }
-            dispatch(requestAttorneys(''));
+            props.requestAttorneys('');
         } catch (err) {
             console.log("Error posting data into attorneys: ", err);
         }
     };
 
-    useEffect(() => {
-        fetch("/clients")
-            .then(response => response.json())
-            .then(json => {
-                setClients(json);
-            })
-    }, []);
-
-    const clientsOptions = clients.map(eachClient => {
+    const clientsOptions = props.clientsData.map(eachClient => {
         return { label: eachClient.clientName, value: eachClient.clientId }
     });
 
     let numberOfServicePricingList = [];
-    for(let num=1; num<=clients.length; num++) {
+    for(let num=1; num<=props.clientsData.length; num++) {
         numberOfServicePricingList.push(num);
     }
 
@@ -175,4 +167,20 @@ const AddAttorney = () => {
         </div>
     );
 }
-export default AddAttorney
+
+AddAttorney.propTypes = {
+    clientsData: PropTypes.array.isRequired,
+    requestAttorneys: PropTypes.func.isRequired,
+}
+
+const mapStateToProps = state => ({
+    clientsData: getClientsData(state),
+})
+
+const mapDispatchToProps = dispatch => ({
+    requestAttorneys: (attorneyID) => {
+        dispatch(requestAttorneys(attorneyID))
+    },
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddAttorney)

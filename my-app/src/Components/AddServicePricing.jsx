@@ -1,5 +1,5 @@
 import React, {useState} from "react"
-import {connect, useDispatch} from "react-redux";
+import {connect} from "react-redux";
 import  './MultiselectDropdown.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
@@ -15,7 +15,6 @@ const AddServicePricing = (props) => {
     const [showAddService, setShowAddService] = useState(false);
     const [message, setMessage] = useState("");
 
-    const dispatch = useDispatch();
     let handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -41,7 +40,7 @@ const AddServicePricing = (props) => {
             } else {
                 setMessage("❗ Error occurred while updating data for attorney");
             }
-            dispatch(requestAttorneys(''));
+            props.requestAttorneys('');
         } catch (err) {
             console.log("Error updating data for attorney: ", err);
         }
@@ -134,6 +133,7 @@ const AddServicePricing = (props) => {
 AddServicePricing.propTypes = {
     attorneysData: PropTypes.array.isRequired,
     clientsData: PropTypes.array.isRequired,
+    requestAttorneys: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = state => {
@@ -143,4 +143,10 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps, null)(AddServicePricing)
+const mapDispatchToProps = dispatch => ({
+    requestAttorneys: (attorneyID) => {
+        dispatch(requestAttorneys(attorneyID))
+    }
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddServicePricing)

@@ -1,13 +1,17 @@
 import React, {useEffect, useState} from "react"
-import {useDispatch} from "react-redux";
+import {connect} from "react-redux";
 import {requestServices} from "../Redux/Services/ServicesActions";
 import  './MultiselectDropdown.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
 import '@amir04lm26/react-modern-calendar-date-picker/lib/DatePicker.css';
 import DatePicker from '@amir04lm26/react-modern-calendar-date-picker';
+import PropTypes from "prop-types";
+import {getClientsData} from "../Redux/Clients/ClientsSelectors";
+import {getCasesData} from "../Redux/Cases/CasesSelectors";
+import {getAttorneysData} from "../Redux/Attorneys/AttorneysSelectors";
 
-const AddService = () => {
+const AddService = (props) => {
     const [caseID, setCaseID] = useState("");
     const [clientID, setClientID] = useState("");
     const [service, setService] = useState("");
@@ -15,15 +19,11 @@ const AddService = () => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [minutes, setMinutes] = useState({});
     const [message, setMessage] = useState("");
-    const [cases, setCases] = useState([]);
-    const [clients, setClients] = useState([]);
-    const [attorneys, setAttorneys] = useState([]);
     const [selectedAttorneys, setSelectedAttorneys] = useState({});
     const [showAddService, setShowAddService] = useState(false);
     const [numberOfAttorneys, setNumberOfAttorneys] = useState("0");
     const [shouldPost, setShouldPost] = useState(true);
 
-    const dispatch = useDispatch();
     let handleSubmit = async (e) => {
         e.preventDefault();
         if(shouldPost){
@@ -59,7 +59,7 @@ const AddService = () => {
                 } else {
                     setMessage("❗ Error occurred while adding data into services");
                 }
-                dispatch(requestServices(''));
+                props.requestServices('');
             } catch (err) {
                 console.log("Error posting data into services: ", err);
             }
@@ -67,41 +67,21 @@ const AddService = () => {
     };
 
     useEffect(() => {
-        fetch("/cases")
-            .then(response => response.json())
-            .then(json => {
-                setCases(json);
-            })
-        
-        fetch("/clients")
-            .then(response => response.json())
-            .then(json => {
-                setClients(json);
-            })
-
-        fetch("/attorneys")
-            .then(response => response.json())
-            .then(json => {
-                setAttorneys(json);
-            })
-    }, []);
-
-    useEffect(() => {
         setDate(selectedDate?.year+'-'+
             selectedDate?.month.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})+'-'
             +selectedDate?.day.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}))
     }, [selectedDate])
 
-    const caseOptions = cases.map(eachCase => {
+    const caseOptions = props.casesData?.map(eachCase => {
             return { label: eachCase.caseName, value: eachCase.caseId }
         });
 
-    const clientsOptions = clients.map(eachClient => {
+    const clientsOptions = props.clientsData?.map(eachClient => {
         return { label: eachClient.clientName, value: eachClient.clientId }
     });
 
     let numberOfAttorneysList = [];
-    for(let num=1; num<=attorneys?.length; num++) {
+    for(let num=1; num<=props.attorneysData?.length; num++) {
         numberOfAttorneysList.push(num);
     }
 
@@ -110,7 +90,7 @@ const AddService = () => {
             return { label: eachNumber, value: eachNumber }
         });
 
-    const  attorneysOptions  = attorneys.map(eachAttorney => {
+    const  attorneysOptions  = props.attorneysData?.map(eachAttorney => {
         return { label:  eachAttorney.firstName + " " + eachAttorney.lastName, value:  eachAttorney.attorneyId,
             style: {fontSize: '85%', color:'black'}}
     });
@@ -268,4 +248,26 @@ const AddService = () => {
         </div>
     );
 }
-export default AddService
+
+AddService.propTypes = {
+    clientsData: PropTypes.array.isRequired,
+    casesData: PropTypes.array.isRequired,
+    attorneysData: PropTypes.array.isRequired,
+    requestServices: PropTypes.func.isRequired,
+}
+
+const mapStateToProps = state => {
+    return {
+        clientsData: getClientsData(state),
+        casesData: getCasesData(state),
+        attorneysData: getAttorneysData(state),
+    }
+}
+
+const mapDispatchToProps = dispatch => ({
+    requestServices: (clientID) => {
+        dispatch(requestServices(clientID));
+    }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddService)

@@ -1,6 +1,6 @@
 import {useTable, useSortBy, useFilters, useGlobalFilter, useExpanded} from "react-table";
 import {requestServices} from "../Redux/Services/ServicesActions";
-import {useDispatch} from "react-redux";
+import {connect} from "react-redux";
 import {useMemo} from "react";
 import {DefaultColumnFilter} from "./DefaultColumnFilter";
 import {defaultGlobalFilter} from "./DefaultGlobalFilter";
@@ -69,7 +69,6 @@ function Table(props) {
         useExpanded,
     );
 
-    const dispatch = useDispatch();
     const handleDelete = (rows) => {
         let id = '';
         if(props.type === 'services'){
@@ -84,16 +83,16 @@ function Table(props) {
         fetch("/" + props.type + "=" + id, { method: 'DELETE' })
                 .then(async response => {
                     if (props.type === 'services') {
-                        dispatch(requestServices(''));
+                        props.requestServices('');
                     }
                     if (props.type === 'clients') {
-                        dispatch(requestClients(''));
+                        props.requestClients('');
                     }
                     if (props.type === 'attorneys') {
-                        dispatch(requestAttorneys(''));
+                        props.requestAttorneys('');
                     }
                     if (props.type === 'cases') {
-                        dispatch(requestCases(''));
+                        props.requestCases('');
                     }
                     setTimeout(deleteAlert, 1000)
                     const data = await response.json();
@@ -162,4 +161,20 @@ Table.propTypes = {
     type: PropTypes.string.isRequired,
 }
 
-export default Table;
+const mapDispatchToProps = dispatch => ({
+    requestServices: (clientID) => {
+        dispatch(requestServices(clientID))
+    },
+    requestClients: (clientID) => {
+        dispatch(requestClients(clientID))
+    },
+    requestCases: (caseID) => {
+        dispatch(requestCases(caseID))
+    },
+    requestAttorneys: (attorneyID) => {
+        dispatch(requestAttorneys(attorneyID))
+    }
+})
+
+
+export default connect(null, mapDispatchToProps)(Table);

@@ -1,18 +1,18 @@
 import React, {useState} from "react"
-import {useDispatch} from "react-redux";
+import {connect} from "react-redux";
 import  './MultiselectDropdown.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
 import {requestCases} from "../Redux/Cases/CasesActions";
+import PropTypes from "prop-types";
 
-const AddCase = () => {
+const AddCase = (props) => {
     const [caseName, setCaseName] = useState("");
     const [currencyCode, setCurrencyCode] = useState("");
     const [amount, setAmount] = useState(0);
     const [showAddService, setShowAddService] = useState(false);
     const [message, setMessage] = useState("");
 
-    const dispatch = useDispatch();
     let handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -36,7 +36,7 @@ const AddCase = () => {
             } else {
                 setMessage("❗ Error occurred while adding data into cases");
             }
-            dispatch(requestCases(''));
+            props.requestCases('');
         } catch (err) {
             console.log("Error posting data into cases: ", err);
         }
@@ -107,4 +107,15 @@ const AddCase = () => {
         </div>
     );
 }
-export default AddCase
+
+AddCase.propTypes = {
+    requestCases: PropTypes.func.isRequired,
+}
+
+const mapDispatchToProps = dispatch => ({
+    requestCases: (caseID) => {
+        dispatch(requestCases(caseID))
+    }
+})
+
+export default connect(null, mapDispatchToProps)(AddCase)
