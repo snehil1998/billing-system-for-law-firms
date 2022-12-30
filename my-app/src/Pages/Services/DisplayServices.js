@@ -61,6 +61,12 @@ const DisplayServices = (props) => {
                         sortType: "basic",
                         filter: "text"
                     }, {
+                        Header: 'Currency Code',
+                        accessor: 'currencycode',
+                        sortType: "basic",
+                        filter: "text",
+
+                    }, {
                         Header: 'Amount',
                         accessor: 'amount',
                         sortType: "basic",
@@ -125,7 +131,7 @@ const DisplayServices = (props) => {
         filterAttorneys.forEach(attorney => {
             attorneyNamesList.push(attorney[0]?.firstName + " " + attorney[0]?.lastName)
             attorney[0]?.servicePricing.filter(price => price.clientId === service.clientId)
-                .forEach(price => attorneyPricingList.push(price.price))
+                .forEach(price => attorneyPricingList.push(price.price.toFixed(2)))
         })
         
         minutes.forEach(minute => hours.push((minute/60.0).toFixed(2)))
@@ -138,6 +144,7 @@ const DisplayServices = (props) => {
                 clientname: filterClients[0]?.clientName,
                 service: service.service,
                 date: service.date,
+                currencycode: filterClients[0]?.currencyCode,
                 attorneys: attorneyNamesList.toString(),
                 minutes: minutes.toString(),
                 hours: hours.toString(),
@@ -152,6 +159,7 @@ const DisplayServices = (props) => {
                         clientname: "",
                         service: "",
                         date: "",
+                        currencycode: "",
                         attorneys: name,
                         minutes: minutes[index],
                         hours: hours[index],

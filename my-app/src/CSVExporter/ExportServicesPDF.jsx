@@ -8,9 +8,9 @@ function ExportServicesPDF(props) {
         let csvRow = {}
         csvRow["Sno"] = index+1
         csvRow["Case"] = row.original.casename
-        csvRow["Client"] = row.original.clientname
         csvRow["Service"] = row.original.service
         csvRow["Date"] = row.original.date
+        csvRow["CurrencyCode"] = row.original.currencycode
         csvRow["Amount"] = row.original.amount
         if(row.canExpand){
             csvRow["Attorneys"] = row.original?.subRows[0].attorneys
@@ -31,9 +31,9 @@ function ExportServicesPDF(props) {
             if (index > 0){
                 csvRow["Sno"] = ""
                 csvRow["Case"] = subRow.casename
-                csvRow["Client"] = subRow.clientname
                 csvRow["Service"] = subRow.service
                 csvRow["Date"] = subRow.date
+                csvRow["CurrencyCode"] = subRow.currencycode
                 csvRow["Amount"] = subRow.amount
                 csvRow["Attorneys"] = subRow.attorneys
                 csvRow["Minutes"] = subRow.minutes
@@ -61,10 +61,10 @@ function ExportServicesPDF(props) {
     const report = "Report";
     const client = "Client: " + props.client;
     const period = "Period: " + fromDate + " to " + toDate;
-    const headers = [["S.No.", "Case", "Client", "Service", "Date", "Service Fee", "Attorney(s)",
+    const headers = [["S.No.", "Case", "Service", "Date", "Currency Code", "Service Fee", "Attorney(s)",
         "Time spent (in minutes)", "Time spent (in hours)", "Rate per hour", "Amount for Attorney"]];
 
-    const data = csvRows.map(row=> [row.Sno, row.Case, row.Client, row.Service, row.Date,
+    const data = csvRows.map(row=> [row.Sno, row.Case, row.Service, row.Date, row.CurrencyCode,
         row.Amount, row.Attorneys, row.Minutes, row.Hours, row.Pricing, row.Total]);
 
     let content = {
