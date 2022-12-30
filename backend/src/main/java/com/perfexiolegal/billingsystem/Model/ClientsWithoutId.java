@@ -16,6 +16,5 @@ import java.util.UUID;
 public class ClientsWithoutId {
   private String clientName;
   private String currencyCode;
-  private float servicePricing;
   private float amount;
 }

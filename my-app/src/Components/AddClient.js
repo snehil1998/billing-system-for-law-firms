@@ -25,7 +25,6 @@ const AddClient = () => {
                 body: JSON.stringify({
                     clientName: clientName,
                     currencyCode: currencyCode,
-                    servicePricing: 0,
                     amount: amount,
                 }),
             });

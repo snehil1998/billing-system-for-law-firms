@@ -17,6 +17,5 @@ public class Clients {
   private UUID clientId;
   private String clientName;
   private String currencyCode;
-  private float servicePricing;
   private float amount;
 }

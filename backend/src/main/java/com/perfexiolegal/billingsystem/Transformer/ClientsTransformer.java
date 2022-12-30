@@ -14,7 +14,6 @@ public class ClientsTransformer {
         clientID,
         client.getClientName(),
         client.getCurrencyCode(),
-        client.getServicePricing(),
         client.getAmount()
     );
   }

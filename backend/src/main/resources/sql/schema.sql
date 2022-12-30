@@ -28,15 +28,14 @@ CREATE TABLE clients
     Client_Id  UUID PRIMARY KEY,
     Client_Name   VARCHAR(500) NOT NULL,
     Currency_Code   VARCHAR(3) NOT NULL,
-    Service_Pricing FLOAT NOT NULL,
     Amount  FLOAT NOT NULL
 );
 
-INSERT INTO clients(Client_Id, Client_Name, Currency_Code, Service_Pricing, Amount)
-VALUES ('bc37c7ca-0175-4fdb-8b3e-a1952a271c98', 'Microsoft', 'USD', 300, 100000);
+INSERT INTO clients(Client_Id, Client_Name, Currency_Code, Amount)
+VALUES ('bc37c7ca-0175-4fdb-8b3e-a1952a271c98', 'Microsoft', 'USD', 100000);
 
-INSERT INTO clients(Client_Id, Client_Name, Currency_Code, Service_Pricing, Amount)
-VALUES ('c59df7c9-183a-422d-9113-5a9ffd4fd4ca', 'Bohringer', 'GBP', 200, 354600);
+INSERT INTO clients(Client_Id, Client_Name, Currency_Code, Amount)
+VALUES ('c59df7c9-183a-422d-9113-5a9ffd4fd4ca', 'Bohringer', 'GBP', 354600);
 
 -- All attorneys
 CREATE TABLE attorneys
