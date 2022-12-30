@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import '@amir04lm26/react-modern-calendar-date-picker/lib/DatePicker.css';
 import DatePicker from '@amir04lm26/react-modern-calendar-date-picker';
 import {addFromSearchDate, addToSearchDate, requestServices} from "../Redux/Services/ServicesActions";
@@ -8,23 +8,15 @@ import PropTypes from "prop-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCaretSquareDown, faCaretSquareUp} from "@fortawesome/free-solid-svg-icons";
 import {getFromSearchDate, getToSearchDate} from "../Redux/Services/ServicesSelectors";
+import {getClientsData} from "../Redux/Clients/ClientsSelectors";
 
 function Filters(props) {
     const [selectedFromDate, setSelectedFromDate] = useState(null);
     const [selectedToDate, setSelectedToDate] = useState(null);
-    const [clients, setClients] = useState([]);
     const [clientID, setClientID] = useState("");
     const [showFilter, setShowFilter] = useState(false);
 
-    useEffect(() => {
-        fetch("/clients")
-            .then(response => response.json())
-            .then(json => {
-                setClients(json);
-            })
-    }, []);
-
-    const clientsOptions = clients.map(eachClient => {
+    const clientsOptions = props.clientsData.map(eachClient => {
         return { label: eachClient.clientName, value: eachClient.clientId }
     });
 
@@ -97,7 +89,9 @@ function Filters(props) {
                   </select>
               </div>
               <div className={'generate-report-button-container'} style={{marginLeft: '1vw', paddingTop: '2vh'}}>
-                  <button style={{width:'9vw', height:'5vh', fontSize:'14px', cursor:'pointer'}} onClick={() => {
+                  <button style={{width:'9vw', height:'5vh', fontSize:'14px', cursor:'pointer'}}
+                          disabled={props.fromDate === null || props.toDate === null || clientID === ""}
+                          onClick={() => {
                       ExportServicesPDF({
                           rows: props.rows, fromDate: props.fromDate, toDate: props.toDate,
                           client: clientsOptions.find(client => (client.value === clientID)).label})}}>
@@ -124,12 +118,14 @@ Filters.propTypes = {
     addFromSearchDate: PropTypes.func.isRequired,
     addToSearchDate: PropTypes.func.isRequired,
     requestServices: PropTypes.func.isRequired,
+    clientsData: PropTypes.array.isRequired,
 }
 
 const mapStateToProps = state => {
     return {
-        fromDate: getFromSearchDate(state) !== null ? getFromSearchDate(state) : {day: '', month: '', year: ''},
-        toDate: getToSearchDate(state) !== null ? getToSearchDate(state) : {day: '', month: '', year: ''},
+        fromDate: getFromSearchDate(state),
+        toDate: getToSearchDate(state),
+        clientsData: getClientsData(state),
     }
 }
 

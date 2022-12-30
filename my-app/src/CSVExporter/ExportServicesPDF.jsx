@@ -46,8 +46,8 @@ function ExportServicesPDF(props) {
         })
     })
 
-    const fromDate = props.fromDate.day + '/' + props.fromDate.month + '/' + props.fromDate.year;
-    const toDate = props.toDate.day + '/' + props.toDate.month + '/' + props.toDate.year;
+    const fromDate = props.fromDate?.day + '/' + props.fromDate?.month + '/' + props.fromDate?.year;
+    const toDate = props.toDate?.day + '/' + props.toDate?.month + '/' + props.toDate?.year;
     const unit = "pt";
     const size = "A4";
     const orientation = "landscape";

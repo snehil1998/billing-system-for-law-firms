@@ -15,6 +15,8 @@ export const requestServices = (clientID) => async (dispatch) => {
                     dispatch(requestCases(''));
                     dispatch(requestClients(''));
                     dispatch(requestAttorneys(''));
+                    dispatch(addFromSearchDate(null));
+                    dispatch(addToSearchDate(null));
                     dispatch({
                         type: SERVICES.LOAD_SUCCESS,
                         data: json,
