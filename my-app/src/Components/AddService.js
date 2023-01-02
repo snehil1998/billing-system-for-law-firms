@@ -80,8 +80,13 @@ const AddService = (props) => {
         return { label: eachClient.clientName, value: eachClient.clientId }
     });
 
+    const filteredAttorneysData = props.attorneysData
+        .filter(attorney => attorney.servicePricing
+        .find(servicePrice => servicePrice.clientId === clientID) !== undefined);
+
+
     let numberOfAttorneysList = [];
-    for(let num=1; num<=props.attorneysData?.length; num++) {
+    for(let num=1; num<=filteredAttorneysData?.length; num++) {
         numberOfAttorneysList.push(num);
     }
 
@@ -90,7 +95,7 @@ const AddService = (props) => {
             return { label: eachNumber, value: eachNumber }
         });
 
-    const  attorneysOptions  = props.attorneysData?.map(eachAttorney => {
+    const  attorneysOptions  = filteredAttorneysData?.map(eachAttorney => {
         return { label:  eachAttorney.firstName + " " + eachAttorney.lastName, value:  eachAttorney.attorneyId,
             style: {fontSize: '85%', color:'black'}}
     });
@@ -205,9 +210,14 @@ const AddService = (props) => {
                             {'Number of attorneys: '}
                         </div>
                         <select value={numberOfAttorneys} onChange={handleNumberOfAttorneys} style={{width:'39vw', height:'4vh'}}>
-                            <option key={"placeholder-number-of-attorneys"} value={"0"} disabled={true}>
+                            {clientID === "" ?
+                                <option key={"placeholder-number-of-attorneys"} value={"0"} disabled={true}>
+                                    Select a client first
+                                </option> :
+                                <option key={"placeholder-number-of-attorneys"} value={"0"} disabled={true}>
                                 Select number of attorneys
-                            </option>
+                                </option>
+                            }
                             {numberOfAttorneysOptions.map((option) => (
                                 <option key={option.value} value={option.value}>{option.label}</option>
                             ))}

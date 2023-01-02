@@ -89,7 +89,8 @@ function Filters(props) {
                   </select>
               </div>
               <div className={'generate-report-button-container'} style={{marginLeft: '1vw', paddingTop: '2vh'}}>
-                  <button style={{width:'9vw', height:'5vh', fontSize:'14px', cursor:'pointer'}}
+                  <button style={{width:'9vw', height:'5vh', fontSize:'14px', cursor: props.fromDate === null
+                          || props.toDate === null || clientID === "" ? 'default' : 'pointer'}}
                           disabled={props.fromDate === null || props.toDate === null || clientID === ""}
                           onClick={() => {
                       ExportServicesPDF({
