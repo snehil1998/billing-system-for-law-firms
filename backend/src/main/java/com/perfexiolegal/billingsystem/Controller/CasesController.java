@@ -57,7 +57,7 @@ public class CasesController {
   }
 
   @GetMapping(value = "/cases={caseID}")
-  public ResponseEntity<Cases> getServicesForCase(@PathVariable("caseID") UUID caseID) {
+  public ResponseEntity<Cases> getServicesForCase(@PathVariable("caseID") String caseID) {
     try {
       logger.info("retrieving case from controller with caseID: " + caseID);
       Optional<Cases> retrievedCase = casesService.getCaseById(caseID);
@@ -73,11 +73,10 @@ public class CasesController {
   }
 
   @PostMapping(value = "/cases", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<String> createNewCase(@RequestBody CasesWithoutId newCase) {
+  public ResponseEntity<String> createNewCase(@RequestBody Cases newCase) {
     try {
-      UUID uuid = UUID.randomUUID();
-      logger.info("Creating case with name: " + uuid);
-      casesService.postCases(casesTransformer.update(newCase, uuid));
+      logger.info("Creating case with name: " + newCase.getCaseId());
+      casesService.postCases(newCase);
       return new ResponseEntity<>("Case was created successfully.", HttpStatus.CREATED);
     } catch (ServiceException e) {
       return new ResponseEntity<>("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -85,7 +84,7 @@ public class CasesController {
   }
 
   @PutMapping(value = "/cases={caseID}")
-  public ResponseEntity<String> updateCase(@PathVariable("caseID") UUID caseID,
+  public ResponseEntity<String> updateCase(@PathVariable("caseID") String caseID,
                                               @RequestBody CasesWithoutId caseJSONWithoutID) {
     try {
       logger.info("check existence of case with case ID: " + caseID);
@@ -104,7 +103,7 @@ public class CasesController {
   }
 
   @DeleteMapping(value = "/cases={caseID}")
-  public ResponseEntity<String> deleteService(@PathVariable("caseID") UUID caseID) {
+  public ResponseEntity<String> deleteService(@PathVariable("caseID") String caseID) {
     try {
       logger.info("deleting case with ID: " + caseID);
       int result = casesService.deleteById(caseID);

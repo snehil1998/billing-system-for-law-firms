@@ -54,7 +54,7 @@ public class ClientsController {
   }
 
   @GetMapping(value = "/clients={clientID}")
-  public ResponseEntity<Cases> getServicesForCase(@PathVariable("clientID") UUID clientID) {
+  public ResponseEntity<Cases> getServicesForCase(@PathVariable("clientID") String clientID) {
     try {
       logger.info("retrieving client from controller with clientID: " + clientID);
       Optional<Clients> retrievedClients = clientsService.getClientById(clientID);
@@ -70,11 +70,10 @@ public class ClientsController {
   }
 
   @PostMapping(value = "/clients", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<String> createNewCase(@RequestBody ClientsWithoutId client) {
+  public ResponseEntity<String> createNewCase(@RequestBody Clients client) {
     try {
-      UUID uuid = UUID.randomUUID();
-      logger.info("Creating client with clientID: " + uuid);
-      clientsService.postClients(clientsTransformer.update(client, uuid));
+      logger.info("Creating client with clientID: " + client.getClientId());
+      clientsService.postClients(client);
       return new ResponseEntity<>("Client was created successfully.", HttpStatus.CREATED);
     } catch (ServiceException e) {
       return new ResponseEntity<>("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -82,7 +81,7 @@ public class ClientsController {
   }
 
   @PutMapping(value = "/clients={clientID}")
-  public ResponseEntity<String> updateCase(@PathVariable("clientID") UUID clientID,
+  public ResponseEntity<String> updateCase(@PathVariable("clientID") String clientID,
                                               @RequestBody ClientsWithoutId clientJSONWithoutID) {
     try {
       logger.info("check existence of client with client ID: " + clientID);
@@ -101,7 +100,7 @@ public class ClientsController {
   }
 
   @DeleteMapping(value = "/clients={clientID}")
-  public ResponseEntity<String> deleteService(@PathVariable("clientID") UUID clientID) {
+  public ResponseEntity<String> deleteService(@PathVariable("clientID") String clientID) {
     try {
       logger.info("deleting client with ID: " + clientID);
       int result = clientsService.deleteById(clientID);

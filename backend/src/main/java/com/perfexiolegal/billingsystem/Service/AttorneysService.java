@@ -31,7 +31,7 @@ public class AttorneysService {
     }
   }
 
-  public Optional<Attorneys> getAttorneyById(UUID attorneyID) throws ServiceException {
+  public Optional<Attorneys> getAttorneyById(String attorneyID) throws ServiceException {
     try {
       return attorneysRepository.getAttorneyById(attorneyID);
     } catch (RepositoryException e) {
@@ -55,7 +55,7 @@ public class AttorneysService {
     }
   }
 
-  public int deleteById(UUID attorneyID) throws ServiceException {
+  public int deleteById(String attorneyID) throws ServiceException {
     try {
       return attorneysRepository.deleteById(attorneyID);
     } catch (RepositoryException e) {

@@ -5,8 +5,8 @@
 CREATE TABLE services
 (
     Service_Id UUID PRIMARY KEY,
-    Case_Id  UUID NOT NULL,
-    Client_Id   UUID NOT NULL,
+    Case_Id  VARCHAR(40) NOT NULL,
+    Client_Id   VARCHAR(40) NOT NULL,
     Service   VARCHAR(10000) NOT NULL,
     Date    DATE NOT NULL,
     Attorneys   JSONB NOT NULL,
@@ -25,7 +25,7 @@ VALUES ('a644294e-601d-401b-b713-a6bd061497f5', 'f35fe8ae-aa46-4305-bb3f-21fc45c
 -- All clients
 CREATE TABLE clients
 (
-    Client_Id  UUID PRIMARY KEY,
+    Client_Id  VARCHAR(40) PRIMARY KEY,
     Client_Name   VARCHAR(500) NOT NULL,
     Currency_Code   VARCHAR(3) NOT NULL,
     Amount  FLOAT NOT NULL
@@ -40,7 +40,7 @@ VALUES ('c59df7c9-183a-422d-9113-5a9ffd4fd4ca', 'Bohringer', 'GBP', 354600);
 -- All attorneys
 CREATE TABLE attorneys
 (
-    Attorney_Id  UUID PRIMARY KEY,
+    Attorney_Id  VARCHAR(40) PRIMARY KEY,
     First_Name   VARCHAR(500),
     Last_Name   VARCHAR(500),
     Service_Pricing     JSONB NOT NULL
@@ -56,7 +56,7 @@ VALUES ('bc37c7ca-0175-4fdb-8b3e-a1952a271b98', 'Arpita', 'Sawhney', '[{"clientI
 -- All cases
 CREATE TABLE cases
 (
-    Case_Id  UUID PRIMARY KEY,
+    Case_Id  VARCHAR(40) PRIMARY KEY,
     Case_Name   VARCHAR(500),
     Currency_Code   VARCHAR(3) NOT NULL,
     Amount  FLOAT NOT NULL
@@ -73,8 +73,8 @@ VALUES ('f35fe8ae-aa46-4305-bb3f-21fc45c8888c', 'Pharma case', 'GBP', 20000);
 CREATE TABLE disbursements
 (
     Disbursement_Id   UUID PRIMARY KEY,
-    Case_Id     UUID NOT NULL,
-    Client_Id   UUID NOT NULL,
+    Case_Id     VARCHAR(40) NOT NULL,
+    Client_Id   VARCHAR(40) NOT NULL,
     Date    DATE NOT NULL,
     Currency_Code   VARCHAR(3) NOT NULL,
     Conversion_Rate     FLOAT NOT NULL,

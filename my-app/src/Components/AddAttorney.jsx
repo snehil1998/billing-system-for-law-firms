@@ -8,6 +8,7 @@ import PropTypes from "prop-types";
 import {getClientsData} from "../Redux/Clients/ClientsSelectors";
 
 const AddAttorney = (props) => {
+    const [attorneyID, setAttorneyID] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [clientIdList, setClientIdList] = useState({});
@@ -30,12 +31,14 @@ const AddAttorney = (props) => {
                     'Content-Type': 'application/json; charset=utf-8'
                 },
                 body: JSON.stringify({
+                    attorneyId: attorneyID,
                     firstName: firstName,
                     lastName: lastName,
                     servicePricing: servicePricingList,
                 }),
             });
             if (res.status === 200 || res.status === 201) {
+                setAttorneyID("");
                 setFirstName("");
                 setLastName("");
                 setNumberOfServicePricing("0");
@@ -95,7 +98,19 @@ const AddAttorney = (props) => {
                 </span>
             </div>
             {showAddService && <form onSubmit={handleSubmit} style={{fontSize:'15px', marginLeft:'1vw',
-                backgroundColor:'grey', height:(35+(parseInt(numberOfServicePricing)*6.5)).toString()+'vh', width:'98vw'}}>
+                backgroundColor:'grey', height:(42+(parseInt(numberOfServicePricing)*6.5)).toString()+'vh', width:'98vw'}}>
+                <div className="attorney-id-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
+                    <div className={'attorney-id-translation'} style={{fontSize: '17px'}}>
+                        {'Attorney ID: '}
+                    </div>
+                    <input
+                        type="text"
+                        value={attorneyID}
+                        placeholder="Attorney ID"
+                        onChange={(e) => setAttorneyID(e.target.value)}
+                        style={{width:'35vw', height:'4vh'}}
+                    />
+                </div>
                 <div className="first-name-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
                     <div className={'first-name-translation'} style={{fontSize: '17px'}}>
                         {'First Name: '}

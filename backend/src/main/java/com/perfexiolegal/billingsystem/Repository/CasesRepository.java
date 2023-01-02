@@ -26,7 +26,7 @@ public class CasesRepository {
       logger.info("Retrieving data for all cases");
       List<Cases> casesList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
-            UUID caseId = (UUID) resultSet.getObject("case_id");
+            String caseId = resultSet.getString("case_id");
             String caseName = resultSet.getString("case_name");
             String currencyCode = resultSet.getString("currency_code");
             float amount = resultSet.getFloat("amount");
@@ -39,13 +39,13 @@ public class CasesRepository {
     }
   }
 
-  public Optional<Cases> getCaseById(UUID caseID) throws RepositoryException {
+  public Optional<Cases> getCaseById(String caseID) throws RepositoryException {
     try {
       String sql = "SELECT * FROM cases where case_id = '" + caseID + "'";
       logger.info("Retrieving data for case with case ID: " + caseID);
       Cases caseList = jdbcTemplate.queryForObject(sql,
           (resultSet, i) -> {
-            UUID caseId = (UUID) resultSet.getObject("case_id");
+            String caseId = resultSet.getString("case_id");
             String caseName = resultSet.getString("case_name");
             String currencyCode = resultSet.getString("currency_code");
             float amount = resultSet.getFloat("amount");
@@ -81,7 +81,7 @@ public class CasesRepository {
     }
   }
 
-  public int deleteById(UUID caseID) throws RepositoryException {
+  public int deleteById(String caseID) throws RepositoryException {
     try {
       logger.info("Deleting case with ID: " + caseID);
       return jdbcTemplate.update("delete from cases where case_id=?", caseID);

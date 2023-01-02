@@ -9,7 +9,7 @@ import java.util.UUID;
 @Component
 public class ClientsTransformer {
 
-  public Clients update(ClientsWithoutId client, UUID clientID) {
+  public Clients update(ClientsWithoutId client, String clientID) {
     return new Clients(
         clientID,
         client.getClientName(),

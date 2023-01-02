@@ -7,6 +7,7 @@ import {requestCases} from "../Redux/Cases/CasesActions";
 import PropTypes from "prop-types";
 
 const AddCase = (props) => {
+    const [caseID, setCaseID] = useState("");
     const [caseName, setCaseName] = useState("");
     const [currencyCode, setCurrencyCode] = useState("");
     const [amount, setAmount] = useState(0);
@@ -23,12 +24,14 @@ const AddCase = (props) => {
                     'Content-Type': 'application/json; charset=utf-8'
                 },
                 body: JSON.stringify({
+                    caseId: caseID,
                     caseName: caseName,
                     currencyCode: currencyCode,
                     amount: amount,
                 }),
             });
             if (res.status === 200 || res.status === 201) {
+                setCaseID("");
                 setCaseName("");
                 setCurrencyCode("");
                 setAmount(0);
@@ -64,7 +67,19 @@ const AddCase = (props) => {
                 </span>
             </div>
             {showAddService && <form onSubmit={handleSubmit} style={{fontSize:'15px', marginLeft:'1vw',
-                backgroundColor:'grey', height:'34vh', width:'98vw'}}>
+                backgroundColor:'grey', height:'42vh', width:'98vw'}}>
+                    <div className="case-id-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
+                        <div className={'case-id-translation'} style={{fontSize: '17px'}}>
+                            {'Case ID: '}
+                        </div>
+                        <input
+                            type="text"
+                            value={caseID}
+                            placeholder="Case ID"
+                            onChange={(e) => setCaseID(e.target.value)}
+                            style={{width:'35vw', height:'4vh'}}
+                        />
+                    </div>
                     <div className="case-name-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
                         <div className={'case-name-translation'} style={{fontSize: '17px'}}>
                             {'Case Name: '}

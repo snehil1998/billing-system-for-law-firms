@@ -18,8 +18,8 @@ import java.util.UUID;
 @EqualsAndHashCode
 @ToString
 public class ServicesWithoutIdAndAmount {
-  private UUID caseId;
-  private UUID clientId;
+  private String caseId;
+  private String clientId;
   private String service;
   private Date date;
   private List<AttorneysInService> attorneys;

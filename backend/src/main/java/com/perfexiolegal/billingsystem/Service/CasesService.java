@@ -29,7 +29,7 @@ public class CasesService {
     }
   }
 
-  public Optional<Cases> getCaseById(UUID caseID) throws ServiceException {
+  public Optional<Cases> getCaseById(String caseID) throws ServiceException {
     try {
       return casesRepository.getCaseById(caseID);
     } catch (RepositoryException e) {
@@ -53,7 +53,7 @@ public class CasesService {
     }
   }
 
-  public int deleteById(UUID caseID) throws ServiceException {
+  public int deleteById(String caseID) throws ServiceException {
     try {
       return casesRepository.deleteById(caseID);
     } catch (RepositoryException e) {

@@ -29,7 +29,7 @@ public class ClientsService {
     }
   }
 
-  public Optional<Clients> getClientById(UUID clientID) throws ServiceException {
+  public Optional<Clients> getClientById(String clientID) throws ServiceException {
     try {
       return clientsRepository.getClientsById(clientID);
     } catch (RepositoryException e) {
@@ -53,7 +53,7 @@ public class ClientsService {
     }
   }
 
-  public int deleteById(UUID clientID) throws ServiceException {
+  public int deleteById(String clientID) throws ServiceException {
     try {
       return clientsRepository.deleteById(clientID);
     } catch (RepositoryException e) {

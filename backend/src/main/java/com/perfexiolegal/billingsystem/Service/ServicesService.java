@@ -28,7 +28,7 @@ public class ServicesService {
     }
   }
 
-  public Optional<List<Services>> getServicesForCase(UUID caseID) throws ServiceException {
+  public Optional<List<Services>> getServicesForCase(String caseID) throws ServiceException {
     try {
       return servicesRepository.getServicesForCase(caseID);
     } catch (RepositoryException e) {
@@ -36,7 +36,7 @@ public class ServicesService {
     }
   }
 
-  public Optional<List<Services>> getServicesForClient(UUID clientID) throws ServiceException {
+  public Optional<List<Services>> getServicesForClient(String clientID) throws ServiceException {
     try {
       return servicesRepository.getServicesForClient(clientID);
     } catch (RepositoryException e) {
@@ -77,7 +77,7 @@ public class ServicesService {
     }
   }
 
-  public int deleteByCase(UUID caseID) throws ServiceException {
+  public int deleteByCase(String caseID) throws ServiceException {
     try {
       return servicesRepository.deleteByCase(caseID);
     } catch (RepositoryException e) {

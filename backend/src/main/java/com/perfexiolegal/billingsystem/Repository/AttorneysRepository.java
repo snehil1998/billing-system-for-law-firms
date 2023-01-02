@@ -38,7 +38,7 @@ public class AttorneysRepository {
       logger.info("Retrieving data for all attorneys");
       List<Attorneys> attorneysList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
-            UUID attorneyId = (UUID) resultSet.getObject("attorney_id");
+            String attorneyId = resultSet.getString("attorney_id");
             String firstName = resultSet.getString("first_name");
             String lastName = resultSet.getString("last_name");
             ObjectMapper objectMapper = new ObjectMapper();
@@ -60,13 +60,13 @@ public class AttorneysRepository {
     }
   }
 
-  public Optional<Attorneys> getAttorneyById(UUID attorneyID) throws RepositoryException {
+  public Optional<Attorneys> getAttorneyById(String attorneyID) throws RepositoryException {
     try {
       String sql = "SELECT * FROM attorneys where attorney_id = '" + attorneyID + "'";
       logger.info("Retrieving data for attorney with attorney ID: " + attorneyID);
       Attorneys attorney = jdbcTemplate.queryForObject(sql,
           (resultSet, i) -> {
-            UUID attorneyId = (UUID) resultSet.getObject("attorney_id");
+            String attorneyId = resultSet.getString("attorney_id");
             String firstName = resultSet.getString("first_name");
             String lastName = resultSet.getString("last_name");
             ObjectMapper objectMapper = new ObjectMapper();
@@ -120,7 +120,7 @@ public class AttorneysRepository {
     }
   }
 
-  public int deleteById(UUID attorneyID) throws RepositoryException {
+  public int deleteById(String attorneyID) throws RepositoryException {
     try {
       logger.info("Deleting attorney with ID: " + attorneyID);
       return jdbcTemplate.update("delete from attorneys where attorney_id=?", attorneyID);

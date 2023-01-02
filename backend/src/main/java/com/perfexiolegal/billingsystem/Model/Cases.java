@@ -15,7 +15,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 @ToString
 public class Cases {
-  private UUID caseId;
+  private String caseId;
   private String caseName;
   private String currencyCode;
   private float amount;

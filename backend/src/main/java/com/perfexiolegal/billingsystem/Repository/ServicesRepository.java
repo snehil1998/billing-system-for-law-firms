@@ -35,8 +35,8 @@ public class ServicesRepository {
       List<Services> servicesList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
             UUID serviceId = (UUID) resultSet.getObject("service_id");
-            UUID caseId = (UUID) resultSet.getObject("case_id");
-            UUID clientId = (UUID) resultSet.getObject("client_id");
+            String caseId = resultSet.getString("case_id");
+            String clientId = resultSet.getString("client_id");
             String service = resultSet.getString("service");
             Date date = (Date) resultSet.getObject("date");
             ObjectMapper objectMapper = new ObjectMapper();
@@ -59,15 +59,15 @@ public class ServicesRepository {
     }
   }
 
-  public Optional<List<Services>> getServicesForCase(UUID caseID) throws RepositoryException {
+  public Optional<List<Services>> getServicesForCase(String caseID) throws RepositoryException {
     try {
       String sql = "SELECT * FROM services where case_id = '" + caseID + "'";
       logger.info("Retrieving data for bill with case ID: " + caseID);
       List<Services> servicesForCaseList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
             UUID serviceId = (UUID) resultSet.getObject("service_id");
-            UUID caseId = (UUID) resultSet.getObject("case_id");
-            UUID clientId = (UUID) resultSet.getObject("client_id");
+            String caseId = resultSet.getString("case_id");
+            String clientId = resultSet.getString("client_id");
             String service = resultSet.getString("service");
             Date date = (Date) resultSet.getObject("date");
             ObjectMapper objectMapper = new ObjectMapper();
@@ -92,15 +92,15 @@ public class ServicesRepository {
     }
   }
 
-  public Optional<List<Services>> getServicesForClient(UUID clientID) throws RepositoryException {
+  public Optional<List<Services>> getServicesForClient(String clientID) throws RepositoryException {
     try {
       String sql = "SELECT * FROM services where client_id = '" + clientID + "'";
       logger.info("Retrieving data for bill with client ID: " + clientID);
       List<Services> servicesForClientList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
             UUID serviceId = (UUID) resultSet.getObject("service_id");
-            UUID caseId = (UUID) resultSet.getObject("case_id");
-            UUID clientId = (UUID) resultSet.getObject("client_id");
+            String caseId = resultSet.getString("case_id");
+            String clientId = resultSet.getString("client_id");
             String service = resultSet.getString("service");
             Date date = (Date) resultSet.getObject("date");
             ObjectMapper objectMapper = new ObjectMapper();
@@ -132,8 +132,8 @@ public class ServicesRepository {
       Services serviceFromId = jdbcTemplate.queryForObject(sql,
           (resultSet, i) -> {
             UUID serviceId = (UUID) resultSet.getObject("service_id");
-            UUID caseId = (UUID) resultSet.getObject("case_id");
-            UUID clientId = (UUID) resultSet.getObject("client_id");
+            String caseId = resultSet.getString("case_id");
+            String clientId = resultSet.getString("client_id");
             String service = resultSet.getString("service");
             Date date = (Date) resultSet.getObject("date");
             ObjectMapper objectMapper = new ObjectMapper();
@@ -199,9 +199,9 @@ public class ServicesRepository {
     }
   }
 
-  public int deleteByCase(UUID caseID) throws RepositoryException {
+  public int deleteByCase(String caseID) throws RepositoryException {
     try {
-      logger.info("Deleting all services");
+      logger.info("Deleting services with case ID: " + caseID);
       return jdbcTemplate.update("delete from services where case_id=?", caseID);
     } catch (DataAccessException e) {
       throw new RepositoryException("failed to delete tasks", e);

@@ -14,7 +14,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 @ToString
 public class AttorneysInService {
-  private UUID id;
+  private String id;
   private int minutes;
   public AttorneysInService() {
 

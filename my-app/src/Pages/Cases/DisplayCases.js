@@ -60,7 +60,7 @@ const DisplayCases = (props) => {
             <div className={"display table container"}>
                 <div className={"table container"} style={{textAlign:'left'}}>
                     <AddCase/>
-                    <Table columns={columns} data={tableData} type={'casesdispla'} />
+                    <Table columns={columns} data={tableData} type={'cases'} />
                 </div>
             </div>
         </>

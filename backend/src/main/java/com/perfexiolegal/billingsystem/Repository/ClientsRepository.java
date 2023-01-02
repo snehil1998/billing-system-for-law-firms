@@ -26,7 +26,7 @@ public class ClientsRepository {
       logger.info("Retrieving data for all clients");
       List<Clients> clientsList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
-            UUID clientId = (UUID) resultSet.getObject("client_id");
+            String clientId = resultSet.getString("client_id");
             String clientName = resultSet.getString("client_name");
             String currencyCode = resultSet.getString("currency_code");
             float amount = resultSet.getFloat("amount");
@@ -39,13 +39,13 @@ public class ClientsRepository {
     }
   }
 
-  public Optional<Clients> getClientsById(UUID clientID) throws RepositoryException {
+  public Optional<Clients> getClientsById(String clientID) throws RepositoryException {
     try {
       String sql = "SELECT * FROM clients where client_id = '" + clientID + "'";
       logger.info("Retrieving data for client with client ID: " + clientID);
       Clients client = jdbcTemplate.queryForObject(sql,
           (resultSet, i) -> {
-            UUID clientId = (UUID) resultSet.getObject("client_id");
+            String clientId = resultSet.getString("client_id");
             String clientName = resultSet.getString("client_name");
             String currencyCode = resultSet.getString("currency_code");
             float amount = resultSet.getFloat("amount");
@@ -81,7 +81,7 @@ public class ClientsRepository {
     }
   }
 
-  public int deleteById(UUID clientID) throws RepositoryException {
+  public int deleteById(String clientID) throws RepositoryException {
     try {
       logger.info("Deleting client with ID: " + clientID);
       return jdbcTemplate.update("delete from clients where client_id=?", clientID);

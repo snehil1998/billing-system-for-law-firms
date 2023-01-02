@@ -54,7 +54,7 @@ public class ServicesController {
   }
 
   @GetMapping(value = "/services/case={caseID}")
-  public ResponseEntity<List<Services>> getServicesForCase(@PathVariable("caseID") UUID caseID) {
+  public ResponseEntity<List<Services>> getServicesForCase(@PathVariable("caseID") String caseID) {
     try {
       logger.info("retrieving service from controller with caseID: " + caseID);
       Optional<List<Services>> listOfServices = servicesService.getServicesForCase(caseID);
@@ -82,7 +82,7 @@ public class ServicesController {
   }
 
   @GetMapping(value = "/services/client={clientID}")
-  public ResponseEntity<Services> getServicesForClient(@PathVariable("clientID") UUID clientID) {
+  public ResponseEntity<Services> getServicesForClient(@PathVariable("clientID") String clientID) {
     try{
       logger.info("retrieving service from controller with clientID: " + clientID);
       Optional<List<Services>> listOfServices = servicesService.getServicesForClient(clientID);
@@ -144,7 +144,7 @@ public class ServicesController {
   }
 
   @DeleteMapping(value = "/services/case={caseID}")
-  public ResponseEntity<String> deleteByCase(@PathVariable("caseID") UUID caseID) {
+  public ResponseEntity<String> deleteByCase(@PathVariable("caseID") String caseID) {
     try {
       logger.info("delete services for case: " + caseID);
       int result = servicesService.deleteByCase(caseID);

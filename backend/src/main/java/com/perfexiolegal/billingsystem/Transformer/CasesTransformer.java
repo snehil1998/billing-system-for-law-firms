@@ -11,7 +11,7 @@ import java.util.UUID;
 @Component
 public class CasesTransformer {
 
-  public Cases update(CasesWithoutId updatedCase, UUID caseID) {
+  public Cases update(CasesWithoutId updatedCase, String caseID) {
     return new Cases(
         caseID,
         updatedCase.getCaseName(),

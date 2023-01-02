@@ -14,7 +14,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 @ToString
 public class Clients {
-  private UUID clientId;
+  private String clientId;
   private String clientName;
   private String currencyCode;
   private float amount;

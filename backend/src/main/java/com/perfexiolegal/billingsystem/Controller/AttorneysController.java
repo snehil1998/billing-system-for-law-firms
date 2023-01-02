@@ -58,7 +58,7 @@ public class AttorneysController {
   }
 
   @GetMapping(value = "/attorneys={attorneyID}")
-  public ResponseEntity<Attorneys> getAttorneysForCase(@PathVariable("attorneyID") UUID attorneyID) {
+  public ResponseEntity<Attorneys> getAttorneysForCase(@PathVariable("attorneyID") String attorneyID) {
     try {
       logger.info("retrieving attorney from controller with attorneyID: " + attorneyID);
       Optional<Attorneys> retrievedAttorneys = attorneysService.getAttorneyById(attorneyID);
@@ -74,11 +74,10 @@ public class AttorneysController {
   }
 
   @PostMapping(value = "/attorneys", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<String> createNewAttorney(@RequestBody AttorneysWithoutId attorney) {
+  public ResponseEntity<String> createNewAttorney(@RequestBody Attorneys attorney) {
     try {
-      UUID uuid = UUID.randomUUID();
-      logger.info("Creating attorney with attorneyID: " + uuid);
-      attorneysService.postAttorneys(attorneysTransformer.updateWithUUID(attorney, uuid));
+      logger.info("Creating attorney with attorneyID: " + attorney.getAttorneyId());
+      attorneysService.postAttorneys(attorney);
       return new ResponseEntity<>("Attorney was created successfully.", HttpStatus.CREATED);
     } catch (ServiceException e) {
       return new ResponseEntity<>("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -86,7 +85,7 @@ public class AttorneysController {
   }
 
   @PutMapping(value = "/attorneys={attorneyID}")
-  public ResponseEntity<String> updateAttorney(@PathVariable("attorneyID") UUID attorneyID,
+  public ResponseEntity<String> updateAttorney(@PathVariable("attorneyID") String attorneyID,
                                               @RequestBody AttorneysWithoutId attorneyJSONWithoutID) {
     try {
       logger.info("check existence of attorney with attorney ID: " + attorneyID);
@@ -105,7 +104,7 @@ public class AttorneysController {
   }
 
   @DeleteMapping(value = "/attorneys={attorneyID}")
-  public ResponseEntity<String> deleteService(@PathVariable("attorneyID") UUID attorneyID) {
+  public ResponseEntity<String> deleteService(@PathVariable("attorneyID") String attorneyID) {
     try {
       logger.info("deleting attorney with ID: " + attorneyID);
       int result = attorneysService.deleteById(attorneyID);

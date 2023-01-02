@@ -20,11 +20,10 @@ public class AttorneysTransformer {
   @Autowired
   AttorneysService attorneysService;
 
-  public Attorneys update(AttorneysWithoutId attorney, UUID attorneyID) throws ServiceException {
+  public Attorneys update(AttorneysWithoutId attorney, String attorneyID) throws ServiceException {
     List<ServicePricing> servicePricingList = attorneysService.getAttorneyById(attorneyID).get()
         .getServicePricing();
-    servicePricingList.add(attorney.getServicePricing().get(0));
-//    attorney.getServicePricing().stream().map(servicePricingList::add);
+    servicePricingList.addAll(attorney.getServicePricing());
     return new Attorneys(
         attorneyID,
         attorney.getFirstName(),
@@ -33,7 +32,7 @@ public class AttorneysTransformer {
     );
   }
 
-  public Attorneys updateWithUUID(AttorneysWithoutId attorney, UUID attorneyID) {
+  public Attorneys updateWithUUID(AttorneysWithoutId attorney, String attorneyID) {
     return new Attorneys(
         attorneyID,
         attorney.getFirstName(),
