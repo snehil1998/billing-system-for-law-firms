@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
 import com.perfexiolegal.billingsystem.Model.AttorneysInService;
-import com.perfexiolegal.billingsystem.Model.ServicePricing;
 import com.perfexiolegal.billingsystem.Model.Services;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;

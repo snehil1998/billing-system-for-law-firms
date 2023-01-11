@@ -75,6 +75,7 @@ CREATE TABLE disbursements
     Disbursement_Id   UUID PRIMARY KEY,
     Case_Id     VARCHAR(40) NOT NULL,
     Client_Id   VARCHAR(40) NOT NULL,
+    Disbursement VARCHAR(10000) NOT NULL,
     Date    DATE NOT NULL,
     Currency_Code   VARCHAR(3) NOT NULL,
     Conversion_Rate     FLOAT NOT NULL,
@@ -82,10 +83,10 @@ CREATE TABLE disbursements
     Conversion_Amount   FLOAT NOT NULL
 );
 
-INSERT INTO disbursements(Disbursement_Id, Case_Id, Client_Id, Date, Currency_Code, Conversion_Rate, Inr_Amount, Conversion_Amount)
-VALUES ('f35fe8ae-aa46-4305-bb3f-21fc45c8888c', '0b32333f-4d31-4d3b-89c3-b2824f8794ba', 'bc37c7ca-0175-4fdb-8b3e-a1952a271c98', '2022/06/05', 'GBP', 96.93, 969.3, 10.0);
+INSERT INTO disbursements(Disbursement_Id, Case_Id, Client_Id, Disbursement, Date, Currency_Code, Conversion_Rate, Inr_Amount, Conversion_Amount)
+VALUES ('f35fe8ae-aa46-4305-bb3f-21fc45c8888c', '0b32333f-4d31-4d3b-89c3-b2824f8794ba', 'bc37c7ca-0175-4fdb-8b3e-a1952a271c98', 'Flight tickets', '2022/06/05', 'GBP', 96.93, 969.3, 10.0);
 
-INSERT INTO disbursements(Disbursement_Id, Case_Id, Client_Id, Date, Currency_Code, Conversion_Rate, Inr_Amount, Conversion_Amount)
-VALUES ('ec02e254-894d-4600-b319-274679d0bd28', 'f35fe8ae-aa46-4305-bb3f-21fc45c8888c', 'c59df7c9-183a-422d-9113-5a9ffd4fd4ca', '2022/06/05', 'USD', 70.73, 7073.0, 100.0);
+INSERT INTO disbursements(Disbursement_Id, Case_Id, Client_Id, Disbursement, Date, Currency_Code, Conversion_Rate, Inr_Amount, Conversion_Amount)
+VALUES ('ec02e254-894d-4600-b319-274679d0bd28', 'f35fe8ae-aa46-4305-bb3f-21fc45c8888c', 'c59df7c9-183a-422d-9113-5a9ffd4fd4ca', 'Hotel booking', '2022/06/05', 'USD', 70.73, 7073.0, 100.0);
 
 
