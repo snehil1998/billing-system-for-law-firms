@@ -15,6 +15,7 @@ import PropTypes from "prop-types";
 import {requestClients} from "../Redux/Clients/ClientsActions";
 import {requestAttorneys} from "../Redux/Attorneys/AttorneysActions";
 import {requestCases} from "../Redux/Cases/CasesActions";
+import {requestDisbursements} from "../Redux/Disbursements/DisbursementsActions";
 
 function Table(props) {
 
@@ -79,6 +80,8 @@ function Table(props) {
             id = rows.attorneyid;
         } else if(props.type === 'cases'){
             id = rows.caseid;
+        } else if(props.type === 'disbursements'){
+            id = rows.disbursementid;
         }
         fetch("/" + props.type + "=" + id, { method: 'DELETE' })
                 .then(async response => {
@@ -94,18 +97,17 @@ function Table(props) {
                     if (props.type === 'cases') {
                         props.requestCases('');
                     }
-                    setTimeout(deleteAlert, 1000)
+                    if (props.type === 'disbursements') {
+                        props.requestDisbursements('');
+                    }
+                    setTimeout(() => alert("Delete successful"), 1000);
                     const data = await response.json();
 
                     if (!response.ok) {
                         const error = (data && data.message) || response.status;
                         return Promise.reject(error);
                     }
-                })
-    }
-
-    function deleteAlert() {
-        alert("Delete successful");
+                }).catch(() => setTimeout(() => alert("Delete unsuccessful"), 1000))
     }
 
     return (
@@ -173,6 +175,9 @@ const mapDispatchToProps = dispatch => ({
     },
     requestAttorneys: (attorneyID) => {
         dispatch(requestAttorneys(attorneyID))
+    },
+    requestDisbursements: (disbusementID) => {
+        dispatch(requestDisbursements(disbusementID))
     }
 })
 

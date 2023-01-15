@@ -5,6 +5,7 @@ import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import DisplayClients from "./Pages/Clients/DisplayClients";
 import DisplayCases from "./Pages/Cases/DisplayCases";
 import DisplayAttorneys from "./Pages/Attorneys/DisplayAttorneys";
+import DisplayDisbursements from "./Pages/Disbursements/DisplayDisbursements";
 
 
 function App() {
@@ -19,7 +20,7 @@ function App() {
                       <Route path='/attorneys' element={<DisplayAttorneys />} />
                       <Route path='/clients' element={<DisplayClients />} />
                       <Route path='/cases' element={<DisplayCases />} />
-                      <Route path='/disbursements' element={<DisplayServices />} />
+                      <Route path='/disbursements' element={<DisplayDisbursements />} />
                       <Route path='/services' element={<DisplayServices />} />
                   </Routes>
               </Router>

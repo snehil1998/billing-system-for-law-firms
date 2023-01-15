@@ -3,6 +3,7 @@ import ServicesReducer from "./Services/ServicesReducer";
 import ClientsReducer from "./Clients/ClientsReducer";
 import CasesReducer from "./Cases/CasesReducer";
 import AttorneysReducer from "./Attorneys/AttorneysReducer";
+import DisbursementsReducer from "./Disbursements/DisbursementsReducer";
 
 
 const AppReducer = combineReducers({
@@ -10,6 +11,7 @@ const AppReducer = combineReducers({
     clients: ClientsReducer,
     cases: CasesReducer,
     attorneys: AttorneysReducer,
+    disbursements: DisbursementsReducer,
 })
 
 export default AppReducer;
