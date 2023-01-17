@@ -2,44 +2,90 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import PropTypes from "prop-types";
 
-function ExportServicesPDF(props) {
-    let csvRows = []
+export default function ExportServicesPDF(props) {
+    let csvRows = [];
+    let header = ['S.No.'];
     props.rows.forEach((row, index) => {
         let csvRow = {}
         csvRow["Sno"] = index+1
-        csvRow["Case"] = row.original.casename
-        csvRow["Service"] = row.original.service
-        csvRow["Date"] = row.original.date
-        csvRow["CurrencyCode"] = row.original.currencycode
-        csvRow["Amount"] = row.original.amount
+        if (props.filterCheckboxes.find(checkbox => checkbox === 'Case Name')) {
+            csvRow["Case"] = row.original.casename
+            if (index === 0) header.push('Case Name')
+        }
+        if (props.filterCheckboxes.find(checkbox => checkbox === 'Service')) {
+            csvRow["Service"] = row.original.service
+            if (index === 0) header.push(('Service'))
+        }
+        if (props.filterCheckboxes.find(checkbox => checkbox === 'Date')) {
+            csvRow["Date"] = row.original.date
+            if (index === 0) header.push('Date')
+        }
+        if (props.filterCheckboxes.find(checkbox => checkbox === 'Currency Code')) {
+            csvRow["CurrencyCode"] = row.original.currencycode
+            if (index === 0) header.push('Currency Code')
+        }
+        if (props.filterCheckboxes.find(checkbox => checkbox === 'Amount')) {
+            csvRow["Amount"] = row.original.amount
+            if (index === 0) header.push('Amount')
+        }
         if(row.canExpand){
-            csvRow["Attorneys"] = row.original?.subRows[0].attorneys
-            csvRow["Minutes"] = row.original?.subRows[0].minutes
-            csvRow["Hours"] = row.original?.subRows[0].hours
-            csvRow["Pricing"] = row.original?.subRows[0].pricing
-            csvRow["Total"] = row.original?.subRows[0].total
+            if (props.filterCheckboxes.find(checkbox => checkbox === 'Attorneys Name')) {
+                csvRow["Attorneys"] = row.original?.subRows[0].attorneys
+                if (index === 0) header.push('Attorneys')
+            }
+            if (props.filterCheckboxes.find(checkbox => checkbox === 'Time Spent (in Minutes)')) {
+                csvRow["Minutes"] = row.original?.subRows[0].minutes
+                if (index === 0) header.push('Minutes')
+            }
+            if (props.filterCheckboxes.find(checkbox => checkbox === 'Time Spent (in Hours)')) {
+                csvRow["Hours"] = row.original?.subRows[0].hours
+                if (index === 0) header.push('Hours')
+            }
+            if (props.filterCheckboxes.find(checkbox => checkbox === 'Rate Per Hour')) {
+                csvRow["Pricing"] = row.original?.subRows[0].pricing
+                if (index === 0) header.push('Pricing')
+            }
+            if (props.filterCheckboxes.find(checkbox => checkbox === 'Total')) {
+                csvRow["Total"] = row.original?.subRows[0].total
+                if (index === 0) header.push('Total')
+            }
         } else {
-            csvRow["Attorneys"] = row.original.attorneys
-            csvRow["Minutes"] = row.original.minutes
-            csvRow["Hours"] = row.original.hours
-            csvRow["Pricing"] = row.original.pricing
-            csvRow["Total"] = row.original.total
+            if (props.filterCheckboxes.find(checkbox => checkbox === 'Attorneys Name')) {
+                csvRow["Attorneys"] = row.original.attorneys
+                if (index === 0) header.push('Attorneys')
+            }
+            if (props.filterCheckboxes.find(checkbox => checkbox === 'Time Spent (in Minutes)')) {
+                csvRow["Minutes"] = row.original.minutes
+                if (index === 0) header.push('Minutes')
+            }
+            if (props.filterCheckboxes.find(checkbox => checkbox === 'Time Spent (in Hours)')) {
+                csvRow["Hours"] = row.original.hours
+                if (index === 0) header.push('Hours')
+            }
+            if (props.filterCheckboxes.find(checkbox => checkbox === 'Rate Per Hour')) {
+                csvRow["Pricing"] = row.original.pricing
+                if (index === 0) header.push('Pricing')
+            }
+            if (props.filterCheckboxes.find(checkbox => checkbox === 'Total')) {
+                csvRow["Total"] = row.original.total
+                if (index === 0) header.push('Total')
+            }
         }
         csvRows.push(csvRow)
         csvRow = {}
         row.original?.subRows?.forEach((subRow, index) => {
             if (index > 0){
                 csvRow["Sno"] = ""
-                csvRow["Case"] = subRow.casename
-                csvRow["Service"] = subRow.service
-                csvRow["Date"] = subRow.date
-                csvRow["CurrencyCode"] = subRow.currencycode
-                csvRow["Amount"] = subRow.amount
-                csvRow["Attorneys"] = subRow.attorneys
-                csvRow["Minutes"] = subRow.minutes
-                csvRow["Hours"] = subRow.hours
-                csvRow["Pricing"] = subRow.pricing
-                csvRow["Total"] = subRow.total
+                if (props.filterCheckboxes.find(checkbox => checkbox === 'Case Name')) csvRow["Case"] = subRow.casename
+                if (props.filterCheckboxes.find(checkbox => checkbox === 'Service')) csvRow["Service"] = subRow.service
+                if (props.filterCheckboxes.find(checkbox => checkbox === 'Date')) csvRow["Date"] = subRow.date
+                if (props.filterCheckboxes.find(checkbox => checkbox === 'Currency Code')) csvRow["CurrencyCode"] = subRow.currencycode
+                if (props.filterCheckboxes.find(checkbox => checkbox === 'Amount')) csvRow["Amount"] = subRow.amount
+                if (props.filterCheckboxes.find(checkbox => checkbox === 'Attorneys Name')) csvRow["Attorneys"] = subRow.attorneys
+                if (props.filterCheckboxes.find(checkbox => checkbox === 'Time Spent (in Minutes)')) csvRow["Minutes"] = subRow.minutes
+                if (props.filterCheckboxes.find(checkbox => checkbox === 'Time Spent (in Hours)')) csvRow["Hours"] = subRow.hours
+                if (props.filterCheckboxes.find(checkbox => checkbox === 'Rate Per Hour')) csvRow["Pricing"] = subRow.pricing
+                if (props.filterCheckboxes.find(checkbox => checkbox === 'Total')) csvRow["Total"] = subRow.total
                 csvRows.push(csvRow)
                 csvRow = {}
             }
@@ -58,14 +104,27 @@ function ExportServicesPDF(props) {
     doc.setFontSize(15);
 
     const title = "Services Report";
-    const report = "Report";
+    const report = props.title;
     const client = "Client: " + props.client;
     const period = "Period: " + fromDate + " to " + toDate;
-    const headers = [["S.No.", "Case", "Service", "Date", "Currency Code", "Service Fee", "Attorney(s)",
-        "Time spent (in minutes)", "Time spent (in hours)", "Rate per hour", "Amount for Attorney"]];
+    const headers = [header];
 
-    const data = csvRows.map(row=> [row.Sno, row.Case, row.Service, row.Date, row.CurrencyCode,
-        row.Amount, row.Attorneys, row.Minutes, row.Hours, row.Pricing, row.Total]);
+    const data = [];
+    csvRows.forEach(row => {
+        const eachRowData = [];
+        eachRowData.push(row.Sno);
+        if(row.Case !== undefined) eachRowData.push(row.Case);
+        if(row.Service !== undefined) eachRowData.push(row.Service);
+        if(row.Date !== undefined) eachRowData.push(row.Date);
+        if(row.CurrencyCode !== undefined) eachRowData.push(row.CurrencyCode);
+        if(row.Amount !== undefined) eachRowData.push(row.Amount);
+        if(row.Attorneys !== undefined) eachRowData.push(row.Attorneys);
+        if(row.Minutes !== undefined) eachRowData.push(row.Minutes);
+        if(row.Hours !== undefined) eachRowData.push(row.Hours);
+        if(row.Pricing !== undefined) eachRowData.push(row.Pricing);
+        if(row.Total !== undefined) eachRowData.push(row.Total);
+        data.push(eachRowData);
+    });
 
     let content = {
         startY: 150,
@@ -78,8 +137,8 @@ function ExportServicesPDF(props) {
     doc.text(client, marginLeft, 100);
     doc.text(period, marginLeft, 130);
     doc.autoTable(content);
-    doc.save("report.pdf")
-    return null;
+    doc.save("service-report.pdf")
+    return {};
 }
 
 ExportServicesPDF.propTypes = {
@@ -96,6 +155,6 @@ ExportServicesPDF.propTypes = {
         year: PropTypes.number.isRequired,
     }),
     client: PropTypes.string.isRequired,
+    filterCheckboxes: PropTypes.array.isRequired,
+    title: PropTypes.string.isRequired,
 }
-
-export default ExportServicesPDF;

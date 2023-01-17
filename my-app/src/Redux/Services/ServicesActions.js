@@ -15,8 +15,8 @@ export const requestServices = (clientID) => async (dispatch) => {
                     dispatch(requestCases(''));
                     dispatch(requestClients(''));
                     dispatch(requestAttorneys(''));
-                    dispatch(addFromSearchDate(null));
-                    dispatch(addToSearchDate(null));
+                    dispatch(addFromSearchDateServices(null));
+                    dispatch(addToSearchDateServices(null));
                     dispatch({
                         type: SERVICES.LOAD_SUCCESS,
                         data: json,
@@ -42,16 +42,23 @@ export const requestServices = (clientID) => async (dispatch) => {
     }
 };
 
-export const addFromSearchDate = (fromSearchDate) => async (dispatch) => {
+export const addFromSearchDateServices = (fromSearchDate) => async (dispatch) => {
     dispatch({
         type: SERVICES.ADD_FROM_SEARCH_DATE,
         fromSearchDate,
     });
 };
 
-export const addToSearchDate = (toSearchDate) => async (dispatch) => {
+export const addToSearchDateServices = (toSearchDate) => async (dispatch) => {
     dispatch({
         type: SERVICES.ADD_TO_SEARCH_DATE,
         toSearchDate,
+    });
+};
+
+export const addFilterCheckboxesServices = (filterCheckboxes) => async (dispatch) => {
+    dispatch({
+        type: SERVICES.ADD_FILTER_CHECKBOXES,
+        filterCheckboxes,
     });
 };

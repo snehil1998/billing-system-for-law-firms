@@ -1,5 +1,9 @@
 import {useTable, useSortBy, useFilters, useGlobalFilter, useExpanded} from "react-table";
-import {requestServices} from "../Redux/Services/ServicesActions";
+import {
+    addFromSearchDateServices,
+    addToSearchDateServices,
+    requestServices
+} from "../Redux/Services/ServicesActions";
 import {connect} from "react-redux";
 import {useMemo} from "react";
 import {DefaultColumnFilter} from "./DefaultColumnFilter";
@@ -15,7 +19,14 @@ import PropTypes from "prop-types";
 import {requestClients} from "../Redux/Clients/ClientsActions";
 import {requestAttorneys} from "../Redux/Attorneys/AttorneysActions";
 import {requestCases} from "../Redux/Cases/CasesActions";
-import {requestDisbursements} from "../Redux/Disbursements/DisbursementsActions";
+import {
+    addFromSearchDateDisbursements,
+    addToSearchDateDisbursements,
+    requestDisbursements
+} from "../Redux/Disbursements/DisbursementsActions";
+import {getFromSearchDateForServices, getToSearchDateForServices} from "../Redux/Services/ServicesSelectors";
+import {getFromSearchDateForDisbursements, getToSearchDateForDisbursements} from "../Redux/Disbursements/DisbursementsSelectors";
+
 
 function Table(props) {
 
@@ -117,7 +128,12 @@ function Table(props) {
                 style={{
                     textAlign: "left"
                 }}>
-                {(props.type === 'services' || props.type === 'disbursements') && <Filters rows={rows}/>}
+                {props.type === 'services'
+                && <Filters rows={rows} requestData={requestServices} addFromSearchDate={addFromSearchDateServices} addToSearchDate={addToSearchDateServices}
+                fromDate={props.fromDateServices} toDate={props.toDateServices} type={props.type}/>}
+                {props.type === 'disbursements'
+                && <Filters rows={rows} requestData={requestDisbursements} addFromSearchDate={addFromSearchDateDisbursements} addToSearchDate={addToSearchDateDisbursements}
+                            fromDate={props.fromDateDisbursements} toDate={props.toDateDisbursements} type={props.type}/>}
                 <GlobalFilter
                     preGlobalFilteredRows={preGlobalFilteredRows}
                     globalFilter={state.globalFilter}
@@ -161,7 +177,34 @@ Table.propTypes = {
     columns: PropTypes.number.isRequired,
     data: PropTypes.array.isRequired,
     type: PropTypes.string.isRequired,
+    fromDateServices: PropTypes.shape({
+        day: PropTypes.number.isRequired,
+        month: PropTypes.number.isRequired,
+        year: PropTypes.number.isRequired,
+    }),
+    toDateServices: PropTypes.shape({
+        day: PropTypes.number.isRequired,
+        month: PropTypes.number.isRequired,
+        year: PropTypes.number.isRequired,
+    }),
+    fromDateDisbursements: PropTypes.shape({
+        day: PropTypes.number.isRequired,
+        month: PropTypes.number.isRequired,
+        year: PropTypes.number.isRequired,
+    }),
+    toDateDisbursements: PropTypes.shape({
+        day: PropTypes.number.isRequired,
+        month: PropTypes.number.isRequired,
+        year: PropTypes.number.isRequired,
+    }),
 }
+
+const mapStateToProps = state => ({
+    fromDateServices: getFromSearchDateForServices(state),
+    toDateServices: getToSearchDateForServices(state),
+    fromDateDisbursements: getFromSearchDateForDisbursements(state),
+    toDateDisbursements: getToSearchDateForDisbursements(state),
+});
 
 const mapDispatchToProps = dispatch => ({
     requestServices: (clientID) => {
@@ -182,4 +225,4 @@ const mapDispatchToProps = dispatch => ({
 })
 
 
-export default connect(null, mapDispatchToProps)(Table);
+export default connect(mapStateToProps, mapDispatchToProps)(Table);

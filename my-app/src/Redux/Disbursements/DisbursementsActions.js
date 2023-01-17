@@ -13,13 +13,15 @@ export const requestDisbursements = (clientID) => async (dispatch) => {
                 .then(json => {
                     dispatch(requestCases(''));
                     dispatch(requestClients(''));
+                    dispatch(addFromSearchDateDisbursements(null));
+                    dispatch(addToSearchDateDisbursements(null));
                     dispatch({
                         type: DISBURSEMENTS.LOAD_SUCCESS,
                         data: json,
                         isError: false,
                     })})
         } else{
-            await fetch("/disbursements/clients="+clientID)
+            await fetch("/disbursements/client="+clientID)
                 .then(response => response.json())
                 .then(json =>
                     dispatch({
@@ -36,4 +38,25 @@ export const requestDisbursements = (clientID) => async (dispatch) => {
             isError: true,
         });
     }
+};
+
+export const addFromSearchDateDisbursements = (fromSearchDate) => async (dispatch) => {
+  dispatch({
+      type: DISBURSEMENTS.ADD_FROM_SEARCH_DATE,
+      fromSearchDate,
+  });
+};
+
+export const addToSearchDateDisbursements = (toSearchDate) => async (dispatch) => {
+  dispatch({
+      type: DISBURSEMENTS.ADD_TO_SEARCH_DATE,
+      toSearchDate,
+  });
+};
+
+export const addFilterCheckboxesDisbursements = (filterCheckboxes) => async (dispatch) => {
+  dispatch({
+      type: DISBURSEMENTS.ADD_FILTER_CHECKBOXES,
+      filterCheckboxes,
+  });
 };

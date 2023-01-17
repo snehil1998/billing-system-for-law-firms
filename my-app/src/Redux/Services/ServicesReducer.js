@@ -7,6 +7,7 @@ const initalState = {
     fromSearchDate: null,
     toSearchDate: null,
     filteredData: [],
+    filterCheckboxes: [],
 };
 
 function filterDataByDate(fromDate, toDate, data){
@@ -63,6 +64,11 @@ const ServicesReducer = (state = initalState, action) => {
                 ...state,
                 filteredData: filterDataByDate(state.fromSearchDate, action.toSearchDate, state.data),
                 toSearchDate: action.toSearchDate,
+            }
+        case SERVICES.ADD_FILTER_CHECKBOXES:
+            return {
+                ...state,
+                filterCheckboxes: action.filterCheckboxes,
             }
         default:
             return state;
