@@ -15,6 +15,7 @@ import java.util.UUID;
 @ToString
 public class CasesWithoutId {
   private String caseName;
+  private String clientId;
   private String currencyCode;
   private float amount;
 }

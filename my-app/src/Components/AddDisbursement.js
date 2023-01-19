@@ -77,17 +77,8 @@ const AddDisbursement = (props) => {
         return {label: eachCase.caseName, value: eachCase.caseId}
     });
 
-    const clientsOptions = props.clientsData?.map(eachClient => {
-        return {label: eachClient.clientName, value: eachClient.clientId}
-    });
-
-
     const handleChangeCases = (event) => {
         setCaseID(event.target.value);
-    };
-
-    const handleChangeClients = (event) => {
-        setClientID(event.target.value);
     };
 
     const handleAddDisbursement = () => {
@@ -104,7 +95,6 @@ const AddDisbursement = (props) => {
     }
 
     useEffect(() => {
-        setCurrencyCode(props.clientsData.find(data => data.clientId === clientID)?.currencyCode);
         async function fetchData() {
             const endpoint = "https://api.exchangerate.host/";
             if (currencyCode !== "" && currencyCode !== undefined && date !== "") {
@@ -118,7 +108,17 @@ const AddDisbursement = (props) => {
             }
         }
         fetchData();
-    }, [currencyCode, clientID, props.clientsData, date, conversionRate, inrAmount])
+    }, [currencyCode, date, conversionRate, inrAmount])
+
+    useEffect(() => {
+        setClientID(props.casesData.find(data => data.caseId === caseID)?.clientId)
+        setCurrencyCode(props.clientsData.find(data => data.clientId === clientID)?.currencyCode);
+    }, [caseID, clientID, props.casesData, props.clientsData])
+
+    const getClientNameForSelectedCase = () => {
+        return props.clientsData.find(data => data.clientId === props.casesData
+            .find(data => data.caseId === caseID)?.clientId)?.clientName
+    }
 
     return (
         <div className="add-disbursement">
@@ -153,14 +153,13 @@ const AddDisbursement = (props) => {
                     <div className={'client-name-translation'} style={{fontSize: '17px'}}>
                         {'Client: '}
                     </div>
-                    <select value={clientID} onChange={handleChangeClients} style={{width: '39vw', height: '4vh'}}>
-                        <option key={"placeholder-client"} value={""} disabled={true}>
-                            Select a client
-                        </option>
-                        {clientsOptions.map((option) => (
-                            <option key={option.value} value={option.value}>{option.label}</option>
-                        ))}
-                    </select>
+                    <input
+                        type="text"
+                        value={getClientNameForSelectedCase()}
+                        placeholder="Client"
+                        style={{width: '35vw', height: '4vh'}}
+                        disabled={true}
+                    />
                 </div>
                 <div className="disbursement-container" style={{marginLeft: '1vw', paddingTop: '1vh'}}>
                     <div className={'disbursement-translation'} style={{fontSize: '17px'}}>

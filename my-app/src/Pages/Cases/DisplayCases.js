@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import {requestCases} from "../../Redux/Cases/CasesActions";
 import {getCasesData, getCasesIsLoading} from "../../Redux/Cases/CasesSelectors";
 import AddCase from "../../Components/AddCase";
+import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
 
 const DisplayCases = (props) => {
     const dispatch = useDispatch();
@@ -29,6 +30,11 @@ const DisplayCases = (props) => {
                         sortType: "basic",
                         filter: "text"
                     }, {
+                        Header: 'Client Name',
+                        accessor: 'clientname',
+                        sortType: "basic",
+                        filter: "text"
+                    }, {
                         Header: 'Currency Code',
                         accessor: 'currencycode',
                         sortType: "basic",
@@ -49,6 +55,7 @@ const DisplayCases = (props) => {
             {
                 caseid: Case.caseId,
                 casename: Case.caseName,
+                clientname: props.clientsData.find(data => data.clientId === Case.clientId)?.clientName,
                 currencycode: Case.currencyCode,
                 amount: Case.amount,
             })
@@ -70,12 +77,14 @@ const DisplayCases = (props) => {
 DisplayCases.propTypes = {
     data: PropTypes.array.isRequired,
     isLoading: PropTypes.bool.isRequired,
+    clientsData: PropTypes.array.isRequired,
 }
 
 const mapStateToProps = state => {
     return {
         data: getCasesData(state),
         isLoading: getCasesIsLoading(state),
+        clientsData: getClientsData(state),
     }
 }
 

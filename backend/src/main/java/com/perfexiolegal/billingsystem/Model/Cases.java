@@ -17,6 +17,7 @@ import java.util.UUID;
 public class Cases {
   private String caseId;
   private String caseName;
+  private String clientId;
   private String currencyCode;
   private float amount;
 }

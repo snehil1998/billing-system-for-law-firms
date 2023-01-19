@@ -15,6 +15,7 @@ public class CasesTransformer {
     return new Cases(
         caseID,
         updatedCase.getCaseName(),
+        updatedCase.getClientId(),
         updatedCase.getCurrencyCode(),
         updatedCase.getAmount()
     );

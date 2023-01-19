@@ -27,9 +27,10 @@ public class CasesRepository {
           (resultSet, i) -> {
             String caseId = resultSet.getString("case_id");
             String caseName = resultSet.getString("case_name");
+            String clientId = resultSet.getString("client_id");
             String currencyCode = resultSet.getString("currency_code");
             float amount = resultSet.getFloat("amount");
-            return Cases.builder().caseId(caseId).caseName(caseName).currencyCode(currencyCode)
+            return Cases.builder().caseId(caseId).caseName(caseName).clientId(clientId).currencyCode(currencyCode)
                 .amount(amount).build();
           });
       return Optional.of(casesList);
@@ -46,9 +47,10 @@ public class CasesRepository {
           (resultSet, i) -> {
             String caseId = resultSet.getString("case_id");
             String caseName = resultSet.getString("case_name");
+            String clientId = resultSet.getString("client_id");
             String currencyCode = resultSet.getString("currency_code");
             float amount = resultSet.getFloat("amount");
-            return Cases.builder().caseId(caseId).caseName(caseName).currencyCode(currencyCode)
+            return Cases.builder().caseId(caseId).caseName(caseName).clientId(clientId).currencyCode(currencyCode)
                 .amount(amount).build();
           });
       return Optional.of(caseList);
@@ -60,8 +62,8 @@ public class CasesRepository {
   public Cases postCases(Cases postCase) throws RepositoryException {
     try {
       logger.info("Creating case: " + postCase.getCaseId());
-      jdbcTemplate.update("insert into cases (case_id, case_name, currency_code, amount) values (?,?,?,?)",
-          postCase.getCaseId(), postCase.getCaseName(), postCase.getCurrencyCode(), postCase.getAmount());
+      jdbcTemplate.update("insert into cases (case_id, case_name, client_id, currency_code, amount) values (?,?,?,?,?)",
+          postCase.getCaseId(), postCase.getCaseName(), postCase.getClientId(), postCase.getCurrencyCode(), postCase.getAmount());
       return postCase;
     } catch (DataAccessException e){
       throw new RepositoryException("failed to insert case", e);
@@ -71,8 +73,8 @@ public class CasesRepository {
   public Cases updateCases(Cases updatedCase) throws RepositoryException {
     try {
       logger.info("Updating case: " + updatedCase.getCaseId());
-      jdbcTemplate.update("update cases set case_name=?, currency_code=?, amount=? " +
-              "where case_id=?", updatedCase.getCaseName(), updatedCase.getCurrencyCode(),
+      jdbcTemplate.update("update cases set case_name=?, client_id=?, currency_code=?, amount=? " +
+              "where case_id=?", updatedCase.getCaseName(), updatedCase.getClientId(), updatedCase.getCurrencyCode(),
           updatedCase.getAmount(), updatedCase.getCaseId());
       return updatedCase;
     } catch (DataAccessException e) {

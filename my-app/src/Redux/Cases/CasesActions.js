@@ -1,4 +1,5 @@
 import CASES from "./CasesConstants";
+import {requestClients} from "../Clients/ClientsActions";
 
 export const requestCases = (casesID) => async (dispatch) => {
     dispatch({
@@ -9,6 +10,7 @@ export const requestCases = (casesID) => async (dispatch) => {
             await fetch("/cases")
                 .then(response => response.json())
                 .then(json => {
+                    dispatch(requestClients(''));
                     dispatch({
                         type: CASES.LOAD_SUCCESS,
                         data: json,

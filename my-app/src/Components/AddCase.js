@@ -5,14 +5,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
 import {requestCases} from "../Redux/Cases/CasesActions";
 import PropTypes from "prop-types";
+import {getClientsData} from "../Redux/Clients/ClientsSelectors";
 
 const AddCase = (props) => {
     const [caseID, setCaseID] = useState("");
     const [caseName, setCaseName] = useState("");
-    const [currencyCode, setCurrencyCode] = useState("");
     const [amount, setAmount] = useState(0);
     const [showAddService, setShowAddService] = useState(false);
     const [message, setMessage] = useState("");
+    const [clientId, setClientId] = useState("");
 
     let handleSubmit = async (e) => {
         e.preventDefault();
@@ -26,14 +27,15 @@ const AddCase = (props) => {
                 body: JSON.stringify({
                     caseId: caseID,
                     caseName: caseName,
-                    currencyCode: currencyCode,
+                    clientId: clientId,
+                    currencyCode: props.clientsData.find(data => data.clientId === clientId)?.currencyCode,
                     amount: amount,
                 }),
             });
             if (res.status === 200 || res.status === 201) {
                 setCaseID("");
                 setCaseName("");
-                setCurrencyCode("");
+                setClientId("");
                 setAmount(0);
                 setMessage("Case was created successfully!");
             } else {
@@ -53,6 +55,10 @@ const AddCase = (props) => {
         }
     }
 
+    const clientsOptions = props.clientsData.map(eachClient => {
+        return { label: eachClient.clientName, value: eachClient.clientId }
+    });
+
     const faCaretSquare = () => {
         return showAddService ? <FontAwesomeIcon icon={faCaretSquareUp} /> : <FontAwesomeIcon icon={faCaretSquareDown} />
     }
@@ -67,7 +73,7 @@ const AddCase = (props) => {
                 </span>
             </div>
             {showAddService && <form onSubmit={handleSubmit} style={{fontSize:'15px', marginLeft:'1vw',
-                backgroundColor:'grey', height:'42vh', width:'98vw'}}>
+                backgroundColor:'grey', height:'50vh', width:'98vw'}}>
                     <div className="case-id-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
                         <div className={'case-id-translation'} style={{fontSize: '17px'}}>
                             {'Case ID: '}
@@ -92,16 +98,30 @@ const AddCase = (props) => {
                             style={{width:'35vw', height:'4vh'}}
                         />
                     </div>
+                    <div className="client-name-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
+                        <div className={'client-name-translation'} style={{fontSize: '17px'}}>
+                            {'Client Name: '}
+                        </div>
+                        <select key={"client-name-selector"} value={clientId} onChange={(event) =>
+                            setClientId(event.target.value)} style={{width:'39vw', height:'4vh'}}>
+                            <option key={"placeholder-client"} value={""}>
+                                Select a client
+                            </option>
+                            {clientsOptions.map((option) => (
+                                <option key={option.value} value={option.value}>{option.label}</option>
+                            ))}
+                        </select>
+                    </div>
                     <div className="currency-code-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
                         <div className={'currency-code-translation'} style={{fontSize: '17px'}}>
                             {'Currency Code: '}
                         </div>
                         <input
                             type="text"
-                            value={currencyCode}
+                            value={props.clientsData.find(data => data.clientId === clientId)?.currencyCode}
                             placeholder="Currency code"
-                            onChange={(e) => setCurrencyCode(e.target.value)}
                             style={{width:'35vw', height:'4vh'}}
+                            disabled={true}
                         />
                     </div>
                     <div className="amount-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
@@ -125,7 +145,12 @@ const AddCase = (props) => {
 
 AddCase.propTypes = {
     requestCases: PropTypes.func.isRequired,
+    clientsData: PropTypes.array.isRequired,
 }
+
+const mapStateToProps = state => ({
+    clientsData: getClientsData(state),
+})
 
 const mapDispatchToProps = dispatch => ({
     requestCases: (caseID) => {
@@ -133,4 +158,4 @@ const mapDispatchToProps = dispatch => ({
     }
 })
 
-export default connect(null, mapDispatchToProps)(AddCase)
+export default connect(mapStateToProps, mapDispatchToProps)(AddCase)

@@ -58,15 +58,16 @@ CREATE TABLE cases
 (
     Case_Id  VARCHAR(40) PRIMARY KEY,
     Case_Name   VARCHAR(500),
+    Client_Id  VARCHAR(40) NOT NULL,
     Currency_Code   VARCHAR(3) NOT NULL,
     Amount  FLOAT NOT NULL
 );
 
-INSERT INTO cases(Case_Id, Case_Name, Currency_Code, Amount)
-VALUES ('0b32333f-4d31-4d3b-89c3-b2824f8794ba', 'AI Case', 'USD', 30000);
+INSERT INTO cases(Case_Id, Case_Name, Client_Id, Currency_Code, Amount)
+VALUES ('0b32333f-4d31-4d3b-89c3-b2824f8794ba', 'AI Case', 'bc37c7ca-0175-4fdb-8b3e-a1952a271c98', 'USD', 30000);
 
-INSERT INTO cases(Case_Id, Case_Name, Currency_Code, Amount)
-VALUES ('f35fe8ae-aa46-4305-bb3f-21fc45c8888c', 'Pharma case', 'GBP', 20000);
+INSERT INTO cases(Case_Id, Case_Name, Client_Id, Currency_Code, Amount)
+VALUES ('f35fe8ae-aa46-4305-bb3f-21fc45c8888c', 'Pharma case', 'c59df7c9-183a-422d-9113-5a9ffd4fd4ca', 'GBP', 20000);
 
 
 -- All disbursements
