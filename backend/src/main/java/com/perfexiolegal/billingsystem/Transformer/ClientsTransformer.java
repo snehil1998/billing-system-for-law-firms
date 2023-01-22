@@ -1,5 +1,6 @@
 package com.perfexiolegal.billingsystem.Transformer;
 
+import com.perfexiolegal.billingsystem.Model.Cases;
 import com.perfexiolegal.billingsystem.Model.Clients;
 import com.perfexiolegal.billingsystem.Model.ClientsWithoutId;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,15 @@ public class ClientsTransformer {
         client.getClientName(),
         client.getCurrencyCode(),
         client.getAmount()
+    );
+  }
+
+  public Clients updateAmount(Clients updatedClient, double amount) {
+    return new Clients(
+        updatedClient.getClientId(),
+        updatedClient.getClientName(),
+        updatedClient.getCurrencyCode(),
+        updatedClient.getAmount() + amount
     );
   }
 }

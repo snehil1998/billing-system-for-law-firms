@@ -19,5 +19,5 @@ public class Cases {
   private String caseName;
   private String clientId;
   private String currencyCode;
-  private float amount;
+  private double amount;
 }

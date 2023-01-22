@@ -20,4 +20,14 @@ public class CasesTransformer {
         updatedCase.getAmount()
     );
   }
+
+  public Cases updateAmount(Cases updatedCase, double amount) {
+    return new Cases(
+        updatedCase.getCaseId(),
+        updatedCase.getCaseName(),
+        updatedCase.getClientId(),
+        updatedCase.getCurrencyCode(),
+        updatedCase.getAmount() + amount
+    );
+  }
 }

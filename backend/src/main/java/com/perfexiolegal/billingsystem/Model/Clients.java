@@ -17,5 +17,5 @@ public class Clients {
   private String clientId;
   private String clientName;
   private String currencyCode;
-  private float amount;
+  private double amount;
 }

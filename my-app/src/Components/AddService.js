@@ -22,6 +22,7 @@ const AddService = (props) => {
     const [selectedAttorneys, setSelectedAttorneys] = useState({});
     const [showAddService, setShowAddService] = useState(false);
     const [numberOfAttorneys, setNumberOfAttorneys] = useState("0");
+    const [currencyCode, setCurrencyCode] = useState("");
     const [shouldPost, setShouldPost] = useState(true);
 
     let handleSubmit = async (e) => {
@@ -72,13 +73,14 @@ const AddService = (props) => {
             +selectedDate?.day.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}))
     }, [selectedDate])
 
+    useEffect(() => {
+        setClientID(props.casesData.find(data => data.caseId === caseID)?.clientId)
+        setCurrencyCode(props.clientsData.find(data => data.clientId === clientID)?.currencyCode);
+    }, [caseID, clientID, props.casesData, props.clientsData])
+
     const caseOptions = props.casesData?.map(eachCase => {
             return { label: eachCase.caseName, value: eachCase.caseId }
         });
-
-    const clientsOptions = props.clientsData?.map(eachClient => {
-        return { label: eachClient.clientName, value: eachClient.clientId }
-    });
 
     const filteredAttorneysData = props.attorneysData
         .filter(attorney => attorney.servicePricing
@@ -102,10 +104,6 @@ const AddService = (props) => {
 
     const handleChangeCases = (event) => {
         setCaseID(event.target.value);
-    };
-
-    const handleChangeClients = (event) => {
-        setClientID(event.target.value);
     };
 
     const  handleChangeAttorneys  =  (event, i)  => {
@@ -144,6 +142,11 @@ const AddService = (props) => {
         return showAddService ? <FontAwesomeIcon icon={faCaretSquareUp} /> : <FontAwesomeIcon icon={faCaretSquareDown} />
     }
 
+    const getClientNameForSelectedCase = () => {
+        return props.clientsData.find(data => data.clientId === props.casesData
+            .find(data => data.caseId === caseID)?.clientId)?.clientName
+    }
+
     return (
         <div className="add service">
             <p style={{fontSize:'20px', textAlign:'center', width:'100vw', 
@@ -154,7 +157,7 @@ const AddService = (props) => {
                 </span>
             </div>
             {showAddService && <form onSubmit={handleSubmit} style={{fontSize:'15px', marginLeft:'1vw',
-                backgroundColor:'grey', height:(50+(parseInt(numberOfAttorneys)*6)).toString()+'vh', width:'98vw'}}>
+                backgroundColor:'grey', height:(58+(parseInt(numberOfAttorneys)*6)).toString()+'vh', width:'98vw'}}>
                     <div className="case-name-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
                         <div className={'case-name-translation'} style={{fontSize: '17px'}}>
                             {'Case: '}
@@ -172,14 +175,13 @@ const AddService = (props) => {
                         <div className={'client-name-translation'} style={{fontSize: '17px'}}>
                             {'Client: '}
                         </div>
-                        <select value={clientID} onChange={handleChangeClients} style={{width:'39vw', height:'4vh'}}>
-                            <option key={"placeholder-client"} value={""} disabled={true}>
-                                Select a client
-                            </option>
-                            {clientsOptions.map((option) => (
-                                <option key={option.value} value={option.value}>{option.label}</option>
-                            ))}
-                        </select>
+                        <input
+                            type="text"
+                            value={getClientNameForSelectedCase()}
+                            placeholder="Client"
+                            style={{width:'35vw', height:'4vh'}}
+                            disabled={true}
+                        />
                     </div>
                     <div className="service-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
                         <div className={'service-translation'} style={{fontSize: '17px'}}>
@@ -203,6 +205,18 @@ const AddService = (props) => {
                             inputPlaceholder="Select a date"
                             shouldHighlightWeekends
                             wrapperClassName={'DatePicker__input'}
+                        />
+                    </div>
+                    <div className="currency-code-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
+                        <div className={'currency-code-translation'} style={{fontSize: '17px'}}>
+                            {'Currency code: '}
+                        </div>
+                        <input
+                            type="text"
+                            value={currencyCode}
+                            placeholder="Currency code"
+                            style={{width:'35vw', height:'4vh'}}
+                            disabled={true}
                         />
                     </div>
                     <div className="number-of-attorneys-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
