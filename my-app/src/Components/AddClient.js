@@ -10,7 +10,6 @@ const AddClient = (props) => {
     const [clientID, setClientID] = useState("");
     const [clientName, setClientName] = useState("");
     const [currencyCode, setCurrencyCode] = useState("");
-    const [amount, setAmount] = useState(0);
     const [showAddService, setShowAddService] = useState(false);
     const [message, setMessage] = useState("");
 
@@ -27,14 +26,15 @@ const AddClient = (props) => {
                     clientId: clientID,
                     clientName: clientName,
                     currencyCode: currencyCode,
-                    amount: amount,
+                    disbursementsAmount: 0,
+                    servicesAmount: 0,
+                    amount: 0,
                 }),
             });
             if (res.status === 200 || res.status === 201) {
                 setClientID("");
                 setClientName("");
                 setCurrencyCode("");
-                setAmount(0);
                 setMessage("Client was created successfully!");
             } else {
                 setMessage("❗ Error occurred while adding data into clients");
@@ -101,18 +101,6 @@ const AddClient = (props) => {
                             value={currencyCode}
                             placeholder="Currency code"
                             onChange={(e) => setCurrencyCode(e.target.value)}
-                            style={{width:'35vw', height:'4vh'}}
-                        />
-                    </div>
-                    <div className="amount-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                        <div className={'amount-translation'} style={{fontSize: '17px'}}>
-                            {'Amount: '}
-                        </div>
-                        <input
-                            type="number"
-                            value={amount}
-                            placeholder="Amount"
-                            onChange={(e) => setAmount(e.target.value)}
                             style={{width:'35vw', height:'4vh'}}
                         />
                     </div>

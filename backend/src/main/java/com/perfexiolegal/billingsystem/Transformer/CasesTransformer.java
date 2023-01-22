@@ -17,17 +17,21 @@ public class CasesTransformer {
         updatedCase.getCaseName(),
         updatedCase.getClientId(),
         updatedCase.getCurrencyCode(),
+        updatedCase.getDisbursementsAmount(),
+        updatedCase.getServicesAmount(),
         updatedCase.getAmount()
     );
   }
 
-  public Cases updateAmount(Cases updatedCase, double amount) {
+  public Cases updateAmount(Cases updatedCase, double disbursementsAmount, double servicesAmount) {
     return new Cases(
         updatedCase.getCaseId(),
         updatedCase.getCaseName(),
         updatedCase.getClientId(),
         updatedCase.getCurrencyCode(),
-        updatedCase.getAmount() + amount
+        updatedCase.getDisbursementsAmount() + disbursementsAmount,
+        updatedCase.getServicesAmount() + servicesAmount,
+        updatedCase.getAmount() + disbursementsAmount + servicesAmount
     );
   }
 }

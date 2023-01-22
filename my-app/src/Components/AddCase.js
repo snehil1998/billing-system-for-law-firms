@@ -10,7 +10,6 @@ import {getClientsData} from "../Redux/Clients/ClientsSelectors";
 const AddCase = (props) => {
     const [caseID, setCaseID] = useState("");
     const [caseName, setCaseName] = useState("");
-    const [amount, setAmount] = useState(0);
     const [showAddService, setShowAddService] = useState(false);
     const [message, setMessage] = useState("");
     const [clientId, setClientId] = useState("");
@@ -29,14 +28,15 @@ const AddCase = (props) => {
                     caseName: caseName,
                     clientId: clientId,
                     currencyCode: props.clientsData.find(data => data.clientId === clientId)?.currencyCode,
-                    amount: amount,
+                    disbursementsAmount: 0,
+                    servicesAmount: 0,
+                    amount: 0,
                 }),
             });
             if (res.status === 200 || res.status === 201) {
                 setCaseID("");
                 setCaseName("");
                 setClientId("");
-                setAmount(0);
                 setMessage("Case was created successfully!");
             } else {
                 setMessage("❗ Error occurred while adding data into cases");
@@ -122,18 +122,6 @@ const AddCase = (props) => {
                             placeholder="Currency code"
                             style={{width:'35vw', height:'4vh'}}
                             disabled={true}
-                        />
-                    </div>
-                    <div className="amount-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                        <div className={'amount-translation'} style={{fontSize: '17px'}}>
-                            {'Amount: '}
-                        </div>
-                        <input
-                            type="number"
-                            value={amount}
-                            placeholder="Amount"
-                            onChange={(e) => setAmount(e.target.value)}
-                            style={{width:'35vw', height:'4vh'}}
                         />
                     </div>
                     <button type="submit" className="add-button-container"

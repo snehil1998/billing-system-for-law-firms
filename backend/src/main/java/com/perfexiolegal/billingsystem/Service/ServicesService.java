@@ -71,11 +71,11 @@ public class ServicesService {
   public Services postServices(Services service) throws ServiceException {
     try {
       Cases caseForService = casesService.getCaseById(service.getCaseId()).get();
-      Cases updatedCase = casesTransformer.updateAmount(caseForService, service.getAmount());
+      Cases updatedCase = casesTransformer.updateAmount(caseForService, 0, service.getAmount());
       casesService.updateCases(updatedCase);
 
       Clients clientForService = clientsService.getClientById(service.getClientId()).get();
-      Clients updatedClient = clientsTransformer.updateAmount(clientForService, service.getAmount());
+      Clients updatedClient = clientsTransformer.updateAmount(clientForService, 0, service.getAmount());
       clientsService.updateClient(updatedClient);
 
       return servicesRepository.postServices(service);
@@ -98,11 +98,11 @@ public class ServicesService {
       Services service = getServiceFromId(serviceID).get();
 
       Cases caseForService = casesService.getCaseById(service.getCaseId()).get();
-      Cases updatedCase = casesTransformer.updateAmount(caseForService, -service.getAmount());
+      Cases updatedCase = casesTransformer.updateAmount(caseForService, 0, -service.getAmount());
       casesService.updateCases(updatedCase);
 
       Clients clientForService = clientsService.getClientById(service.getClientId()).get();
-      Clients updatedClient = clientsTransformer.updateAmount(clientForService, -service.getAmount());
+      Clients updatedClient = clientsTransformer.updateAmount(clientForService, 0, -service.getAmount());
       clientsService.updateClient(updatedClient);
       
       return servicesRepository.deleteById(serviceID);

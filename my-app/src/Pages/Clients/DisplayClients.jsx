@@ -34,6 +34,16 @@ const DisplayClients = (props) => {
                         sortType: "basic",
                         filter: "text"
                     }, {
+                        Header: 'Disbursements Amount',
+                        accessor: 'disbursementsamount',
+                        sortType: "basic",
+                        filter: "text"
+                    }, {
+                        Header: 'Services Amount',
+                        accessor: 'servicesamount',
+                        sortType: "basic",
+                        filter: "text"
+                    }, {
                         Header: 'Amount',
                         accessor: 'amount',
                         sortType: "basic",
@@ -50,7 +60,9 @@ const DisplayClients = (props) => {
                 clientid: client.clientId,
                 clientname: client.clientName,
                 currencycode: client.currencyCode,
-                amount: client.amount,
+                disbursementsamount: client.disbursementsAmount.toFixed(2),
+                servicesamount: client.servicesAmount.toFixed(2),
+                amount: client.amount.toFixed(2),
             })
     });
 

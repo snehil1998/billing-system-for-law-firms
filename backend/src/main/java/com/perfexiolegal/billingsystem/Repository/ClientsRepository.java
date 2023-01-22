@@ -28,9 +28,11 @@ public class ClientsRepository {
             String clientId = resultSet.getString("client_id");
             String clientName = resultSet.getString("client_name");
             String currencyCode = resultSet.getString("currency_code");
+            float disbursementsAmount = resultSet.getFloat("disbursements_amount");
+            float servicesAmount = resultSet.getFloat("services_amount");
             float amount = resultSet.getFloat("amount");
             return Clients.builder().clientId(clientId).clientName(clientName).currencyCode(currencyCode)
-                .amount(amount).build();
+                .disbursementsAmount(disbursementsAmount).servicesAmount(servicesAmount).amount(amount).build();
           });
       return Optional.of(clientsList);
     } catch (DataAccessException e) {
@@ -47,9 +49,11 @@ public class ClientsRepository {
             String clientId = resultSet.getString("client_id");
             String clientName = resultSet.getString("client_name");
             String currencyCode = resultSet.getString("currency_code");
+            float disbursementsAmount = resultSet.getFloat("disbursements_amount");
+            float servicesAmount = resultSet.getFloat("services_amount");
             float amount = resultSet.getFloat("amount");
             return Clients.builder().clientId(clientId).clientName(clientName).currencyCode(currencyCode)
-                .amount(amount).build();
+                .disbursementsAmount(disbursementsAmount).servicesAmount(servicesAmount).amount(amount).build();
           });
       return Optional.of(client);
     } catch (DataAccessException e) {
@@ -60,8 +64,8 @@ public class ClientsRepository {
   public Clients postClients(Clients client) throws RepositoryException {
     try {
       logger.info("Creating client: " + client.getClientId());
-      jdbcTemplate.update("insert into clients (client_id, client_name, currency_code, amount) values (?,?,?,?)",
-          client.getClientId(), client.getClientName(), client.getCurrencyCode(), client.getAmount());
+      jdbcTemplate.update("insert into clients (client_id, client_name, currency_code, disbursements_amount, services_amount, amount) values (?,?,?,?,?,?)",
+          client.getClientId(), client.getClientName(), client.getCurrencyCode(), client.getDisbursementsAmount(), client.getServicesAmount(), client.getAmount());
       return client;
     } catch (DataAccessException e){
       throw new RepositoryException("failed to insert client", e);
@@ -71,8 +75,8 @@ public class ClientsRepository {
   public Clients updateClients(Clients client) throws RepositoryException {
     try {
       logger.info("Updating client: " + client.getClientId());
-      jdbcTemplate.update("update clients set client_name=?, currency_code=?, amount=? " +
-              "where client_id=?", client.getClientName(), client.getCurrencyCode(),
+      jdbcTemplate.update("update clients set client_name=?, currency_code=?, disbursements_amount=?, services_amount=?, amount=? " +
+              "where client_id=?", client.getClientName(), client.getCurrencyCode(), client.getDisbursementsAmount(), client.getServicesAmount(),
           client.getAmount(), client.getClientId());
       return client;
     } catch (DataAccessException e) {

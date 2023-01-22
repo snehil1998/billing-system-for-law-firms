@@ -17,5 +17,7 @@ public class Clients {
   private String clientId;
   private String clientName;
   private String currencyCode;
+  private double disbursementsAmount;
+  private double servicesAmount;
   private double amount;
 }

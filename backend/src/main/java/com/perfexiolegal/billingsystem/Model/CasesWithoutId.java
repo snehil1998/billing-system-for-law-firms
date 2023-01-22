@@ -17,5 +17,7 @@ public class CasesWithoutId {
   private String caseName;
   private String clientId;
   private String currencyCode;
+  private double disbursementsAmount;
+  private double servicesAmount;
   private float amount;
 }

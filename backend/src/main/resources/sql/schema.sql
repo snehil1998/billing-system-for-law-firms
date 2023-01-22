@@ -28,14 +28,16 @@ CREATE TABLE clients
     Client_Id  VARCHAR(40) PRIMARY KEY,
     Client_Name   VARCHAR(500) NOT NULL,
     Currency_Code   VARCHAR(3) NOT NULL,
+    Disbursements_Amount FLOAT NOT NULL,
+    Services_Amount FLOAT NOT NULL,
     Amount  FLOAT NOT NULL
 );
 
-INSERT INTO clients(Client_Id, Client_Name, Currency_Code, Amount)
-VALUES ('bc37c7ca-0175-4fdb-8b3e-a1952a271c98', 'Microsoft', 'USD', 310);
+INSERT INTO clients(Client_Id, Client_Name, Currency_Code, Disbursements_Amount, Services_Amount, Amount)
+VALUES ('bc37c7ca-0175-4fdb-8b3e-a1952a271c98', 'Microsoft', 'USD', 10, 300, 310);
 
-INSERT INTO clients(Client_Id, Client_Name, Currency_Code, Amount)
-VALUES ('c59df7c9-183a-422d-9113-5a9ffd4fd4ca', 'Bohringer', 'GBP', 500);
+INSERT INTO clients(Client_Id, Client_Name, Currency_Code, Disbursements_Amount, Services_Amount, Amount)
+VALUES ('c59df7c9-183a-422d-9113-5a9ffd4fd4ca', 'Bohringer', 'GBP', 100, 400, 500);
 
 -- All attorneys
 CREATE TABLE attorneys
@@ -60,14 +62,16 @@ CREATE TABLE cases
     Case_Name   VARCHAR(500),
     Client_Id  VARCHAR(40) NOT NULL,
     Currency_Code   VARCHAR(3) NOT NULL,
+    Disbursements_Amount FLOAT NOT NULL,
+    Services_Amount FLOAT NOT NULL,
     Amount  FLOAT NOT NULL
 );
 
-INSERT INTO cases(Case_Id, Case_Name, Client_Id, Currency_Code, Amount)
-VALUES ('0b32333f-4d31-4d3b-89c3-b2824f8794ba', 'AI Case', 'bc37c7ca-0175-4fdb-8b3e-a1952a271c98', 'USD', 310);
+INSERT INTO cases(Case_Id, Case_Name, Client_Id, Currency_Code, Disbursements_Amount, Services_Amount, Amount)
+VALUES ('0b32333f-4d31-4d3b-89c3-b2824f8794ba', 'AI Case', 'bc37c7ca-0175-4fdb-8b3e-a1952a271c98', 'USD', 10, 300, 310);
 
-INSERT INTO cases(Case_Id, Case_Name, Client_Id, Currency_Code, Amount)
-VALUES ('f35fe8ae-aa46-4305-bb3f-21fc45c8888c', 'Pharma case', 'c59df7c9-183a-422d-9113-5a9ffd4fd4ca', 'GBP', 500);
+INSERT INTO cases(Case_Id, Case_Name, Client_Id, Currency_Code, Disbursements_Amount, Services_Amount, Amount)
+VALUES ('f35fe8ae-aa46-4305-bb3f-21fc45c8888c', 'Pharma case', 'c59df7c9-183a-422d-9113-5a9ffd4fd4ca', 'GBP', 100, 400, 500);
 
 
 -- All disbursements

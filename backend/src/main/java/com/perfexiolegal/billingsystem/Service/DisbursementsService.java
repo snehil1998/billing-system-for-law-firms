@@ -73,11 +73,11 @@ public class DisbursementsService {
   public void postDisbursements(Disbursements disbursement) throws ServiceException {
     try {
       Cases caseForService = casesService.getCaseById(disbursement.getCaseId()).get();
-      Cases updatedCase = casesTransformer.updateAmount(caseForService, disbursement.getConversionAmount());
+      Cases updatedCase = casesTransformer.updateAmount(caseForService, disbursement.getConversionAmount(), 0);
       casesService.updateCases(updatedCase);
 
       Clients clientForService = clientsService.getClientById(disbursement.getClientId()).get();
-      Clients updatedClient = clientsTransformer.updateAmount(clientForService, disbursement.getConversionAmount());
+      Clients updatedClient = clientsTransformer.updateAmount(clientForService, disbursement.getConversionAmount(), 0);
       clientsService.updateClient(updatedClient);
 
       disbursementsRepository.postDisbursements(disbursement);
@@ -100,11 +100,11 @@ public class DisbursementsService {
       Disbursements disbursement = getDisbursementsById(disbursementId).get();
 
       Cases caseForService = casesService.getCaseById(disbursement.getCaseId()).get();
-      Cases updatedCase = casesTransformer.updateAmount(caseForService, -disbursement.getConversionAmount());
+      Cases updatedCase = casesTransformer.updateAmount(caseForService, -disbursement.getConversionAmount(), 0);
       casesService.updateCases(updatedCase);
 
       Clients clientForService = clientsService.getClientById(disbursement.getClientId()).get();
-      Clients updatedClient = clientsTransformer.updateAmount(clientForService, -disbursement.getConversionAmount());
+      Clients updatedClient = clientsTransformer.updateAmount(clientForService, -disbursement.getConversionAmount(), 0);
       clientsService.updateClient(updatedClient);
 
       return disbursementsRepository.deleteDisbursementById(disbursementId);

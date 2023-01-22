@@ -40,6 +40,16 @@ const DisplayCases = (props) => {
                         sortType: "basic",
                         filter: "text"
                     }, {
+                        Header: 'Disbursements Amount',
+                        accessor: 'disbursementsamount',
+                        sortType: "basic",
+                        filter: "text"
+                    }, {
+                        Header: 'Services Amount',
+                        accessor: 'servicesamount',
+                        sortType: "basic",
+                        filter: "text"
+                    }, {
                         Header: 'Amount',
                         accessor: 'amount',
                         sortType: "basic",
@@ -57,7 +67,9 @@ const DisplayCases = (props) => {
                 casename: Case.caseName,
                 clientname: props.clientsData.find(data => data.clientId === Case.clientId)?.clientName,
                 currencycode: Case.currencyCode,
-                amount: Case.amount,
+                disbursementsamount: Case.disbursementsAmount.toFixed(2),
+                servicesamount: Case.servicesAmount.toFixed(2),
+                amount: Case.amount.toFixed(2),
             })
     });
 

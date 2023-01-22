@@ -15,16 +15,20 @@ public class ClientsTransformer {
         clientID,
         client.getClientName(),
         client.getCurrencyCode(),
+        client.getDisbursementsAmount(),
+        client.getServicesAmount(),
         client.getAmount()
     );
   }
 
-  public Clients updateAmount(Clients updatedClient, double amount) {
+  public Clients updateAmount(Clients updatedClient, double disbursementsAmount, double servicesAmount) {
     return new Clients(
         updatedClient.getClientId(),
         updatedClient.getClientName(),
         updatedClient.getCurrencyCode(),
-        updatedClient.getAmount() + amount
+        updatedClient.getDisbursementsAmount() + disbursementsAmount,
+        updatedClient.getServicesAmount() + servicesAmount,
+        updatedClient.getAmount() + disbursementsAmount + servicesAmount
     );
   }
 }
