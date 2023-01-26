@@ -18,14 +18,14 @@ function ServicesFilterCheckboxes(props) {
     }, [tickedBoxes])
 
     return (
-       <div className={'disbursements-filter-checkboxes-container'}>
-           <div className={'disbursements-filter-checkboxes-translation'} style={{fontSize: '18px'}}>
-               Tick columns to include in the report:
+       <div id={'disbursements-filter-checkboxes-container'}>
+           <div id={'disbursements-filter-checkboxes-translation'} className={'dropdown-translation'}>
+               {'Tick columns to include in the report:'}
            </div>
-           <div className={'checkboxes-container'} style={{fontSize: '16px'}}>
+           <div id={'disbursements-filter-checkboxes'} className={'dropdown-checkboxes'}>
                <input
                    type="checkbox"
-                   id="caseName"
+                   id="disbursements-filter-checkboxes-caseName"
                    name="Case Name"
                    value="Case Name"
                    checked={tickedBoxes.find(box => box === "Case Name")}
@@ -35,7 +35,7 @@ function ServicesFilterCheckboxes(props) {
 
                <input
                    type="checkbox"
-                   id="disbursement"
+                   id="disbursements-filter-checkboxes-disbursement"
                    name="Disbursement"
                    value="Disbursement"
                    checked={tickedBoxes.find(box => box === "Disbursement")}
@@ -45,7 +45,7 @@ function ServicesFilterCheckboxes(props) {
 
                <input
                    type="checkbox"
-                   id="date"
+                   id="disbursements-filter-checkboxes-date"
                    name="Date"
                    value="Date"
                    checked={tickedBoxes.find(box => box === "Date")}
@@ -55,7 +55,7 @@ function ServicesFilterCheckboxes(props) {
 
                <input
                    type="checkbox"
-                   id="currencyCode"
+                   id="disbursements-filter-checkboxes-currencyCode"
                    name="Currency Code"
                    value="Currency Code"
                    checked={tickedBoxes.find(box => box === "Currency Code")}
@@ -65,7 +65,7 @@ function ServicesFilterCheckboxes(props) {
 
                <input
                    type="checkbox"
-                   id="conversionRate"
+                   id="disbursements-filter-checkboxes-conversionRate"
                    name="Conversion Rate"
                    value="Conversion Rate"
                    checked={tickedBoxes.find(box => box === "Conversion Rate")}
@@ -75,7 +75,7 @@ function ServicesFilterCheckboxes(props) {
 
                <input
                    type="checkbox"
-                   id="inrAmount"
+                   id="disbursements-filter-checkboxes-inrAmount"
                    name="INR Amount"
                    value="INR Amount"
                    checked={tickedBoxes.find(box => box === "INR Amount")}
@@ -85,7 +85,7 @@ function ServicesFilterCheckboxes(props) {
 
                <input
                    type="checkbox"
-                   id="conversionAmount"
+                   id="disbursements-filter-checkboxes-conversionAmount"
                    name="Conversion Amount"
                    value="Conversion Amount"
                    checked={tickedBoxes.find(box => box === "Conversion Amount")}

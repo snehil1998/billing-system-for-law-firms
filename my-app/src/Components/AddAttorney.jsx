@@ -6,6 +6,7 @@ import { faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-
 import {requestAttorneys} from "../Redux/Attorneys/AttorneysActions";
 import PropTypes from "prop-types";
 import {getClientsData} from "../Redux/Clients/ClientsSelectors";
+import './AddAttorney.css';
 
 const AddAttorney = (props) => {
     const [attorneyID, setAttorneyID] = useState("");
@@ -89,74 +90,72 @@ const AddAttorney = (props) => {
     }
 
     return (
-        <div className="add-attorney">
-            <p style={{fontSize:'20px', textAlign:'center', width:'100vw',
-                backgroundColor:'white', color:'red'}}>{message}</p>
-            <div className="add-attorney-span-container" style={{backgroundColor:'black', width:'13vw', marginLeft:'1vw'}}>
-                <span onClick={handleAddService} style={{cursor:'pointer', fontSize:'20px', marginLeft:'1vw'}}>
+        <div id="add-attorney-container" className={'dropdown-components-container'}>
+            <div id="add-attorney-span-container" className={'dropdown-span-container'}>
+                <span id={"add-attorney-container-span"} className={'dropdown-container-span'} onClick={handleAddService}>
                     ADD ATTORNEY   {faCaretSquare()}
                 </span>
             </div>
-            {showAddService && <form onSubmit={handleSubmit} style={{fontSize:'15px', marginLeft:'1vw',
-                backgroundColor:'grey', height:(42+(parseInt(numberOfServicePricing)*6.5)).toString()+'vh', width:'98vw'}}>
-                <div className="attorney-id-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                    <div className={'attorney-id-translation'} style={{fontSize: '17px'}}>
+            {showAddService && <form id={'add-attorney-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit}>
+                <div id="add-attorney-attorney-id-container" className={'dropdown-field-container'}>
+                    <div id={'add-attorney-attorney-id-translation'} className={'dropdown-translation'}>
                         {'Attorney ID: '}
                     </div>
                     <input
+                        id={'add-attorney-attorney-id-input-field'}
+                        className={'dropdown-input-field'}
                         type="text"
                         value={attorneyID}
-                        placeholder="Attorney ID"
                         onChange={(e) => setAttorneyID(e.target.value)}
-                        style={{width:'35vw', height:'4vh'}}
                     />
                 </div>
-                <div className="first-name-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                    <div className={'first-name-translation'} style={{fontSize: '17px'}}>
+                <div id="add-attorney-first-name-container" className={'dropdown-field-container'}>
+                    <div id={'add-attorney-first-name-translation'} className={'dropdown-translation'}>
                         {'First Name: '}
                     </div>
                     <input
+                        id={'add-attorney-first-name-input-field'}
+                        className={'dropdown-input-field'}
                         type="text"
                         value={firstName}
-                        placeholder="First name"
                         onChange={(e) => setFirstName(e.target.value)}
-                        style={{width:'35vw', height:'4vh'}}
                     />
                 </div>
-                <div className="last-name-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                    <div className={'first-name-translation'} style={{fontSize: '17px'}}>
+                <div id="add-attorney-last-name-container" className={'dropdown-field-container'}>
+                    <div id={'add-attorney-first-name-translation'} className={'dropdown-translation'}>
                         {'Last Name: '}
                     </div>
                     <input
+                        id={'add-attorney-last-name-input-field'}
+                        className={'dropdown-input-field'}
                         type="text"
                         value={lastName}
-                        placeholder="Last name"
                         onChange={(e) => setLastName(e.target.value)}
-                        style={{width:'35vw', height:'4vh'}}
                     />
                 </div>
-                <div className="number-of-service-pricing-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                    <div className={'number-of-service-pricing-translation'} style={{fontSize: '17px'}}>
+                <div id="add-attorney-number-of-service-pricing-container" className={'dropdown-field-container'}>
+                    <div id={'add-attorney-number-of-service-pricing-translation'} className={'dropdown-translation'}>
                         {'Number of Service Pricing: '}
                     </div>
-                    <select value={numberOfServicePricing} onChange={handleNumberOfServicePricing} style={{width:'39vw', height:'4vh'}}>
+                    <select id={'add-attorney-number-of-service-pricing-select'} className={'dropdown-input-field'}
+                            value={numberOfServicePricing} onChange={handleNumberOfServicePricing}>
                         <option key={"placeholder-number-of-attorneys"} value={"0"} disabled={true}>
-                            Select number of service pricing
+                            0
                         </option>
                         {numberOfServicePricingOptions.map((option) => (
                             <option key={option.value} value={option.value}>{option.label}</option>
                         ))}
                     </select>
                 </div>
-                <div className="service-pricing-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
+                <div id="add-attorney-service-pricing-container" className={'dropdown-field-container'}>
                     {[...Array(parseInt(numberOfServicePricing))].map((e, i) => {
                         return(
-                            <div className={"service-pricing-"+i}>
-                                <div className={'service-pricing' + i + '-translation'} style={{fontSize: '17px'}}>
+                            <div id={"add-attorney-service-pricing-"+i} className={"dropdown-field-container"}>
+                                <div id={'add-attorney-service-pricing' + i + '-translation'} className={'dropdown-translation'}>
                                     {'Service Pricing ' + (i+1).toString() + ': '}
                                 </div>
-                                <select key={"client-name-selector-"+i} value={clientIdList[i]} onChange={(event) =>
-                                    handleChangeClients(event, i)} style={{width:'39vw', height:'4vh'}}>
+                                <select key={"add-attorney-client-name-selector-"+i} className={'dropdown-select'} value={clientIdList[i]} onChange={(event) =>
+                                    handleChangeClients(event, i)}>
                                     <option key={"placeholder-client-"+ i} value={""}>
                                         Select a client
                                     </option>
@@ -166,18 +165,22 @@ const AddAttorney = (props) => {
                                 </select>
                                 <input
                                     key={"service-pricing-price-input-"+i}
+                                    id={'add-attorney-service-pricing-price-input-field'}
+                                    className={'dropdown-input-field'}
                                     type="number"
                                     value={priceList[i]}
                                     placeholder="Price"
                                     onChange={(e) =>
                                         setPriceList({...priceList, [i]: e.target.value})}
-                                    style={{width:'10vw', height:'3.2vh'}}
                                 />
                             </div>)
                     })}
                 </div>
-                <button type="submit" className="add-button-container"
-                        style={{width:'5vw', height:'4vh', fontSize:'15px', marginLeft: '1vw', marginTop: '2vh'}}>Add</button>
+                <div id={'add-attorney-add-button-container'} className={'dropdown-button-container'}>
+                    <button type="submit" id="add-attorney-add-button" className={'dropdown-button'}>
+                        ADD
+                    </button>
+                </div>
             </form>}
         </div>
     );

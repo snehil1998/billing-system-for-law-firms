@@ -12,6 +12,8 @@ import {getFilterCheckboxesForServices} from "../Redux/Services/ServicesSelector
 import DisbursementsFilterCheckboxes from "./DisbursementsFilterCheckboxes";
 import ExportDisbursementsPDF from "../CSVExporter/ExportDisbursementsPDF";
 import {getFilterCheckboxesForDisbursements} from "../Redux/Disbursements/DisbursementsSelectors";
+import './Filters.css';
+import '../App.css';
 
 function Filters(props) {
     const dispatch = useDispatch();
@@ -60,28 +62,28 @@ function Filters(props) {
     }
 
     return (
-      <div className={'filters-container'} style={{textAlign:'left', margin:'1vw'}}>
-          <div className="show-filter-span-container" style={{backgroundColor:'black', width:'23vw'}}>
-            <span onClick={handleShowFilter} style={{cursor:'pointer', fontSize:'20px', marginLeft:'1vw'}}>
+      <div id={'filters-container'} className={'dropdown-components-container'}>
+          <div id="filters-span-container" className={'dropdown-span-container'}>
+            <span id="filters-span" className={'dropdown-container-span'} onClick={handleShowFilter}>
                 FILTER AND GENERATE REPORT   {caCaretSquare()}
             </span>
           </div>
-          {showFilter && <div className={'filter-form-container'} style={{backgroundColor: 'grey', height: '40vh', width: '98vw'}}>
-              <div className={'title-container'} style={{marginLeft: '1vw', paddingTop: '1vh'}}>
-                  <div className={'title-translation'} style={{fontSize: '17px'}}>
+          {showFilter && <div id={'filters-form-container'} className={'dropdown-form-container'}>
+              <div id={'filters-title-container'} className={'dropdown-field-container'}>
+                  <div id={'filters-title-translation'} className={'dropdown-translation'}>
                       {'Title: '}
                   </div>
                   <input
+                      id={'filters-title-input-field'}
+                      className={'dropdown-input-field'}
                       type="text"
                       value={title}
-                      placeholder="Title"
                       onChange={(e) => setTitle(e.target.value)}
-                      style={{width:'35vw', height:'4vh'}}
                   />
               </div>
-              <div className={'date-container'} style={{marginLeft: '1vw', paddingTop: '1vh', display:'flex'}}>
-                  <div className={'from-date-container'}>
-                      <div className={'from-translation'} style={{fontSize: '17px'}}>
+              <div id={'filters-date-container'} className={'dropdown-field-container'}>
+                  <div id={'filters-from-date-container'} className={'from-date-container'}>
+                      <div id={'filters-from-translation'} className={'dropdown-translation'}>
                           {'From: '}
                       </div>
                       <DatePicker
@@ -92,11 +94,11 @@ function Filters(props) {
                           }}
                           inputPlaceholder="Select a date"
                           shouldHighlightWeekends
-                          wrapperClassName={'DatePicker__input'}
+                          className={'DatePicker__input'}
                       />
                   </div>
-                  <div className={'to-date-container'} style={{paddingLeft: '2vw'}}>
-                      <div className={'to-translation'} style={{fontSize: '17px'}}>
+                  <div id={'filters-to-date-container'} className={'to-date-container'}>
+                      <div id={'filters-to-translation'} className={'dropdown-translation'}>
                           {'To: '}
                       </div>
                       <DatePicker
@@ -107,15 +109,15 @@ function Filters(props) {
                           }}
                           inputPlaceholder="Select a date"
                           shouldHighlightWeekends
-                          wrapperClassName={'DatePicker__input'}
+                          className={'DatePicker__input'}
                       />
                   </div>
               </div>
-              <div className={'client-name-container'} style={{marginLeft: '1vw', paddingTop: '1vh'}}>
-                  <div className={'client-translation'} style={{fontSize: '17px'}}>
+              <div id={'filters-client-name-container'} className={'dropdown-field-container'}>
+                  <div id={'filters-client-translation'} className={'dropdown-translation'}>
                       {'Client: '}
                   </div>
-                  <select value={clientID} onChange={handleChangeClients} style={{width:'12.6vw', height:'4vh'}}>
+                  <select id={'filters-client-name-select'} className={'dropdown-select'} value={clientID} onChange={handleChangeClients}>
                       <option key={"placeholder-client"} value={""} disabled={true}>
                           Select a client
                       </option>
@@ -124,12 +126,12 @@ function Filters(props) {
                       ))}
                   </select>
               </div>
-              <div className={'services-filter-checkboxes-container'} style={{marginLeft: '1vw', paddingTop: '1vh'}}>
+              <div id={'filters-filter-checkboxes-container'} className={'dropdown-field-container'}>
                   {props.type === 'services' && <ServicesFilterCheckboxes />}
                   {props.type === 'disbursements' && <DisbursementsFilterCheckboxes />}
               </div>
-              <div className={'generate-report-button-container'} style={{marginLeft: '1vw', paddingTop: '2vh'}}>
-                  <button style={{width:'9vw', height:'5vh', fontSize:'14px', cursor: props.fromDate === null
+              <div id={'filters-generate-report-button-container'} className={'dropdown-button-container'}>
+                  <button id={'filters-generate-report-button'} className={'dropdown-button'} style={{cursor: props.fromDate === null
                           || props.toDate === null || clientID === "" || (props.disbursementsFilterCheckboxes.length === 0 && props.servicesFilterCheckboxes.length === 0) || title === "" ? 'default' : 'pointer'}}
                           disabled={props.fromDate === null || props.toDate === null || clientID === "" || (props.disbursementsFilterCheckboxes.length === 0 && props.servicesFilterCheckboxes.length === 0) || title === ""}
                           onClick={() => pdfConverter()}>

@@ -120,9 +120,8 @@ const DisplayAttorneys = (props) => {
 
     return (
         <>
-            {/*{props.isLoading && <div className="loading">Data loading...</div>}*/}
-            <div className={"display table container"} style={{backgroundColor:'maroon'}}>
-                <div className={"table container"} style={{textAlign:'left'}}>
+            <div className={"display-attorneys-table-container"}>
+                <div id={"display-attorneys-table"} className={"table"}>
                     <AddAttorney/>
                     <AddServicePricing/>
                     <Table columns={columns} data={tableData} type={'attorneys'} />

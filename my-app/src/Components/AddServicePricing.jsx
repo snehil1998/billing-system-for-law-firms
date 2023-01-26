@@ -7,6 +7,7 @@ import {requestAttorneys} from "../Redux/Attorneys/AttorneysActions";
 import PropTypes from "prop-types";
 import {getAttorneysData} from "../Redux/Attorneys/AttorneysSelectors";
 import {getClientsData} from "../Redux/Clients/ClientsSelectors";
+import './AddServicePricing.css';
 
 const AddServicePricing = (props) => {
     const [selectedAttorney, setSelectedAttorney] = useState({});
@@ -76,21 +77,18 @@ const AddServicePricing = (props) => {
     }
 
     return (
-        <div className="add-service-pricing">
-            <p style={{fontSize:'20px', textAlign:'center', width:'100vw',
-                backgroundColor:'white', color:'red'}}>{message}</p>
-            <div className="add-attorney-span-container" style={{backgroundColor:'black', width:'17.5vw', marginLeft:'1vw'}}>
-                <span onClick={handleAddService} style={{cursor:'pointer', fontSize:'20px', paddingLeft:'1vw'}}>
+        <div id="add-service-pricing-container" className={'dropdown-components-container'}>
+            <div id="add-service-pricing-span-container" className={'dropdown-span-container'}>
+                <span id={'add-service-pricing-container-span'} className={'dropdown-container-span'} onClick={handleAddService}>
                     ADD SERVICE PRICING   {faCaretSquare()}
                 </span>
             </div>
-            {showAddService && <form onSubmit={handleSubmit} style={{fontSize:'15px', marginLeft:'1vw',
-                backgroundColor:'grey', height:'25vh', width:'98vw'}}>
-                <div className="attorney-name-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                    <div className={'first-name-translation'} style={{fontSize: '17px'}}>
+            {showAddService && <form id={'add-service-pricing-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit}>
+                <div id="add-service-pricing-attorney-name-container" className={'dropdown-field-container'}>
+                    <div id={'add-service-pricing-first-name-translation'} className={'dropdown-translation'}>
                         {'Attorney: '}
                     </div>
-                    <select value={selectedAttorney} onChange={handleChangeAttorneys} style={{width:'39vw', height:'4vh'}}>
+                    <select id={'add-service-pricing-first-name-select'} className={'dropdown-select'} value={selectedAttorney} onChange={handleChangeAttorneys}>
                         <option key={"placeholder-selected-attorney"} value={{}} disabled={true}>
                             Select an attorney
                         </option>
@@ -99,13 +97,13 @@ const AddServicePricing = (props) => {
                         ))}
                     </select>
                 </div>
-                <div className="service-pricing-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                    <div className={"service-pricing"}>
-                        <div className={'service-pricing-translation'} style={{fontSize: '17px'}}>
+                <div id="add-service-pricing-service-pricing-container" className={'dropdown-field-container'}>
+                    <div>
+                        <div id={'add-service-pricing-service-pricing-translation'} className={'dropdown-translation'}>
                             {'Service Pricing: '}
                         </div>
-                        <select key={"client-name-selector"} value={clientId} onChange={handleChangeClients}
-                                style={{width:'39vw', height:'4vh'}}>
+                        <select id={'add-service-pricing-service-pricing-select'} className={'dropdown-select'}
+                                key={"add-service-pricing-service-pricing-selector"} value={clientId} onChange={handleChangeClients}>
                             <option key={"placeholder-client"} value={""}>
                                 Select a client
                             </option>
@@ -113,18 +111,22 @@ const AddServicePricing = (props) => {
                                 <option key={option.value} value={option.value}>{option.label}</option>
                             ))}
                         </select>
-                        <input
-                            key={"service-pricing-price-input"}
-                            type="number"
-                            value={price}
-                            placeholder="Price"
-                            onChange={(e) => setPrice(e.target.value)}
-                            style={{width:'10vw', height:'3.2vh'}}
-                        />
                     </div>
+                    <input
+                        id={'add-service-pricing-service-pricing-price-input-field'}
+                        className={'dropdown-input-field'}
+                        key={"service-pricing-price-input-field"}
+                        type="number"
+                        value={price}
+                        placeholder="Price"
+                        onChange={(e) => setPrice(e.target.value)}
+                    />
                 </div>
-                <button type="submit" className="add-button-container"
-                        style={{width:'5vw', height:'4vh', fontSize:'15px', marginLeft: '1vw', marginTop: '2vh'}}>Add</button>
+                <div id={'add-service-pricing-add-button-container'} className={'dropdown-button-container'}>
+                    <button type="submit" id="add-service-pricing-add-button" className={'dropdown-button'}>
+                        ADD
+                    </button>
+                </div>
             </form>}
         </div>
     );

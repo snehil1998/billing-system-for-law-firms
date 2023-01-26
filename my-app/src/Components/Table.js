@@ -26,8 +26,7 @@ import {
 } from "../Redux/Disbursements/DisbursementsActions";
 import {getFromSearchDateForServices, getToSearchDateForServices} from "../Redux/Services/ServicesSelectors";
 import {getFromSearchDateForDisbursements, getToSearchDateForDisbursements} from "../Redux/Disbursements/DisbursementsSelectors";
-
-
+import './Table.css';
 function Table(props) {
 
     const filterTypes = useMemo(
@@ -123,11 +122,7 @@ function Table(props) {
 
     return (
         <>
-            <div
-                colSpan={visibleColumns.length}
-                style={{
-                    textAlign: "left"
-                }}>
+            <div className={'table-container'} colSpan={visibleColumns.length}>
                 {props.type === 'services'
                 && <Filters rows={rows} requestData={requestServices} addFromSearchDate={addFromSearchDateServices} addToSearchDate={addToSearchDateServices}
                 fromDate={props.fromDateServices} toDate={props.toDateServices} type={props.type}/>}
@@ -139,16 +134,15 @@ function Table(props) {
                     globalFilter={state.globalFilter}
                     setGlobalFilter={setGlobalFilter} />
             </div>
-            <MaUTable className={"table"} {...getTableProps()}>
+            <MaUTable className={'table'} {...getTableProps()}>
                 <TableHead className={"table head"}>
                 {headerGroups.map(headerGroup => (
                     <TableRow className={"headers"} {...headerGroup.getHeaderGroupProps()}>
                         {headerGroup.headers.map(column => (
-                            <TableCell className={"header columns"}
-                                       {...column.getHeaderProps(column.getSortByToggleProps())} 
-                                       style={{color:"white", cursor:'pointer'}}>
+                            <TableCell className={"header-columns"}
+                                       {...column.getHeaderProps(column.getSortByToggleProps())}>
                                 {column.render("Header")}
-                                <span style={{color:'white'}}>{column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}</span>
+                                <span className={'header-columns-span'}>{column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}</span>
                             </TableCell>
                         ))}
                         <TableCell/>
@@ -161,7 +155,7 @@ function Table(props) {
                     return (
                         <TableRow className={"data"} {...row.getRowProps()}>
                             {row.cells.map(cell => {
-                                return <TableCell {...cell.getCellProps()} style={{color:'white'}}>{cell.render("Cell")}</TableCell>;
+                                return <TableCell className={'table-cell'} {...cell.getCellProps()}>{cell.render("Cell")}</TableCell>;
                             })}
                             {!row.id.includes(".") && <TableCell><button onClick={() => handleDelete(row.original)}>X</button></TableCell>}
                         </TableRow>

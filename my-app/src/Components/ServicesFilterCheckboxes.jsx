@@ -18,14 +18,14 @@ function ServicesFilterCheckboxes(props) {
     }, [tickedBoxes])
 
     return (
-       <div className={'services-filter-checkboxes-container'}>
-           <div className={'services-filter-checkboxes-translation'} style={{fontSize: '18px'}}>
-               Tick columns to include in the report:
+       <div id={'services-filter-checkboxes-container'}>
+           <div id={'services-filter-checkboxes-translation'} className={'dropdown-translation'}>
+               {'Tick columns to include in the report:'}
            </div>
-           <div className={'checkboxes-container'} style={{fontSize: '16px'}}>
+           <div id={'services-filter-checkboxes'} className={'dropdown-checkboxes'}>
                <input
                    type="checkbox"
-                   id="caseName"
+                   id="services-filter-checkboxes-caseName"
                    name="Case Name"
                    value="Case Name"
                    checked={tickedBoxes.find(box => box === "Case Name")}
@@ -35,7 +35,7 @@ function ServicesFilterCheckboxes(props) {
 
                <input
                    type="checkbox"
-                   id="service"
+                   id="services-filter-checkboxes-service"
                    name="Service"
                    value="Service"
                    checked={tickedBoxes.find(box => box === "Service")}
@@ -45,7 +45,7 @@ function ServicesFilterCheckboxes(props) {
 
                <input
                    type="checkbox"
-                   id="date"
+                   id="services-filter-checkboxes--date"
                    name="Date"
                    value="Date"
                    checked={tickedBoxes.find(box => box === "Date")}
@@ -55,7 +55,7 @@ function ServicesFilterCheckboxes(props) {
 
                <input
                    type="checkbox"
-                   id="currencyCode"
+                   id="services-filter-checkboxes-currencyCode"
                    name="Currency Code"
                    value="Currency Code"
                    checked={tickedBoxes.find(box => box === "Currency Code")}
@@ -65,7 +65,7 @@ function ServicesFilterCheckboxes(props) {
 
                <input
                    type="checkbox"
-                   id="amount"
+                   id="services-filter-checkboxes-amount"
                    name="Amount"
                    value="Amount"
                    checked={tickedBoxes.find(box => box === "Amount")}
@@ -75,7 +75,7 @@ function ServicesFilterCheckboxes(props) {
 
                <input
                    type="checkbox"
-                   id="attorneysName"
+                   id="services-filter-checkboxes-attorneysName"
                    name="Attorneys Name"
                    value="Attorneys Name"
                    checked={tickedBoxes.find(box => box === "Attorneys Name")}
@@ -85,7 +85,7 @@ function ServicesFilterCheckboxes(props) {
 
                <input
                    type="checkbox"
-                   id="timeSpentInMinutes"
+                   id="services-filter-checkboxes-timeSpentInMinutes"
                    name="Time Spent (in Minutes)"
                    value="Time Spent (in Minutes)"
                    checked={tickedBoxes.find(box => box === "Time Spent (in Minutes)")}
@@ -95,7 +95,7 @@ function ServicesFilterCheckboxes(props) {
 
                <input
                    type="checkbox"
-                   id="timeSpentInHours"
+                   id="services-filter-checkboxes-timeSpentInHours"
                    name="Time Spent (in Hours)"
                    value="Time Spent (in Hours)"
                    checked={tickedBoxes.find(box => box === "Time Spent (in Hours)")}
@@ -105,7 +105,7 @@ function ServicesFilterCheckboxes(props) {
 
                <input
                    type="checkbox"
-                   id="ratePerHour"
+                   id="services-filter-checkboxes-ratePerHour"
                    name="Rate Per Hour"
                    value="Rate Per Hour"
                    checked={tickedBoxes.find(box => box === "Rate Per Hour")}
@@ -115,7 +115,7 @@ function ServicesFilterCheckboxes(props) {
 
                <input
                    type="checkbox"
-                   id="total"
+                   id="services-filter-checkboxes-total"
                    name="Total"
                    value="Total"
                    checked={tickedBoxes.find(box => box === "Total")}

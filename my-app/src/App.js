@@ -10,11 +10,11 @@ import DisplayDisbursements from "./Pages/Disbursements/DisplayDisbursements";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header" style={{display:'flex', flexDirection: 'row'}}>
-          <div className={'navbar-container'} style={{height:'15vh'}}>
-              <Router style={{display:'flex'}}>
-                  <NavBar style={{width:'90vw'}}/>
+    <div className="App" style={{position: 'absolute', height:'100%', width: '100%', backgroundColor:'maroon'}}>
+      <header className="App-header" style={{display:'flex', flexDirection: 'row', width: '100%'}}>
+          <div className={'navbar-container'} style={{height:'100%', width: '100%'}}>
+              <Router>
+                  <NavBar/>
                   <Routes>
                       <Route path='/' exact element={<DisplayServices />} />
                       <Route path='/attorneys' element={<DisplayAttorneys />} />
@@ -26,7 +26,7 @@ function App() {
               </Router>
           </div>
       </header>
-        <div className="App-body" />
+        <div className="App-body"/>
     </div>
   );
 }

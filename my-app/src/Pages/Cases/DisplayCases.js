@@ -75,9 +75,8 @@ const DisplayCases = (props) => {
 
     return (
         <>
-            {/*{props.isLoading && <div className="loading">Data loading...</div>}*/}
-            <div className={"display table container"}>
-                <div className={"table container"} style={{textAlign:'left'}}>
+            <div className={"display-cases-table-container"}>
+                <div id={'display-cases-table'} className={"table"}>
                     <AddCase/>
                     <Table columns={columns} data={tableData} type={'cases'} />
                 </div>

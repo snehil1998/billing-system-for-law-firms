@@ -84,9 +84,8 @@ const DisplayServices = (props) => {
 
     return (
         <>
-        {/*{props.isLoading && <div className="loading">Data loading...</div>}*/}
-            <div className={"display table container"} style={{backgroundColor:'maroon'}}>
-                <div className={"table container"} style={{textAlign:'left'}}>
+            <div className={"display-disbursements-table-container"}>
+                <div id={'display-disbursements-table'} className={"table"}>
                     <AddDisbursement/>
                     <Table columns={columns} data={tableData} type={'disbursements'} />
                 </div>

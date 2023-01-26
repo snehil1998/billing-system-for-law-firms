@@ -68,9 +68,8 @@ const DisplayClients = (props) => {
 
     return (
         <>
-            {/*{props.isLoading && <div className="loading">Data loading...</div>}*/}
-            <div className={"display table container"}>
-                <div className={"table container"} style={{textAlign:'left'}}>
+            <div className={"display-clients-table-container"}>
+                <div id={'display-clients-table'} className={"table"}>
                     <AddClient/>
                     <Table columns={columns} data={tableData} type={'clients'} />
                 </div>

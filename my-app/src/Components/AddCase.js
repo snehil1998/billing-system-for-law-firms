@@ -6,6 +6,7 @@ import { faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-
 import {requestCases} from "../Redux/Cases/CasesActions";
 import PropTypes from "prop-types";
 import {getClientsData} from "../Redux/Clients/ClientsSelectors";
+import './AddCase.css';
 
 const AddCase = (props) => {
     const [caseID, setCaseID] = useState("");
@@ -64,46 +65,44 @@ const AddCase = (props) => {
     }
 
     return (
-        <div className="add-case">
-            <p style={{fontSize:'20px', textAlign:'center', width:'100vw', 
-                backgroundColor:'white', color:'red'}}>{message}</p>
-            <div className="add-case-span-container" style={{backgroundColor:'black', width:'11vw', marginLeft:'1vw'}}>
-                <span onClick={handleAddService} style={{cursor:'pointer', fontSize:'20px', marginLeft:'1vw'}}>
+        <div id="add-case-container" className={'dropdown-components-container'}>
+            <div id="add-case-span-container" className={'dropdown-span-container'}>
+                <span id={'add-case-container-span'} className={'dropdown-container-span'} onClick={handleAddService}>
                     ADD A CASE   {faCaretSquare()}
                 </span>
             </div>
-            {showAddService && <form onSubmit={handleSubmit} style={{fontSize:'15px', marginLeft:'1vw',
-                backgroundColor:'grey', height:'50vh', width:'98vw'}}>
-                    <div className="case-id-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                        <div className={'case-id-translation'} style={{fontSize: '17px'}}>
+            {showAddService && <form onSubmit={handleSubmit} id={'add-case-form-container'} className={'dropdown-form-container'}>
+                    <div id="add-case-case-id-container" className={'dropdown-field-container'}>
+                        <div id={'add-case-case-id-translation'} className={'dropdown-translation'}>
                             {'Case ID: '}
                         </div>
                         <input
+                            id={'add-case-case-id-input-field'}
+                            className={'dropdown-input-field'}
                             type="text"
                             value={caseID}
-                            placeholder="Case ID"
                             onChange={(e) => setCaseID(e.target.value)}
-                            style={{width:'35vw', height:'4vh'}}
                         />
                     </div>
-                    <div className="case-name-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                        <div className={'case-name-translation'} style={{fontSize: '17px'}}>
+                    <div id="add-case-case-name-container" className={'dropdown-field-container'}>
+                        <div id={'add-case-case-name-translation'} className={'dropdown-translation'}>
                             {'Case Name: '}
                         </div>
                         <input
+                            id={'add-case-case-name-input-field'}
+                            className={'dropdown-input-field'}
                             type="text"
                             value={caseName}
-                            placeholder="Case name"
                             onChange={(e) => setCaseName(e.target.value)}
-                            style={{width:'35vw', height:'4vh'}}
                         />
                     </div>
-                    <div className="client-name-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                        <div className={'client-name-translation'} style={{fontSize: '17px'}}>
+                    <div id="add-case-client-name-container" className={'dropdown-field-container'}>
+                        <div id={'add-case-client-name-translation'} className={'dropdown-translation'}>
                             {'Client Name: '}
                         </div>
-                        <select key={"client-name-selector"} value={clientId} onChange={(event) =>
-                            setClientId(event.target.value)} style={{width:'39vw', height:'4vh'}}>
+                        <select key={"client-name-selector"} id={'add-case-client-name-selector'} className={'dropdown-select'}
+                                value={clientId} onChange={(event) =>
+                            setClientId(event.target.value)}>
                             <option key={"placeholder-client"} value={""}>
                                 Select a client
                             </option>
@@ -112,20 +111,23 @@ const AddCase = (props) => {
                             ))}
                         </select>
                     </div>
-                    <div className="currency-code-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                        <div className={'currency-code-translation'} style={{fontSize: '17px'}}>
+                    <div id="add-case-currency-code-container" className={'dropdown-field-container'}>
+                        <div id={'add-case-currency-code-translation'} className={'dropdown-translation'}>
                             {'Currency Code: '}
                         </div>
                         <input
+                            id={'add-case-currency-code-input-field'}
+                            className={'dropdown-input-field'}
                             type="text"
                             value={props.clientsData.find(data => data.clientId === clientId)?.currencyCode}
-                            placeholder="Currency code"
-                            style={{width:'35vw', height:'4vh'}}
                             disabled={true}
                         />
                     </div>
-                    <button type="submit" className="add-button-container"
-                            style={{width:'5vw', height:'4vh', fontSize:'15px', marginLeft: '1vw', marginTop: '2vh'}}>Add</button>
+                <div id="add-case-add-button-container" className={'dropdown-button-container'}>
+                    <button type="submit" id="add-case-add-button" className={'dropdown-button'}>
+                        ADD
+                    </button>
+                </div>
             </form>}
         </div>
     );

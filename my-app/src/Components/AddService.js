@@ -10,6 +10,7 @@ import PropTypes from "prop-types";
 import {getClientsData} from "../Redux/Clients/ClientsSelectors";
 import {getCasesData} from "../Redux/Cases/CasesSelectors";
 import {getAttorneysData} from "../Redux/Attorneys/AttorneysSelectors";
+import './AddService.css';
 
 const AddService = (props) => {
     const [caseID, setCaseID] = useState("");
@@ -148,21 +149,18 @@ const AddService = (props) => {
     }
 
     return (
-        <div className="add service">
-            <p style={{fontSize:'20px', textAlign:'center', width:'100vw', 
-                backgroundColor:'white', color:'red'}}>{message}</p>
-            <div className="add-service-span-container" style={{backgroundColor:'black', width:'13vw', marginLeft:'1vw'}}>
-                <span onClick={handleAddService} style={{cursor:'pointer', fontSize:'20px', marginLeft:'1vw'}}>
+        <div id="add-service-container" className={'dropdown-components-container'}>
+            <div id="add-service-span-container" className={'dropdown-span-container'}>
+                <span id={'add-service-span'} className={'dropdown-container-span'} onClick={handleAddService}>
                     ADD A SERVICE   {faCaretSquare()}
                 </span>
             </div>
-            {showAddService && <form onSubmit={handleSubmit} style={{fontSize:'15px', marginLeft:'1vw',
-                backgroundColor:'grey', height:(58+(parseInt(numberOfAttorneys)*6)).toString()+'vh', width:'98vw'}}>
-                    <div className="case-name-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                        <div className={'case-name-translation'} style={{fontSize: '17px'}}>
+            {showAddService && <form id={'add-service-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit}>
+                    <div id="add-service-case-name-container" className={'dropdown-field-container'}>
+                        <div id={'add-service-case-name-translation'} className={'dropdown-translation'}>
                             {'Case: '}
                         </div>
-                        <select value={caseID} onChange={handleChangeCases} style={{width:'57.5vw', height:'4vh'}}>
+                        <select id={'add-service-case-name-select'} className={'dropdown-select'} value={caseID} onChange={handleChangeCases}>
                             <option key={"placeholder-case"} value={""} disabled={true}>
                                 Select a case
                             </option>
@@ -171,32 +169,32 @@ const AddService = (props) => {
                             ))}
                         </select>
                     </div>
-                    <div className="client-name-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                        <div className={'client-name-translation'} style={{fontSize: '17px'}}>
+                    <div id="add-service-client-name-container" className={'dropdown-field-container'}>
+                        <div id={'add-service-client-name-translation'} className={'dropdown-translation'}>
                             {'Client: '}
                         </div>
                         <input
+                            id={'add-service-client-name-input-field'}
+                            className={'dropdown-input-field'}
                             type="text"
                             value={getClientNameForSelectedCase()}
-                            placeholder="Client"
-                            style={{width:'35vw', height:'4vh'}}
                             disabled={true}
                         />
                     </div>
-                    <div className="service-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                        <div className={'service-translation'} style={{fontSize: '17px'}}>
+                    <div id="add-service-service-container" className={'dropdown-field-container'}>
+                        <div id={'add-service-service-translation'} className={'dropdown-translation'}>
                             {'Service: '}
                         </div>
                         <input
+                            id={'add-service-service-input-field'}
+                            className={'dropdown-input-field'}
                             type="text"
                             value={service}
-                            placeholder="Service"
                             onChange={(e) => setService(e.target.value)}
-                            style={{width:'35vw', height:'4vh'}}
                         />
                     </div>
-                    <div className="date-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                        <div className={'date-translation'} style={{fontSize: '17px'}}>
+                    <div id="add-service-date-container" className={'dropdown-field-container'}>
+                        <div id={'add-service-date-translation'} className={'dropdown-translation'}>
                             {'Date: '}
                         </div>
                         <DatePicker
@@ -204,26 +202,26 @@ const AddService = (props) => {
                             onChange={setSelectedDate}
                             inputPlaceholder="Select a date"
                             shouldHighlightWeekends
-                            wrapperClassName={'DatePicker__input'}
+                            className={'DatePicker__input'}
                         />
                     </div>
-                    <div className="currency-code-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                        <div className={'currency-code-translation'} style={{fontSize: '17px'}}>
+                    <div id="add-service-currency-code-container" className={'dropdown-field-container'}>
+                        <div id={'add-service-currency-code-translation'} className={'dropdown-translation'}>
                             {'Currency code: '}
                         </div>
                         <input
+                            id={'add-service-currency-code-input-field'}
+                            className={'dropdown-input-field'}
                             type="text"
                             value={currencyCode}
-                            placeholder="Currency code"
-                            style={{width:'35vw', height:'4vh'}}
                             disabled={true}
                         />
                     </div>
-                    <div className="number-of-attorneys-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                        <div className={'number-of-attorneys-translation'} style={{fontSize: '17px'}}>
+                    <div id="add-service-number-of-attorneys-container" className={'dropdown-field-container'}>
+                        <div id={'add-service-number-of-attorneys-translation'} className={'dropdown-translation'}>
                             {'Number of attorneys: '}
                         </div>
-                        <select value={numberOfAttorneys} onChange={handleNumberOfAttorneys} style={{width:'39vw', height:'4vh'}}>
+                        <select id={'add-service-number-of-attorneys-select'} className={'dropdown-select'} value={numberOfAttorneys} onChange={handleNumberOfAttorneys}>
                             {clientID === "" ?
                                 <option key={"placeholder-number-of-attorneys"} value={"0"} disabled={true}>
                                     Select a client first
@@ -237,15 +235,16 @@ const AddService = (props) => {
                             ))}
                         </select>
                     </div>
-                    <div className="attorneys-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
+                    <div id="add-service-attorneys-container" className={'dropdown-field-container'}>
                         {[...Array(parseInt(numberOfAttorneys))].map((e, i) => {
                             return(
                             <div className={"attorney-"+i}>
-                                <div className={'attorney' + i + '-translation'} style={{fontSize: '17px'}}>
+                                <div id={'attorney' + i + '-translation'} className={'dropdown-translation'}>
                                     {'Attorney ' + (i+1).toString() + ': '}
                                 </div>
-                                <select key={"attorney-name-selector-"+i} value={selectedAttorneys[i]} onChange={(event) =>
-                                    handleChangeAttorneys(event, i)} style={{width:'39vw', height:'4vh'}}>
+                                <select id={'add-service-attorney-name-selector'} className={'dropdown-select'}
+                                        key={"attorney-name-selector-"+i} value={selectedAttorneys[i]} onChange={(event) =>
+                                    handleChangeAttorneys(event, i)}>
                                     <option key={"placeholder-attorneys-"+ i} value={""}>
                                         Select attorney
                                     </option>
@@ -255,19 +254,23 @@ const AddService = (props) => {
                                 </select>
                                 <input
                                     key={"attorney-minutes-input-"+i}
+                                    id={'add-service-attorney-minutes-input'}
+                                    className={'dropdown-input-field'}
                                     type="number"
                                     value={minutes[i]}
                                     placeholder="Minutes"
                                     onChange={(e) =>
                                         setMinutes({...minutes, [i]: e.target.value})}
-                                    style={{width:'10vw', height:'3.2vh'}}
                                     onBlur={validateMinutes}
                                 />
                             </div>)
                         })}
                     </div>
-                    <button type="submit" className="add-button-container"
-                            style={{width:'5vw', height:'4vh', fontSize:'15px', marginLeft: '1vw', marginTop: '2vh'}}>Add</button>
+                <div id="add-service-add-button-container" className={'dropdown-button-container'}>
+                    <button type="submit" id={'add-service-add-button'} className={'dropdown-button'}>
+                        ADD
+                    </button>
+                </div>
             </form>}
         </div>
     );

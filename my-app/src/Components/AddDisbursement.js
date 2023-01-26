@@ -10,6 +10,7 @@ import {getClientsData} from "../Redux/Clients/ClientsSelectors";
 import {getCasesData} from "../Redux/Cases/CasesSelectors";
 import {getAttorneysData} from "../Redux/Attorneys/AttorneysSelectors";
 import {requestDisbursements} from "../Redux/Disbursements/DisbursementsActions";
+import './AddDisbursement.css';
 
 const AddDisbursement = (props) => {
     const [caseID, setCaseID] = useState("");
@@ -121,26 +122,18 @@ const AddDisbursement = (props) => {
     }
 
     return (
-        <div className="add-disbursement">
-            <p style={{
-                fontSize: '20px', textAlign: 'center', width: '100vw',
-                backgroundColor: 'white', color: 'red'
-            }}>{message}</p>
-            <div className="add-disbursement-span-container"
-                 style={{backgroundColor: 'black', width: '18vw', marginLeft: '1vw'}}>
-                <span onClick={handleAddDisbursement} style={{cursor: 'pointer', fontSize: '20px', marginLeft: '1vw'}}>
+        <div id="add-disbursement" className={'dropdown-components-container'}>
+            <div id="add-disbursement-span-container" className={'dropdown-span-container'}>
+                <span id={'add-disbursement-container-span'} className={'dropdown-container-span'} onClick={handleAddDisbursement}>
                     ADD A DISBURSEMENT {faCaretSquare()}
                 </span>
             </div>
-            {showAddDisbursement && <form onSubmit={handleSubmit} style={{
-                fontSize: '15px', marginLeft: '1vw',
-                backgroundColor: 'grey', height: '75vh', width: '98vw'
-            }}>
-                <div className="case-name-container" style={{marginLeft: '1vw', paddingTop: '1vh'}}>
-                    <div className={'case-name-translation'} style={{fontSize: '17px'}}>
+            {showAddDisbursement && <form id={'add-disbursement-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit}>
+                <div id="add-disbursement-case-name-container" className={'dropdown-field-container'}>
+                    <div id={'add-disbursement-case-name-translation'} className={'dropdown-translation'}>
                         {'Case: '}
                     </div>
-                    <select value={caseID} onChange={handleChangeCases} style={{width: '57.5vw', height: '4vh'}}>
+                    <select id={'add-disbursement-select'} className={'dropdown-select'} value={caseID} onChange={handleChangeCases}>
                         <option key={"placeholder-case"} value={""} disabled={true}>
                             Select a case
                         </option>
@@ -149,32 +142,32 @@ const AddDisbursement = (props) => {
                         ))}
                     </select>
                 </div>
-                <div className="client-name-container" style={{marginLeft: '1vw', paddingTop: '1vh'}}>
-                    <div className={'client-name-translation'} style={{fontSize: '17px'}}>
+                <div id="add-disbursement-client-name-container" className={'dropdown-field-container'}>
+                    <div id={'add-disbursement-client-name-translation'} className={'dropdown-translation'}>
                         {'Client: '}
                     </div>
                     <input
+                        id={'add-disbursement-client-name-input-field'}
+                        className={'dropdown-input-field'}
                         type="text"
                         value={getClientNameForSelectedCase()}
-                        placeholder="Client"
-                        style={{width: '35vw', height: '4vh'}}
                         disabled={true}
                     />
                 </div>
-                <div className="disbursement-container" style={{marginLeft: '1vw', paddingTop: '1vh'}}>
-                    <div className={'disbursement-translation'} style={{fontSize: '17px'}}>
+                <div id="add-disbursement-disbursement-container" className={'dropdown-field-container'}>
+                    <div id={'add-disbursement-disbursement-translation'} className={'dropdown-translation'}>
                         {'Disbursement: '}
                     </div>
                     <input
+                        id={'add-disbursement-disbursement-input-field'}
+                        className={'dropdown-input-field'}
                         type="text"
                         value={disbursement}
-                        placeholder="Disbursement"
                         onChange={(e) => setDisbursement(e.target.value)}
-                        style={{width: '35vw', height: '4vh'}}
                     />
                 </div>
-                <div className="date-container" style={{marginLeft: '1vw', paddingTop: '1vh'}}>
-                    <div className={'date-translation'} style={{fontSize: '17px'}}>
+                <div id="add-disbursement-date-container" className={'dropdown-field-container'}>
+                    <div id={'add-disbursement-date-translation'} className={'dropdown-translation'}>
                         {'Date: '}
                     </div>
                     <DatePicker
@@ -182,61 +175,63 @@ const AddDisbursement = (props) => {
                         onChange={setSelectedDate}
                         inputPlaceholder="Select a date"
                         shouldHighlightWeekends
-                        wrapperClassName={'DatePicker__input'}
+                        className={'DatePicker__input'}
                     />
                 </div>
-                <div className="currency-code-container" style={{marginLeft: '1vw', paddingTop: '1vh'}}>
-                    <div className={'currency-code-translation'} style={{fontSize: '17px'}}>
+                <div id="add-disbursement-currency-code-container" className={'dropdown-field-container'}>
+                    <div id={'add-disbursement-currency-code-translation'} className={'dropdown-translation'}>
                         {'Currency Code: '}
                     </div>
                     <input
+                        id={'add-disbursement-currency-code-input-field'}
+                        className={'dropdown-input-field'}
                         type="text"
                         value={currencyCode}
-                        placeholder={"Currency code"}
                         onChange={(e) => setCurrencyCode(e.target.value)}
                         disabled={true}
-                        style={{width: '35vw', height: '4vh'}}
                     />
                 </div>
-                <div className="conversion-rate-container" style={{marginLeft: '1vw', paddingTop: '1vh'}}>
-                    <div className={'conversion-rate-translation'} style={{fontSize: '17px'}}>
+                <div id="add-disbursement-conversion-rate-container" className={'dropdown-field-container'}>
+                    <div id={'add-disbursement-conversion-rate-translation'} className={'dropdown-translation'}>
                         {'Conversion Rate: '}
                     </div>
                     <input
+                        id={'add-disbursement-conversion-rate-input-field'}
+                        className={'dropdown-input-field'}
                         type="number"
                         value={conversionRate}
-                        placeholder={"Conversion rate"}
-                        style={{width: '35vw', height: '4vh'}}
                         disabled={true}
                     />
                 </div>
-                <div className="inr-amount-container" style={{marginLeft: '1vw', paddingTop: '1vh'}}>
-                    <div className={'inr-amount-translation'} style={{fontSize: '17px'}}>
+                <div id="add-disbursement-inr-amount-container" className={'dropdown-field-container'} style={{marginLeft: '1%', paddingTop: '3%'}}>
+                    <div id={'add-disbursement-inr-amount-translation'} className={'dropdown-translation'}>
                         {'INR Amount: '}
                     </div>
                     <input
+                        id={'add-disbursement-inr-amount-input-field'}
+                        className={'dropdown-input-field'}
                         type="number"
                         value={inrAmount}
-                        placeholder={"INR amount"}
                         onChange={(e) => setInrAmount(e.target.value)}
-                        style={{width: '35vw', height: '4vh'}}
                     />
                 </div>
-                <div className="conversion-amount-container" style={{marginLeft: '1vw', paddingTop: '1vh'}}>
-                    <div className={'conversion-amount-translation'} style={{fontSize: '17px'}}>
+                <div id="add-disbursement-conversion-amount-container" className={'dropdown-field-container'}>
+                    <div id={'add-disbursement-conversion-amount-translation'} className={'dropdown-translation'}>
                         {'Conversion Amount: '}
                     </div>
                     <input
+                        id={'add-disbursement-conversion-amount-input-field'}
+                        className={'dropdown-input-field'}
                         type="number"
                         value={conversionAmount}
-                        placeholder={"Conversion amount"}
-                        style={{width: '35vw', height: '4vh'}}
                         disabled={true}
                     />
                 </div>
-                <button type="submit" className="add-button-container"
-                        style={{width: '5vw', height: '4vh', fontSize: '15px', marginLeft: '1vw', marginTop: '2vh'}}>Add
-                </button>
+                <div id={'add-disbursement-add-button-container'} className={'dropdown-button-container'}>
+                    <button type="submit" id="add-disbursement-add-button" className={'dropdown-button'}>
+                        ADD
+                    </button>
+                </div>
             </form>}
         </div>
     );

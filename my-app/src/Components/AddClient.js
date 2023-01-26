@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
 import {requestClients} from "../Redux/Clients/ClientsActions";
 import PropTypes from "prop-types";
+import './AddClient.css';
 
 const AddClient = (props) => {
     const [clientID, setClientID] = useState("");
@@ -58,54 +59,54 @@ const AddClient = (props) => {
     }
 
     return (
-        <div className="add service">
-            <p style={{fontSize:'20px', textAlign:'center', width:'100vw', 
-                backgroundColor:'white', color:'red'}}>{message}</p>
-            <div className="add-client-span-container" style={{backgroundColor:'black', width:'13vw', marginLeft:'1vw'}}>
-                <span onClick={handleAddService} style={{cursor:'pointer', fontSize:'20px', marginLeft:'1vw'}}>
+        <div id="add-client-container" className={'dropdown-components-container'}>
+            <div id="add-client-span-container" className={'dropdown-span-container'}>
+                <span id={'add-client-container-span'} className={'dropdown-container-span'} onClick={handleAddService}>
                     ADD A CLIENT   {faCaretSquare()}
                 </span>
             </div>
-            {showAddService && <form onSubmit={handleSubmit} style={{fontSize:'15px', marginLeft:'1vw',
-                backgroundColor:'grey', height:'42vh', width:'98vw'}}>
-                    <div className="client-id-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                        <div className={'client-id-translation'} style={{fontSize: '17px'}}>
+            {showAddService && <form onSubmit={handleSubmit} id={'add-client-form-container'} className={'dropdown-form-container'}>
+                    <div id="add-client-client-id-container" className={'dropdown-field-container'}>
+                        <div id={'add-client-client-id-translation'} className={'dropdown-translation'}>
                             {'Client ID: '}
                         </div>
                         <input
+                            id={'add-client-client-id-input-field'}
+                            className={'dropdown-input-field'}
                             type="text"
                             value={clientID}
-                            placeholder="Client ID"
                             onChange={(e) => setClientID(e.target.value)}
-                            style={{width:'35vw', height:'4vh'}}
                         />
                     </div>
-                    <div className="client-name-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                        <div className={'client-name-translation'} style={{fontSize: '17px'}}>
+                    <div id="add-client-client-name-container" className={'dropdown-field-container'}>
+                        <div id={'add-client-client-name-translation'} className={'dropdown-translation'}>
                             {'Client Name: '}
                         </div>
                         <input
+                            id={'add-client-client-name-input-field'}
+                            className={'dropdown-input-field'}
                             type="text"
                             value={clientName}
-                            placeholder="Client name"
                             onChange={(e) => setClientName(e.target.value)}
-                            style={{width:'35vw', height:'4vh'}}
                         />
                     </div>
-                    <div className="currency-code-container" style={{marginLeft:'1vw', paddingTop:'1vh'}}>
-                        <div className={'currency-code-translation'} style={{fontSize: '17px'}}>
+                    <div id="add-client-currency-code-container" className={'dropdown-field-container'}>
+                        <div id={'add-client-currency-code-translation'} className={'dropdown-translation'}>
                             {'Currency Code: '}
                         </div>
                         <input
+                            id={'add-client-currency-code-input-field'}
+                            className={'dropdown-input-field'}
                             type="text"
                             value={currencyCode}
-                            placeholder="Currency code"
                             onChange={(e) => setCurrencyCode(e.target.value)}
-                            style={{width:'35vw', height:'4vh'}}
                         />
                     </div>
-                    <button type="submit" className="add-button-container"
-                            style={{width:'5vw', height:'4vh', fontSize:'15px', marginLeft: '1vw', marginTop: '2vh'}}>Add</button>
+                    <div id={'add-client-add-button-container'} className={'dropdown-button-container'}>
+                        <button type="submit" id="add-client-add-button" className={'dropdown-button'}>
+                            ADD
+                        </button>
+                    </div>
             </form>}
         </div>
     );
