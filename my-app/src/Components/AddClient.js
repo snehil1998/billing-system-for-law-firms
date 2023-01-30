@@ -6,17 +6,20 @@ import { faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-
 import {requestClients} from "../Redux/Clients/ClientsActions";
 import PropTypes from "prop-types";
 import './AddClient.css';
+import {addMessage} from "../Redux/Message/MessageActions";
 
 const AddClient = (props) => {
     const [clientID, setClientID] = useState("");
     const [clientName, setClientName] = useState("");
     const [currencyCode, setCurrencyCode] = useState("");
     const [showAddService, setShowAddService] = useState(false);
-    const [message, setMessage] = useState("");
 
     let handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            if(clientID === '' || clientName === '' || currencyCode === '') {
+                return props.addMessage('Please complete all fields to add a client.')
+            }
             let res = await fetch("/clients", {
                 method: "POST",
                 headers: {
@@ -36,15 +39,24 @@ const AddClient = (props) => {
                 setClientID("");
                 setClientName("");
                 setCurrencyCode("");
-                setMessage("Client was created successfully!");
+                props.addMessage("Client was created successfully!");
+            } else if (res.status === 410) {
+                props.addMessage(`Please use a different client ID. ${clientID} already exists.`);
             } else {
-                setMessage("❗ Error occurred while adding data into clients");
+                props.addMessage("❗ Error occurred while adding data into clients.");
             }
             props.requestClients('');
         } catch (err) {
             console.log("Error posting data into clients: ", err);
         }
     };
+
+    const handleClear = async (e) => {
+        e.preventDefault();
+        setClientID("");
+        setClientName("");
+        setCurrencyCode("");
+    }
 
     const handleAddService = () => {
         if (showAddService) {
@@ -65,7 +77,7 @@ const AddClient = (props) => {
                     ADD A CLIENT   {faCaretSquare()}
                 </span>
             </div>
-            {showAddService && <form onSubmit={handleSubmit} id={'add-client-form-container'} className={'dropdown-form-container'}>
+            {showAddService && <form onSubmit={handleSubmit} onReset={handleClear} id={'add-client-form-container'} className={'dropdown-form-container'}>
                     <div id="add-client-client-id-container" className={'dropdown-field-container'}>
                         <div id={'add-client-client-id-translation'} className={'dropdown-translation'}>
                             {'Client ID: '}
@@ -106,6 +118,9 @@ const AddClient = (props) => {
                         <button type="submit" id="add-client-add-button" className={'dropdown-button'}>
                             ADD
                         </button>
+                        <button type="reset" id="add-client-clear-button" className={'dropdown-button'}>
+                            CLEAR
+                        </button>
                     </div>
             </form>}
         </div>
@@ -119,7 +134,10 @@ AddClient.propTypes = {
 const mapDispatchToProps = dispatch => ({
     requestClients: (clientID) => {
         dispatch(requestClients(clientID))
-    }
+    },
+    addMessage: (message) => {
+        dispatch(addMessage(message))
+    },
 });
 
 export default connect(null, mapDispatchToProps)(AddClient)

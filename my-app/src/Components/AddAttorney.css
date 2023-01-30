@@ -1,3 +1,7 @@
+#add-attorney-clear-button {
+    margin-left: 1%;
+}
+
 @media only screen and (max-width: 600px) {
     #add-attorney-span-container {
         width: 110px;

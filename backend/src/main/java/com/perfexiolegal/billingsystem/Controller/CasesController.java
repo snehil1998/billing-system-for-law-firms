@@ -76,8 +76,13 @@ public class CasesController {
   public ResponseEntity<String> createNewCase(@RequestBody Cases newCase) {
     try {
       logger.info("Creating case with name: " + newCase.getCaseId());
-      casesService.postCases(newCase);
-      return new ResponseEntity<>("Case was created successfully.", HttpStatus.CREATED);
+      try {
+        casesService.getCaseById(newCase.getCaseId()).isPresent();
+        return new ResponseEntity<>("Case with ID already exists.", HttpStatus.GONE);
+      } catch (Exception e) {
+        casesService.postCases(newCase);
+        return new ResponseEntity<>("Case was created successfully.", HttpStatus.CREATED);
+      }
     } catch (ServiceException e) {
       return new ResponseEntity<>("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
     }

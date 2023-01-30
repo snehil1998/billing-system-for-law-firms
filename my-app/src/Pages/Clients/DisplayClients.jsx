@@ -5,10 +5,14 @@ import PropTypes from 'prop-types';
 import {requestClients} from "../../Redux/Clients/ClientsActions";
 import {getClientsData, getClientsIsLoading} from "../../Redux/Clients/ClientsSelectors";
 import AddClient from "../../Components/AddClient";
+import {clearMessage} from "../../Redux/Message/MessageActions";
+import {Page} from "../../Components/PagesEnum";
+
 
 const DisplayClients = (props) => {
     const dispatch = useDispatch();
     useEffect(() => {
+        dispatch(clearMessage());
         dispatch(requestClients(''));
     }, [dispatch]);
 
@@ -71,7 +75,8 @@ const DisplayClients = (props) => {
             <div className={"display-clients-table-container"}>
                 <div id={'display-clients-table'} className={"table"}>
                     <AddClient/>
-                    <Table columns={columns} data={tableData} type={'clients'} />
+                    <Table columns={columns} data={tableData} type={Page.CLIENTS}
+                           filterByColumn={'clientid'} isDescending={false} />
                 </div>
             </div>
         </>

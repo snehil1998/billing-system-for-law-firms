@@ -8,17 +8,20 @@ import PropTypes from "prop-types";
 import {getAttorneysData} from "../Redux/Attorneys/AttorneysSelectors";
 import {getClientsData} from "../Redux/Clients/ClientsSelectors";
 import './AddServicePricing.css';
+import {addMessage} from "../Redux/Message/MessageActions";
 
 const AddServicePricing = (props) => {
     const [selectedAttorney, setSelectedAttorney] = useState({});
     const [clientId, setClientId] = useState("");
     const [price, setPrice] = useState("");
     const [showAddService, setShowAddService] = useState(false);
-    const [message, setMessage] = useState("");
 
     let handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            if(clientId === "" || price === "" || selectedAttorney === {}) {
+                return props.addMessage('Please complete all the fields to add service pricing');
+            }
             const servicePricingList = [{clientId: clientId, price: parseInt(price)}]
             const selectedAttorneyArray = selectedAttorney.split(',');
             let res = await fetch("/attorneys=" + selectedAttorneyArray[0], {
@@ -37,15 +40,22 @@ const AddServicePricing = (props) => {
                 setSelectedAttorney({});
                 setClientId("");
                 setPrice("");
-                setMessage("Attorney was updated successfully!");
+                props.addMessage("Attorney was updated successfully!");
             } else {
-                setMessage("❗ Error occurred while updating data for attorney");
+                props.addMessage("❗ Error occurred while updating data for attorney");
             }
             props.requestAttorneys('');
         } catch (err) {
             console.log("Error updating data for attorney: ", err);
         }
     };
+
+    const handleClear = async (e) => {
+        e.preventDefault();
+        setSelectedAttorney({});
+        setClientId("");
+        setPrice("");
+    }
 
     const clientsOptions = props.clientsData.map(eachClient => {
         return { label: eachClient.clientName, value: eachClient.clientId }
@@ -83,7 +93,7 @@ const AddServicePricing = (props) => {
                     ADD SERVICE PRICING   {faCaretSquare()}
                 </span>
             </div>
-            {showAddService && <form id={'add-service-pricing-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit}>
+            {showAddService && <form id={'add-service-pricing-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit} onReset={handleClear}>
                 <div id="add-service-pricing-attorney-name-container" className={'dropdown-field-container'}>
                     <div id={'add-service-pricing-first-name-translation'} className={'dropdown-translation'}>
                         {'Attorney: '}
@@ -126,6 +136,9 @@ const AddServicePricing = (props) => {
                     <button type="submit" id="add-service-pricing-add-button" className={'dropdown-button'}>
                         ADD
                     </button>
+                    <button type="reset" id="add-service-pricing-clear-button" className={'dropdown-button'}>
+                        CLEAR
+                    </button>
                 </div>
             </form>}
         </div>
@@ -148,7 +161,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({
     requestAttorneys: (attorneyID) => {
         dispatch(requestAttorneys(attorneyID))
-    }
+    },
+    addMessage: (message) => {
+        dispatch(addMessage(message))
+    },
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddServicePricing)

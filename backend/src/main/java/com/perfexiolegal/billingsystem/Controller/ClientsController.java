@@ -73,8 +73,13 @@ public class ClientsController {
   public ResponseEntity<String> createNewCase(@RequestBody Clients client) {
     try {
       logger.info("Creating client with clientID: " + client.getClientId());
-      clientsService.postClients(client);
-      return new ResponseEntity<>("Client was created successfully.", HttpStatus.CREATED);
+      try {
+        clientsService.getClientById(client.getClientId()).isPresent();
+        return new ResponseEntity<>("Client with ID already exists.", HttpStatus.GONE);
+      } catch (Exception e) {
+        clientsService.postClients(client);
+        return new ResponseEntity<>("Client was created successfully.", HttpStatus.CREATED);
+      }
     } catch (ServiceException e) {
       return new ResponseEntity<>("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
     }

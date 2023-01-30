@@ -7,10 +7,13 @@ import {getCasesData} from "../../Redux/Cases/CasesSelectors";
 import {requestDisbursements} from "../../Redux/Disbursements/DisbursementsActions";
 import {getDisbursementsData, getDisbursementsIsLoading} from "../../Redux/Disbursements/DisbursementsSelectors";
 import AddDisbursement from "../../Components/AddDisbursement";
+import {clearMessage} from "../../Redux/Message/MessageActions";
+import {Page} from "../../Components/PagesEnum";
 
 const DisplayServices = (props) => {
     const dispatch = useDispatch();
     useEffect(() => {
+        dispatch(clearMessage());
         dispatch(requestDisbursements(''));
     }, [dispatch]);
 
@@ -87,7 +90,8 @@ const DisplayServices = (props) => {
             <div className={"display-disbursements-table-container"}>
                 <div id={'display-disbursements-table'} className={"table"}>
                     <AddDisbursement/>
-                    <Table columns={columns} data={tableData} type={'disbursements'} />
+                    <Table columns={columns} data={tableData} type={Page.DISBURSEMENTS}
+                           filterByColumn={'date'} isDescending={false} />
                 </div>
             </div>
         </>

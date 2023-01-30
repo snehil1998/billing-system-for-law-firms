@@ -1,3 +1,7 @@
+#add-client-clear-button {
+    margin-left: 1%;
+}
+
 @media only screen and (max-width: 600px) {
     #add-client-span-container {
         width: 103px;

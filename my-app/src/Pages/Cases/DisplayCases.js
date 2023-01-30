@@ -6,10 +6,14 @@ import {requestCases} from "../../Redux/Cases/CasesActions";
 import {getCasesData, getCasesIsLoading} from "../../Redux/Cases/CasesSelectors";
 import AddCase from "../../Components/AddCase";
 import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
+import {clearMessage} from "../../Redux/Message/MessageActions";
+import {Page} from "../../Components/PagesEnum";
+
 
 const DisplayCases = (props) => {
     const dispatch = useDispatch();
     useEffect(() => {
+        dispatch(clearMessage());
         dispatch(requestCases(''));
     }, [dispatch]);
 
@@ -78,7 +82,8 @@ const DisplayCases = (props) => {
             <div className={"display-cases-table-container"}>
                 <div id={'display-cases-table'} className={"table"}>
                     <AddCase/>
-                    <Table columns={columns} data={tableData} type={'cases'} />
+                    <Table columns={columns} data={tableData} type={Page.CASES}
+                           filterByColumn={'caseid'} isDescending={false} />
                 </div>
             </div>
         </>

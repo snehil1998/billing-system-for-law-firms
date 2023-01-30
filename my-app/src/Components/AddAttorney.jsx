@@ -7,6 +7,7 @@ import {requestAttorneys} from "../Redux/Attorneys/AttorneysActions";
 import PropTypes from "prop-types";
 import {getClientsData} from "../Redux/Clients/ClientsSelectors";
 import './AddAttorney.css';
+import {addMessage} from "../Redux/Message/MessageActions";
 
 const AddAttorney = (props) => {
     const [attorneyID, setAttorneyID] = useState("");
@@ -16,7 +17,6 @@ const AddAttorney = (props) => {
     const [priceList, setPriceList] = useState({});
     const [showAddService, setShowAddService] = useState(false);
     const [numberOfServicePricing, setNumberOfServicePricing] = useState("0");
-    const [message, setMessage] = useState("");
 
     let handleSubmit = async (e) => {
         e.preventDefault();
@@ -25,6 +25,9 @@ const AddAttorney = (props) => {
             Object.keys(clientIdList).forEach( index => {
                 servicePricingList.push({clientId: clientIdList[index], price: parseInt(priceList[index])})
             })
+            if(attorneyID === "" || firstName === "" || lastName === "" || servicePricingList.length === 0) {
+                return props.addMessage('Please complete all fields to add an attorney.')
+            }
             let res = await fetch("/attorneys", {
                 method: "POST",
                 headers: {
@@ -45,15 +48,27 @@ const AddAttorney = (props) => {
                 setNumberOfServicePricing("0");
                 setClientIdList({});
                 setPriceList({});
-                setMessage("Attorney was created successfully!");
+                props.addMessage('Attorney was created successfully!')
+            } else if(res.status === 410) {
+                props.addMessage(`Please use a different attorney ID. ${attorneyID} already exists.`);
             } else {
-                setMessage("❗ Error occurred while adding data into attorneys");
+                props.addMessage("❗ Error occurred while adding data into attorneys");
             }
             props.requestAttorneys('');
         } catch (err) {
             console.log("Error posting data into attorneys: ", err);
         }
     };
+
+    const handleClear = async (e) => {
+        e.preventDefault();
+        setAttorneyID("");
+        setFirstName("");
+        setLastName("");
+        setNumberOfServicePricing("0");
+        setClientIdList({});
+        setPriceList({});
+    }
 
     const clientsOptions = props.clientsData.map(eachClient => {
         return { label: eachClient.clientName, value: eachClient.clientId }
@@ -96,7 +111,7 @@ const AddAttorney = (props) => {
                     ADD ATTORNEY   {faCaretSquare()}
                 </span>
             </div>
-            {showAddService && <form id={'add-attorney-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit}>
+            {showAddService && <form id={'add-attorney-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit} onReset={handleClear}>
                 <div id="add-attorney-attorney-id-container" className={'dropdown-field-container'}>
                     <div id={'add-attorney-attorney-id-translation'} className={'dropdown-translation'}>
                         {'Attorney ID: '}
@@ -176,9 +191,12 @@ const AddAttorney = (props) => {
                             </div>)
                     })}
                 </div>
-                <div id={'add-attorney-add-button-container'} className={'dropdown-button-container'}>
+                <div id={'add-attorney-button-container'} className={'dropdown-button-container'}>
                     <button type="submit" id="add-attorney-add-button" className={'dropdown-button'}>
                         ADD
+                    </button>
+                    <button type="reset" id="add-attorney-clear-button" className={'dropdown-button'}>
+                        CLEAR
                     </button>
                 </div>
             </form>}
@@ -198,6 +216,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     requestAttorneys: (attorneyID) => {
         dispatch(requestAttorneys(attorneyID))
+    },
+    addMessage: (message) => {
+        dispatch(addMessage(message))
     },
 })
 

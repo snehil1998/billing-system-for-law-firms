@@ -11,6 +11,7 @@ import {getClientsData} from "../Redux/Clients/ClientsSelectors";
 import {getCasesData} from "../Redux/Cases/CasesSelectors";
 import {getAttorneysData} from "../Redux/Attorneys/AttorneysSelectors";
 import './AddService.css';
+import {addMessage, clearMessage} from "../Redux/Message/MessageActions";
 
 const AddService = (props) => {
     const [caseID, setCaseID] = useState("");
@@ -19,7 +20,6 @@ const AddService = (props) => {
     const [date, setDate] = useState("");
     const [selectedDate, setSelectedDate] = useState(null);
     const [minutes, setMinutes] = useState({});
-    const [message, setMessage] = useState("");
     const [selectedAttorneys, setSelectedAttorneys] = useState({});
     const [showAddService, setShowAddService] = useState(false);
     const [numberOfAttorneys, setNumberOfAttorneys] = useState("0");
@@ -30,6 +30,9 @@ const AddService = (props) => {
         e.preventDefault();
         if(shouldPost){
             try {
+                if(selectedAttorneys === {} || caseID === '' || service === '' || date === 'undefined-undefined-undefined') {
+                    return props.addMessage('❗ Please complete all fields to add a service')
+                }
                 let attorneysList = []
                 Object.keys(selectedAttorneys).forEach( index => {
                     attorneysList.push({id: selectedAttorneys[index], minutes: parseInt(minutes[index])})
@@ -57,9 +60,9 @@ const AddService = (props) => {
                     setMinutes({});
                     setSelectedAttorneys({});
                     setNumberOfAttorneys("0");
-                    setMessage("Service was created successfully!");
+                    props.addMessage("Service was created successfully!");
                 } else {
-                    setMessage("❗ Error occurred while adding data into services");
+                    props.addMessage("❗ Error occurred while adding data into services");
                 }
                 props.requestServices('');
             } catch (err) {
@@ -67,6 +70,18 @@ const AddService = (props) => {
             }
         }
     };
+
+    const handleClear = async (e) => {
+        e.preventDefault();
+        setCaseID("");
+        setClientID("");
+        setService("");
+        setDate("");
+        setSelectedDate(null);
+        setMinutes({});
+        setSelectedAttorneys({});
+        setNumberOfAttorneys("0");
+    }
 
     useEffect(() => {
         setDate(selectedDate?.year+'-'+
@@ -76,7 +91,7 @@ const AddService = (props) => {
 
     useEffect(() => {
         setClientID(props.casesData.find(data => data.caseId === caseID)?.clientId)
-        setCurrencyCode(props.clientsData.find(data => data.clientId === clientID)?.currencyCode);
+        setCurrencyCode(clientID === '' ? '' : props.clientsData.find(data => data.clientId === clientID)?.currencyCode);
     }, [caseID, clientID, props.casesData, props.clientsData])
 
     const caseOptions = props.casesData?.map(eachCase => {
@@ -132,10 +147,10 @@ const AddService = (props) => {
         })
         if(!checkValidation){
             setShouldPost(false)
-            setMessage("❗ Please make sure you enter valid minutes for attorneys. They should be a multiple of 6.");
+            props.addMessage("❗ Please make sure you enter valid minutes for attorneys. They should be a multiple of 6.");
         } else {
             setShouldPost(true)
-            setMessage("");
+            props.clearMessage();
         }
     }
 
@@ -144,7 +159,7 @@ const AddService = (props) => {
     }
 
     const getClientNameForSelectedCase = () => {
-        return props.clientsData.find(data => data.clientId === props.casesData
+        return caseID === '' ? '' : props.clientsData.find(data => data.clientId === props.casesData
             .find(data => data.caseId === caseID)?.clientId)?.clientName
     }
 
@@ -155,7 +170,7 @@ const AddService = (props) => {
                     ADD A SERVICE   {faCaretSquare()}
                 </span>
             </div>
-            {showAddService && <form id={'add-service-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit}>
+            {showAddService && <form id={'add-service-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit} onReset={handleClear}>
                     <div id="add-service-case-name-container" className={'dropdown-field-container'}>
                         <div id={'add-service-case-name-translation'} className={'dropdown-translation'}>
                             {'Case: '}
@@ -266,9 +281,12 @@ const AddService = (props) => {
                             </div>)
                         })}
                     </div>
-                <div id="add-service-add-button-container" className={'dropdown-button-container'}>
+                <div id="add-service-button-container" className={'dropdown-button-container'}>
                     <button type="submit" id={'add-service-add-button'} className={'dropdown-button'}>
                         ADD
+                    </button>
+                    <button type="reset" id={'add-service-clear-button'} className={'dropdown-button'}>
+                        CLEAR
                     </button>
                 </div>
             </form>}
@@ -294,7 +312,13 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({
     requestServices: (clientID) => {
         dispatch(requestServices(clientID));
-    }
+    },
+    addMessage: (message) => {
+        dispatch(addMessage(message));
+    },
+    clearMessage: () => {
+        dispatch(clearMessage());
+    },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddService)

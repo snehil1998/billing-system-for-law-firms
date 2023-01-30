@@ -4,6 +4,7 @@ import ClientsReducer from "./Clients/ClientsReducer";
 import CasesReducer from "./Cases/CasesReducer";
 import AttorneysReducer from "./Attorneys/AttorneysReducer";
 import DisbursementsReducer from "./Disbursements/DisbursementsReducer";
+import MessageReducer from "./Message/MessageReducer";
 
 
 const AppReducer = combineReducers({
@@ -12,6 +13,7 @@ const AppReducer = combineReducers({
     cases: CasesReducer,
     attorneys: AttorneysReducer,
     disbursements: DisbursementsReducer,
+    message: MessageReducer,
 })
 
 export default AppReducer;

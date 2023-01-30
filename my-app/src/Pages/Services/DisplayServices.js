@@ -8,10 +8,13 @@ import PropTypes from 'prop-types';
 import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
 import {getCasesData} from "../../Redux/Cases/CasesSelectors";
 import {getAttorneysData} from "../../Redux/Attorneys/AttorneysSelectors";
+import {clearMessage} from "../../Redux/Message/MessageActions";
+import {Page} from "../../Components/PagesEnum";
 
 const DisplayServices = (props) => {
     const dispatch = useDispatch();
     useEffect(() => {
+        dispatch(clearMessage());
         dispatch(requestServices(''));
     }, [dispatch]);
 
@@ -176,7 +179,8 @@ const DisplayServices = (props) => {
             <div className={"display-services-table-container"}>
                 <div id={'display-services-table'} className={"table"}>
                     <AddService/>
-                    <Table columns={columns} data={tableData} type={'services'} />
+                    <Table columns={columns} data={tableData} type={Page.SERVICES}
+                           filterByColumn={'date'} isDescending={false} />
                 </div>
             </div>
         </>

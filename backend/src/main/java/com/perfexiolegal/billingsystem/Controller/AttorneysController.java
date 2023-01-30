@@ -77,8 +77,13 @@ public class AttorneysController {
   public ResponseEntity<String> createNewAttorney(@RequestBody Attorneys attorney) {
     try {
       logger.info("Creating attorney with attorneyID: " + attorney.getAttorneyId());
-      attorneysService.postAttorneys(attorney);
-      return new ResponseEntity<>("Attorney was created successfully.", HttpStatus.CREATED);
+      try{
+        attorneysService.getAttorneyById(attorney.getAttorneyId()).isPresent();
+        return new ResponseEntity<>("Attorney with ID already exists.", HttpStatus.GONE);
+      } catch (Exception e) {
+        attorneysService.postAttorneys(attorney);
+        return new ResponseEntity<>("Attorney was created successfully.", HttpStatus.CREATED);
+      }
     } catch (ServiceException e) {
       return new ResponseEntity<>("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
     }

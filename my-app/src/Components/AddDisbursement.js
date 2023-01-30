@@ -11,6 +11,7 @@ import {getCasesData} from "../Redux/Cases/CasesSelectors";
 import {getAttorneysData} from "../Redux/Attorneys/AttorneysSelectors";
 import {requestDisbursements} from "../Redux/Disbursements/DisbursementsActions";
 import './AddDisbursement.css';
+import {addMessage} from "../Redux/Message/MessageActions";
 
 const AddDisbursement = (props) => {
     const [caseID, setCaseID] = useState("");
@@ -22,51 +23,64 @@ const AddDisbursement = (props) => {
     const [inrAmount, setInrAmount] = useState("0");
     const [conversionAmount, setConversionAmount] = useState(0);
     const [selectedDate, setSelectedDate] = useState(null);
-    const [message, setMessage] = useState("");
     const [showAddDisbursement, setShowAddDisbursement] = useState(false);
-    const [shouldPost, setShouldPost] = useState(true);
 
     let handleSubmit = async (e) => {
         e.preventDefault();
-        if (shouldPost) {
-            try {
-                let res = await fetch("/disbursements", {
-                    method: "POST",
-                    headers: {
-                        'Accept': 'application/json, text/plain, */*',
-                        'Content-Type': 'application/json; charset=utf-8'
-                    },
-                    body: JSON.stringify({
-                        caseId: caseID,
-                        clientId: clientID,
-                        disbursement: disbursement,
-                        date: date,
-                        currencyCode: currencyCode,
-                        conversionRate: conversionRate,
-                        inrAmount: parseFloat(inrAmount),
-                        conversionAmount: conversionAmount,
-                    }),
-                });
-                if (res.status === 200 || res.status === 201) {
-                    setCaseID("");
-                    setClientID("");
-                    setDisbursement("");
-                    setDate("");
-                    setSelectedDate(null);
-                    setCurrencyCode("");
-                    setConversionRate(0);
-                    setInrAmount("0");
-                    setConversionAmount(0);
-                    setMessage("Disbursement was created successfully!");
-                } else {
-                    setMessage("❗ Error occurred while adding data into disbursements");
-                }
-                props.requestDisbursements('');
-            } catch (err) {
-                console.log("Error posting data into services: ", err);
+        try {
+            if(caseID === '' || disbursement === '' || date === 'undefined-undefined-undefined' || inrAmount === '0') {
+                return props.addMessage('❗ Please complete all fields to add a disbursement.')
             }
+            let res = await fetch("/disbursements", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json; charset=utf-8'
+                },
+                body: JSON.stringify({
+                    caseId: caseID,
+                    clientId: clientID,
+                    disbursement: disbursement,
+                    date: date,
+                    currencyCode: currencyCode,
+                    conversionRate: conversionRate,
+                    inrAmount: parseFloat(inrAmount),
+                    conversionAmount: conversionAmount,
+                }),
+            });
+            if (res.status === 200 || res.status === 201) {
+                setCaseID("");
+                setClientID("");
+                setDisbursement("");
+                setDate("");
+                setSelectedDate(null);
+                setCurrencyCode("");
+                setConversionRate(0);
+                setInrAmount("0");
+                setConversionAmount(0);
+                props.addMessage("Disbursement was created successfully!");
+            } else {
+                props.addMessage("❗ Error occurred while adding data into disbursements");
+            }
+            props.requestDisbursements('');
+        } catch (err) {
+            props.addMessage("❗ Error occurred while adding data into disbursements");
+            console.log("Error posting data into services: ", err);
         }
     };
+
+    const handleClear = async (e) => {
+        e.preventDefault();
+        setCaseID("");
+        setClientID("");
+        setDisbursement("");
+        setDate("");
+        setSelectedDate(null);
+        setCurrencyCode("");
+        setConversionRate(0);
+        setInrAmount("0");
+        setConversionAmount(0);
+    }
 
     useEffect(() => {
         setDate(selectedDate?.year + '-' +
@@ -105,7 +119,10 @@ const AddDisbursement = (props) => {
                         setConversionRate(json['rates']['INR'].toFixed(2));
                         const amount = (parseFloat(inrAmount) / conversionRate);
                         setConversionAmount(amount.toFixed(2));
-                    }).catch(error => console.log("error fetching data from currency api: " + error))
+                    }).catch(error => {
+                        props.addMessage("❗ Error occurred while fetching data from currency api");
+                        console.log("error fetching data from currency api: " + error);
+                    })
             }
         }
         fetchData();
@@ -117,7 +134,7 @@ const AddDisbursement = (props) => {
     }, [caseID, clientID, props.casesData, props.clientsData])
 
     const getClientNameForSelectedCase = () => {
-        return props.clientsData.find(data => data.clientId === props.casesData
+        return caseID === '' ? '' : props.clientsData.find(data => data.clientId === props.casesData
             .find(data => data.caseId === caseID)?.clientId)?.clientName
     }
 
@@ -128,7 +145,7 @@ const AddDisbursement = (props) => {
                     ADD A DISBURSEMENT {faCaretSquare()}
                 </span>
             </div>
-            {showAddDisbursement && <form id={'add-disbursement-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit}>
+            {showAddDisbursement && <form id={'add-disbursement-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit} onReset={handleClear}>
                 <div id="add-disbursement-case-name-container" className={'dropdown-field-container'}>
                     <div id={'add-disbursement-case-name-translation'} className={'dropdown-translation'}>
                         {'Case: '}
@@ -227,9 +244,12 @@ const AddDisbursement = (props) => {
                         disabled={true}
                     />
                 </div>
-                <div id={'add-disbursement-add-button-container'} className={'dropdown-button-container'}>
+                <div id={'add-disbursement-button-container'} className={'dropdown-button-container'}>
                     <button type="submit" id="add-disbursement-add-button" className={'dropdown-button'}>
                         ADD
+                    </button>
+                    <button type="reset" id="add-disbursement-clear-button" className={'dropdown-button'}>
+                        CLEAR
                     </button>
                 </div>
             </form>}
@@ -255,6 +275,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({
     requestDisbursements: (clientID) => {
         dispatch(requestDisbursements(clientID));
+    },
+    addMessage: (message) => {
+        dispatch(addMessage(message));
     }
 });
 

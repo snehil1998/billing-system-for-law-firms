@@ -27,6 +27,9 @@ import {
 import {getFromSearchDateForServices, getToSearchDateForServices} from "../Redux/Services/ServicesSelectors";
 import {getFromSearchDateForDisbursements, getToSearchDateForDisbursements} from "../Redux/Disbursements/DisbursementsSelectors";
 import './Table.css';
+import {addMessage} from "../Redux/Message/MessageActions";
+import {Page} from "./PagesEnum";
+
 function Table(props) {
 
     const filterTypes = useMemo(
@@ -72,7 +75,15 @@ function Table(props) {
             filterTypes,
             getSubRows: (row) => row.subRows,
             globalFilter: (rows, columnIds, filterValue) =>
-                defaultGlobalFilter(rows, columnIds, filterValue, filterOptions)
+                defaultGlobalFilter(rows, columnIds, filterValue, filterOptions),
+            initialState: {
+                sortBy: [
+                    {
+                        id: props.filterByColumn,
+                        desc: props.isDescending,
+                    }
+                ]
+            }
         },
         useFilters,
         useGlobalFilter,
@@ -82,51 +93,49 @@ function Table(props) {
 
     const handleDelete = (rows) => {
         let id = '';
-        if(props.type === 'services'){
+        if(props.type === Page.SERVICES){
             id = rows.serviceid;
-        } else if(props.type === 'clients'){
+        } else if(props.type === Page.CLIENTS){
             id = rows.clientid;
-        } else if(props.type === 'attorneys'){
+        } else if(props.type === Page.ATTORNEYS){
             id = rows.attorneyid;
-        } else if(props.type === 'cases'){
+        } else if(props.type === Page.CASES){
             id = rows.caseid;
-        } else if(props.type === 'disbursements'){
+        } else if(props.type === Page.DISBURSEMENTS){
             id = rows.disbursementid;
         }
         fetch("/" + props.type + "=" + id, { method: 'DELETE' })
                 .then(async response => {
-                    if (props.type === 'services') {
+                    if (props.type === Page.SERVICES) {
                         props.requestServices('');
                     }
-                    if (props.type === 'clients') {
+                    if (props.type === Page.CLIENTS) {
                         props.requestClients('');
                     }
-                    if (props.type === 'attorneys') {
+                    if (props.type === Page.ATTORNEYS) {
                         props.requestAttorneys('');
                     }
-                    if (props.type === 'cases') {
+                    if (props.type === Page.CASES) {
                         props.requestCases('');
                     }
-                    if (props.type === 'disbursements') {
+                    if (props.type === Page.DISBURSEMENTS) {
                         props.requestDisbursements('');
                     }
-                    setTimeout(() => alert("Delete successful"), 1000);
-                    const data = await response.json();
+                    props.addMessage("Row was deleted successfully");
 
                     if (!response.ok) {
-                        const error = (data && data.message) || response.status;
-                        return Promise.reject(error);
+                        return props.addMessage("There was a problem deleting the row");
                     }
-                }).catch(() => setTimeout(() => alert("Delete unsuccessful"), 1000))
+                }).catch(() => props.addMessage("There was a problem deleting the row"))
     }
 
     return (
         <>
             <div className={'table-container'} colSpan={visibleColumns.length}>
-                {props.type === 'services'
+                {props.type === Page.SERVICES
                 && <Filters rows={rows} requestData={requestServices} addFromSearchDate={addFromSearchDateServices} addToSearchDate={addToSearchDateServices}
                 fromDate={props.fromDateServices} toDate={props.toDateServices} type={props.type}/>}
-                {props.type === 'disbursements'
+                {props.type === Page.DISBURSEMENTS
                 && <Filters rows={rows} requestData={requestDisbursements} addFromSearchDate={addFromSearchDateDisbursements} addToSearchDate={addToSearchDateDisbursements}
                             fromDate={props.fromDateDisbursements} toDate={props.toDateDisbursements} type={props.type}/>}
                 <GlobalFilter
@@ -142,7 +151,7 @@ function Table(props) {
                             <TableCell className={"header-columns"}
                                        {...column.getHeaderProps(column.getSortByToggleProps())}>
                                 {column.render("Header")}
-                                <span className={'header-columns-span'}>{column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}</span>
+                                <span className={'header-columns-span'}>{column.isSorted ? column.isSortedDesc ? " 🔽" : "" : ""}</span>
                             </TableCell>
                         ))}
                         <TableCell/>
@@ -171,6 +180,8 @@ Table.propTypes = {
     columns: PropTypes.number.isRequired,
     data: PropTypes.array.isRequired,
     type: PropTypes.string.isRequired,
+    filterByColumn: PropTypes.string.isRequired,
+    isDescending: PropTypes.bool.isRequired,
     fromDateServices: PropTypes.shape({
         day: PropTypes.number.isRequired,
         month: PropTypes.number.isRequired,
@@ -215,6 +226,9 @@ const mapDispatchToProps = dispatch => ({
     },
     requestDisbursements: (disbusementID) => {
         dispatch(requestDisbursements(disbusementID))
+    },
+    addMessage: (message) => {
+        dispatch(addMessage(message))
     }
 })
 

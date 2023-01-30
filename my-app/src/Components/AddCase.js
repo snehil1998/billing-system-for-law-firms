@@ -7,16 +7,19 @@ import {requestCases} from "../Redux/Cases/CasesActions";
 import PropTypes from "prop-types";
 import {getClientsData} from "../Redux/Clients/ClientsSelectors";
 import './AddCase.css';
+import {addMessage} from "../Redux/Message/MessageActions";
 
 const AddCase = (props) => {
     const [caseID, setCaseID] = useState("");
     const [caseName, setCaseName] = useState("");
     const [showAddService, setShowAddService] = useState(false);
-    const [message, setMessage] = useState("");
     const [clientId, setClientId] = useState("");
 
     let handleSubmit = async (e) => {
         e.preventDefault();
+        if(caseID === '' || caseName === '' || clientId === '') {
+            return props.addMessage('Please enter all fields to add a case.')
+        }
         try {
             let res = await fetch("/cases", {
                 method: "POST",
@@ -38,15 +41,24 @@ const AddCase = (props) => {
                 setCaseID("");
                 setCaseName("");
                 setClientId("");
-                setMessage("Case was created successfully!");
+                props.addMessage("Case was created successfully!");
+            } else if(res.status === 410) {
+                props.addMessage(`Please use a different case ID. ${caseID} already exists.`);
             } else {
-                setMessage("❗ Error occurred while adding data into cases");
+                props.addMessage("❗ Error occurred while adding data into cases.");
             }
             props.requestCases('');
         } catch (err) {
             console.log("Error posting data into cases: ", err);
         }
     };
+
+    const handleClear = async (e) => {
+        e.preventDefault();
+        setCaseID("");
+        setCaseName("");
+        setClientId("");
+    }
 
     const handleAddService = () => {
         if (showAddService) {
@@ -71,7 +83,7 @@ const AddCase = (props) => {
                     ADD A CASE   {faCaretSquare()}
                 </span>
             </div>
-            {showAddService && <form onSubmit={handleSubmit} id={'add-case-form-container'} className={'dropdown-form-container'}>
+            {showAddService && <form onSubmit={handleSubmit} onReset={handleClear} id={'add-case-form-container'} className={'dropdown-form-container'}>
                     <div id="add-case-case-id-container" className={'dropdown-field-container'}>
                         <div id={'add-case-case-id-translation'} className={'dropdown-translation'}>
                             {'Case ID: '}
@@ -119,13 +131,16 @@ const AddCase = (props) => {
                             id={'add-case-currency-code-input-field'}
                             className={'dropdown-input-field'}
                             type="text"
-                            value={props.clientsData.find(data => data.clientId === clientId)?.currencyCode}
+                            value={clientId === '' ? '' : props.clientsData.find(data => data.clientId === clientId)?.currencyCode}
                             disabled={true}
                         />
                     </div>
                 <div id="add-case-add-button-container" className={'dropdown-button-container'}>
                     <button type="submit" id="add-case-add-button" className={'dropdown-button'}>
                         ADD
+                    </button>
+                    <button type="reset" id="add-case-clear-button" className={'dropdown-button'}>
+                        CLEAR
                     </button>
                 </div>
             </form>}
@@ -145,7 +160,10 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     requestCases: (caseID) => {
         dispatch(requestCases(caseID))
-    }
+    },
+    addMessage: (message) => {
+        dispatch(addMessage(message))
+    },
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddCase)

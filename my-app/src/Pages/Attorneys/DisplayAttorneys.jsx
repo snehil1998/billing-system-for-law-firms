@@ -7,10 +7,13 @@ import {getAttorneysData, getAttorneysIsLoading} from "../../Redux/Attorneys/Att
 import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
 import AddAttorney from "../../Components/AddAttorney";
 import AddServicePricing from "../../Components/AddServicePricing";
+import {clearMessage} from "../../Redux/Message/MessageActions";
+import {Page} from "../../Components/PagesEnum";
 
 const DisplayAttorneys = (props) => {
     const dispatch = useDispatch();
     useEffect(() => {
+        dispatch(clearMessage());
         dispatch(requestAttorneys(''));
     }, [dispatch]);
 
@@ -91,7 +94,7 @@ const DisplayAttorneys = (props) => {
         attorney.servicePricing.forEach(pricing => {
             clientName.push(props.clientsData.find(client => client.clientId ===
                 pricing.clientId)?.clientName);
-            price.push(pricing.price);
+            price.push(pricing.price.toFixed(2));
             currencyCode.push(props.clientsData.find(client => client.clientId ===
                 pricing.clientId)?.currencyCode)
         })
@@ -124,7 +127,8 @@ const DisplayAttorneys = (props) => {
                 <div id={"display-attorneys-table"} className={"table"}>
                     <AddAttorney/>
                     <AddServicePricing/>
-                    <Table columns={columns} data={tableData} type={'attorneys'} />
+                    <Table columns={columns} data={tableData} type={Page.ATTORNEYS}
+                           filterByColumn={'attorneyid'} isDescending={false} />
                 </div>
             </div>
         </>
