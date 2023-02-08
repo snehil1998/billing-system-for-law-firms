@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react"
+import React, {useState} from "react"
 import {connect} from "react-redux";
 import  './MultiselectDropdown.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,21 +9,21 @@ import {getAttorneysData} from "../Redux/Attorneys/AttorneysSelectors";
 import {getClientsData} from "../Redux/Clients/ClientsSelectors";
 import './AddServicePricing.css';
 import {addMessage} from "../Redux/Message/MessageActions";
+import './DeleteServicePricing.css';
 
-const AddServicePricing = (props) => {
-    const [selectedAttorney, setSelectedAttorney] = useState({});
+const DeleteServicePricing = (props) => {
+    const [selectedAttorney, setSelectedAttorney] = useState('');
     const [clientId, setClientId] = useState("");
-    const [price, setPrice] = useState("");
     const [showAddService, setShowAddService] = useState(false);
 
     let handleSubmit = async (e) => {
         e.preventDefault();
         window.scrollTo(0, 0);
         try {
-            if(clientId === "" || price === "" || selectedAttorney === {}) {
-                return props.addMessage('Please complete all the fields to add service pricing.');
+            if(clientId === "" || selectedAttorney === '') {
+                return props.addMessage('Please complete all the fields to delete service pricing.');
             }
-            const servicePricingList = [{clientId: clientId, price: parseInt(price)}]
+            const servicePricingList = [{clientId: clientId, price: -1}]
             const selectedAttorneyArray = selectedAttorney.split(',');
             let res = await fetch("/attorneys=" + selectedAttorneyArray[0], {
                 method: "PUT",
@@ -38,31 +38,27 @@ const AddServicePricing = (props) => {
                 }),
             });
             if (res.status === 200 || res.status === 201) {
-                setSelectedAttorney({});
+                setSelectedAttorney('');
                 setClientId("");
-                setPrice("");
-                props.addMessage("Service pricing was added successfully!");
-            } else if (res.status === 410) {
-                props.addMessage("Client already exists in service pricing for the attorney.");
+                props.addMessage("Service pricing was deleted successfully!");
             } else {
-                props.addMessage("❗ Error occurred while adding service pricing for attorney.");
+                props.addMessage("❗ Error occurred while deleting service pricing for attorney.");
             }
             props.requestAttorneys('');
         } catch (err) {
-            console.log("Error adding service pricing for attorney: ", err);
-            props.addMessage("❗ Error occurred while adding service pricing for attorney.");
+            props.addMessage("❗ Error occurred while deleting service pricing for attorney.");
+            console.log("Error deleting service pricing for attorney: ", err);
         }
     };
 
     const handleClear = async (e) => {
         e.preventDefault();
-        setSelectedAttorney({});
+        setSelectedAttorney('');
         setClientId("");
-        setPrice("");
     }
 
-    const clientsOptions = props.clientsData.map(eachClient => {
-        return { label: eachClient.clientName, value: eachClient.clientId }
+    const clientsOptions = props.attorneysData.find(attorney => attorney.attorneyId === selectedAttorney?.split(',')[0])?.servicePricing.map(pricing => {
+        return { label: props.clientsData.find(client => client.clientId === pricing.clientId)?.clientName, value: pricing.clientId }
     });
 
     const attorneysOptions = props.attorneysData.map(eachAttorney => {
@@ -91,19 +87,19 @@ const AddServicePricing = (props) => {
     }
 
     return (
-        <div id="add-service-pricing-container" className={'dropdown-components-container'}>
-            <div id="add-service-pricing-span-container" className={'dropdown-span-container'}>
-                <span id={'add-service-pricing-container-span'} className={'dropdown-container-span'} onClick={handleAddService}>
-                    ADD SERVICE PRICING   {faCaretSquare()}
+        <div id="delete-service-pricing-container" className={'dropdown-components-container'}>
+            <div id="delete-service-pricing-span-container" className={'dropdown-span-container'}>
+                <span id={'delete-service-pricing-container-span'} className={'dropdown-container-span'} onClick={handleAddService}>
+                    DELETE SERVICE PRICING   {faCaretSquare()}
                 </span>
             </div>
-            {showAddService && <form id={'add-service-pricing-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit} onReset={handleClear}>
-                <div id="add-service-pricing-attorney-name-container" className={'dropdown-field-container'}>
-                    <div id={'add-service-pricing-first-name-translation'} className={'dropdown-translation'}>
+            {showAddService && <form id={'delete-service-pricing-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit} onReset={handleClear}>
+                <div id="delete-service-pricing-attorney-name-container" className={'dropdown-field-container'}>
+                    <div id={'delete-service-pricing-first-name-translation'} className={'dropdown-translation'}>
                         {'Attorney: '}
                     </div>
-                    <select id={'add-service-pricing-first-name-select'} className={'dropdown-select'} value={selectedAttorney} onChange={handleChangeAttorneys}>
-                        <option key={"placeholder-selected-attorney"} value={{}} disabled={true}>
+                    <select id={'delete-service-pricing-first-name-select'} className={'dropdown-select'} value={selectedAttorney} onChange={handleChangeAttorneys}>
+                        <option key={"placeholder-selected-attorney"} value={''} disabled={true}>
                             Select an attorney
                         </option>
                         {attorneysOptions?.sort(
@@ -118,13 +114,13 @@ const AddServicePricing = (props) => {
                         ))}
                     </select>
                 </div>
-                <div id="add-service-pricing-service-pricing-container" className={'dropdown-field-container'}>
+                <div id="delete-service-pricing-service-pricing-container" className={'dropdown-field-container'}>
                     <div>
-                        <div id={'add-service-pricing-service-pricing-translation'} className={'dropdown-translation'}>
-                            {'Service Pricing: '}
+                        <div id={'delete-service-pricing-service-pricing-translation'} className={'dropdown-translation'}>
+                            {'Client: '}
                         </div>
-                        <select id={'add-service-pricing-service-pricing-select'} className={'dropdown-select'}
-                                key={"add-service-pricing-service-pricing-selector"} value={clientId} onChange={handleChangeClients}>
+                        <select id={'delete-service-pricing-service-pricing-select'} className={'dropdown-select'}
+                                key={"delete-service-pricing-service-pricing-selector"} value={clientId} onChange={handleChangeClients}>
                             <option key={"placeholder-client"} value={""}>
                                 Select a client
                             </option>
@@ -140,21 +136,12 @@ const AddServicePricing = (props) => {
                             ))}
                         </select>
                     </div>
-                    <input
-                        id={'add-service-pricing-service-pricing-price-input-field'}
-                        className={'dropdown-input-field'}
-                        key={"service-pricing-price-input-field"}
-                        type="number"
-                        value={price}
-                        placeholder="Price"
-                        onChange={(e) => setPrice(e.target.value)}
-                    />
                 </div>
-                <div id={'add-service-pricing-add-button-container'} className={'dropdown-button-container'}>
-                    <button type="submit" id="add-service-pricing-add-button" className={'dropdown-button'}>
-                        ADD
+                <div id={'delete-service-pricing-add-button-container'} className={'dropdown-button-container'}>
+                    <button type="submit" id="delete-service-pricing-add-button" className={'dropdown-button'}>
+                        DELETE
                     </button>
-                    <button type="reset" id="add-service-pricing-clear-button" className={'dropdown-button'}>
+                    <button type="reset" id="delete-service-pricing-clear-button" className={'dropdown-button'}>
                         CLEAR
                     </button>
                 </div>
@@ -163,7 +150,7 @@ const AddServicePricing = (props) => {
     );
 }
 
-AddServicePricing.propTypes = {
+DeleteServicePricing.propTypes = {
     attorneysData: PropTypes.array.isRequired,
     clientsData: PropTypes.array.isRequired,
     requestAttorneys: PropTypes.func.isRequired,
@@ -185,4 +172,4 @@ const mapDispatchToProps = dispatch => ({
     },
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddServicePricing)
+export default connect(mapStateToProps, mapDispatchToProps)(DeleteServicePricing)

@@ -9,6 +9,7 @@ import AddAttorney from "../../Components/AddAttorney";
 import AddServicePricing from "../../Components/AddServicePricing";
 import {clearMessage} from "../../Redux/Message/MessageActions";
 import {Page} from "../../Components/PagesEnum";
+import DeleteServicePricing from "../../Components/DeleteServicePricing";
 
 const DisplayAttorneys = (props) => {
     const dispatch = useDispatch();
@@ -127,6 +128,7 @@ const DisplayAttorneys = (props) => {
                 <div id={"display-attorneys-table"} className={"table"}>
                     <AddAttorney/>
                     <AddServicePricing/>
+                    <DeleteServicePricing/>
                     <Table columns={columns} data={tableData} type={Page.ATTORNEYS}
                            filterByColumn={'attorneyid'} isDescending={false} />
                 </div>

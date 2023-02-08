@@ -17,6 +17,7 @@ const AddCase = (props) => {
 
     let handleSubmit = async (e) => {
         e.preventDefault();
+        window.scrollTo(0, 0);
         if(caseID === '' || caseName === '' || clientId === '') {
             return props.addMessage('Please enter all fields to add a case.')
         }
@@ -50,6 +51,7 @@ const AddCase = (props) => {
             props.requestCases('');
         } catch (err) {
             console.log("Error posting data into cases: ", err);
+            props.addMessage("❗ Error occurred while adding data into cases.");
         }
     };
 
@@ -118,7 +120,14 @@ const AddCase = (props) => {
                             <option key={"placeholder-client"} value={""}>
                                 Select a client
                             </option>
-                            {clientsOptions.map((option) => (
+                            {clientsOptions?.sort(
+                                function(a, b){
+                                    let x = a.label.toLowerCase();
+                                    let y = b.label.toLowerCase();
+                                    if (x < y) {return -1;}
+                                    if (x > y) {return 1;}
+                                    return 0;
+                                }).map((option) => (
                                 <option key={option.value} value={option.value}>{option.label}</option>
                             ))}
                         </select>

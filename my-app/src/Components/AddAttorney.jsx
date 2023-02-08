@@ -20,6 +20,7 @@ const AddAttorney = (props) => {
 
     let handleSubmit = async (e) => {
         e.preventDefault();
+        window.scrollTo(0, 0);
         try {
             let servicePricingList = []
             Object.keys(clientIdList).forEach( index => {
@@ -48,14 +49,15 @@ const AddAttorney = (props) => {
                 setNumberOfServicePricing("0");
                 setClientIdList({});
                 setPriceList({});
-                props.addMessage('Attorney was created successfully!')
+                props.addMessage('Attorney was created successfully!');
             } else if(res.status === 410) {
                 props.addMessage(`Please use a different attorney ID. ${attorneyID} already exists.`);
             } else {
-                props.addMessage("❗ Error occurred while adding data into attorneys");
+                props.addMessage("❗ Error occurred while adding data into attorneys.");
             }
             props.requestAttorneys('');
         } catch (err) {
+            props.addMessage("❗ Error occurred while adding data into attorneys.");
             console.log("Error posting data into attorneys: ", err);
         }
     };
@@ -174,7 +176,14 @@ const AddAttorney = (props) => {
                                     <option key={"placeholder-client-"+ i} value={""}>
                                         Select a client
                                     </option>
-                                    {clientsOptions.map((option) => (
+                                    {clientsOptions?.sort(
+                                        function(a, b){
+                                            let x = a.label.toLowerCase();
+                                            let y = b.label.toLowerCase();
+                                            if (x < y) {return -1;}
+                                            if (x > y) {return 1;}
+                                            return 0;
+                                        }).map((option) => (
                                         <option key={option.value} value={option.value}>{option.label}</option>
                                     ))}
                                 </select>

@@ -27,6 +27,7 @@ const AddDisbursement = (props) => {
 
     let handleSubmit = async (e) => {
         e.preventDefault();
+        window.scrollTo(0, 0);
         try {
             if(caseID === '' || disbursement === '' || date === 'undefined-undefined-undefined' || inrAmount === '0') {
                 return props.addMessage('❗ Please complete all fields to add a disbursement.')
@@ -60,11 +61,11 @@ const AddDisbursement = (props) => {
                 setConversionAmount(0);
                 props.addMessage("Disbursement was created successfully!");
             } else {
-                props.addMessage("❗ Error occurred while adding data into disbursements");
+                props.addMessage("❗ Error occurred while adding data into disbursements.");
             }
             props.requestDisbursements('');
         } catch (err) {
-            props.addMessage("❗ Error occurred while adding data into disbursements");
+            props.addMessage("❗ Error occurred while adding data into disbursements.");
             console.log("Error posting data into services: ", err);
         }
     };
@@ -120,7 +121,7 @@ const AddDisbursement = (props) => {
                         const amount = (parseFloat(inrAmount) / conversionRate);
                         setConversionAmount(amount.toFixed(2));
                     }).catch(error => {
-                        props.addMessage("❗ Error occurred while fetching data from currency api");
+                        props.addMessage("❗ Error occurred while fetching data from currency api.");
                         console.log("error fetching data from currency api: " + error);
                     })
             }
@@ -154,7 +155,14 @@ const AddDisbursement = (props) => {
                         <option key={"placeholder-case"} value={""} disabled={true}>
                             Select a case
                         </option>
-                        {caseOptions.map((option) => (
+                        {caseOptions?.sort(
+                            function(a, b){
+                                let x = a.label.toLowerCase();
+                                let y = b.label.toLowerCase();
+                                if (x < y) {return -1;}
+                                if (x > y) {return 1;}
+                                return 0;
+                            }).map((option) => (
                             <option key={option.value} value={option.value}>{option.label}</option>
                         ))}
                     </select>
@@ -220,7 +228,7 @@ const AddDisbursement = (props) => {
                         disabled={true}
                     />
                 </div>
-                <div id="add-disbursement-inr-amount-container" className={'dropdown-field-container'} style={{marginLeft: '1%', paddingTop: '3%'}}>
+                <div id="add-disbursement-inr-amount-container" className={'dropdown-field-container'}>
                     <div id={'add-disbursement-inr-amount-translation'} className={'dropdown-translation'}>
                         {'INR Amount: '}
                     </div>

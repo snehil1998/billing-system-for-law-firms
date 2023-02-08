@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Controller
 public class AttorneysController {
@@ -97,7 +98,18 @@ public class AttorneysController {
       Optional<Attorneys> findAttorney = attorneysService.getAttorneyById(attorneyID);
       if (findAttorney.isPresent()) {
         logger.info("update attorney with ID: " + attorneyID);
-        Attorneys updatedAttorney = attorneysTransformer.update(attorneyJSONWithoutID, attorneyID);
+        Attorneys updatedAttorney;
+        if (attorneyJSONWithoutID.getServicePricing().get(0).getPrice() < 0) {
+          updatedAttorney = attorneysTransformer.deleteServicePrice(findAttorney.get(),
+              attorneyJSONWithoutID.getServicePricing().get(0).getClientId());
+        } else {
+          String clientId = attorneyJSONWithoutID.getServicePricing().get(0).getClientId();
+          if(findAttorney.get().getServicePricing().stream()
+              .anyMatch(pricing -> pricing.getClientId().equals(clientId))) {
+            return new ResponseEntity<>("Client already exists in service pricing.", HttpStatus.GONE);
+          }
+          updatedAttorney = attorneysTransformer.update(attorneyJSONWithoutID, attorneyID);
+        }
         attorneysService.updateAttorney(updatedAttorney);
         return new ResponseEntity<>("Attorney was updated successfully.", HttpStatus.OK);
       } else{

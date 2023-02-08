@@ -7,6 +7,7 @@ import {requestClients} from "../Redux/Clients/ClientsActions";
 import PropTypes from "prop-types";
 import './AddClient.css';
 import {addMessage} from "../Redux/Message/MessageActions";
+import currencyCodeData from 'currency-codes/data';
 
 const AddClient = (props) => {
     const [clientID, setClientID] = useState("");
@@ -14,8 +15,13 @@ const AddClient = (props) => {
     const [currencyCode, setCurrencyCode] = useState("");
     const [showAddService, setShowAddService] = useState(false);
 
+    const currencyCodeOptions = currencyCodeData.map(currencyCode => {
+        return { label: currencyCode.currency + '- ' + currencyCode.code, value: currencyCode.code }
+    });
+
     let handleSubmit = async (e) => {
         e.preventDefault();
+        window.scrollTo(0, 0);
         try {
             if(clientID === '' || clientName === '' || currencyCode === '') {
                 return props.addMessage('Please complete all fields to add a client.')
@@ -48,6 +54,7 @@ const AddClient = (props) => {
             props.requestClients('');
         } catch (err) {
             console.log("Error posting data into clients: ", err);
+            props.addMessage("❗ Error occurred while adding data into clients.");
         }
     };
 
@@ -106,13 +113,30 @@ const AddClient = (props) => {
                         <div id={'add-client-currency-code-translation'} className={'dropdown-translation'}>
                             {'Currency Code: '}
                         </div>
-                        <input
-                            id={'add-client-currency-code-input-field'}
-                            className={'dropdown-input-field'}
-                            type="text"
-                            value={currencyCode}
-                            onChange={(e) => setCurrencyCode(e.target.value)}
-                        />
+                        {/*<input*/}
+                        {/*    id={'add-client-currency-code-input-field'}*/}
+                        {/*    className={'dropdown-input-field'}*/}
+                        {/*    type="text"*/}
+                        {/*    value={currencyCode}*/}
+                        {/*    onChange={(e) => setCurrencyCode(e.target.value)}*/}
+                        {/*/>*/}
+                        <select key={"currency-code-selector"} id={'add-client-currency-code-selector'} className={'dropdown-select'}
+                                value={currencyCode} onChange={(event) =>
+                            setCurrencyCode(event.target.value)}>
+                            <option key={"placeholder-currency-code"} value={""}>
+                                Select a currency code
+                            </option>
+                            {currencyCodeOptions?.sort(
+                                function(a, b){
+                                    let x = a.label.toLowerCase();
+                                    let y = b.label.toLowerCase();
+                                    if (x < y) {return -1;}
+                                    if (x > y) {return 1;}
+                                    return 0;
+                                }).map((option) => (
+                                <option key={option.value} value={option.value}>{option.label}</option>
+                            ))}
+                        </select>
                     </div>
                     <div id={'add-client-add-button-container'} className={'dropdown-button-container'}>
                         <button type="submit" id="add-client-add-button" className={'dropdown-button'}>

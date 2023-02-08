@@ -5,6 +5,8 @@ import PropTypes from "prop-types";
 export default function ExportServicesPDF(props) {
     let csvRows = [];
     let header = ['S.No.'];
+    const summaryHeader = [['Attorney', 'Rate per hour', 'Hours', 'Minutes', 'Amount']];
+    let attorneysMapArray = []
     props.rows.forEach((row, index) => {
         let csvRow = {}
         csvRow["Sno"] = index+1
@@ -29,6 +31,24 @@ export default function ExportServicesPDF(props) {
             if (index === 0) header.push('Amount')
         }
         if(row.canExpand){
+            const findAttorneyIndex = attorneysMapArray.findIndex(attorney => attorney.name === row.original?.subRows[0].attorneys);
+            if (findAttorneyIndex === -1) {
+                attorneysMapArray.push(
+                    {
+                        name: row.original?.subRows[0].attorneys,
+                        rate: row.original?.subRows[0].pricing,
+                        hours: parseFloat(row.original?.subRows[0].hours),
+                        minutes: parseFloat(row.original?.subRows[0].minutes),
+                        amount: parseFloat(row.original?.subRows[0].total)
+                    });
+            } else {
+                attorneysMapArray[findAttorneyIndex] = {
+                    ...attorneysMapArray[findAttorneyIndex],
+                    hours: attorneysMapArray[findAttorneyIndex].hours + parseFloat(row.original?.subRows[0].hours),
+                    minutes: attorneysMapArray[findAttorneyIndex].minutes + parseFloat(row.original?.subRows[0].minutes),
+                    amount: attorneysMapArray[findAttorneyIndex].amount + parseFloat(row.original?.subRows[0].total)
+                };
+            }
             if (props.filterCheckboxes.find(checkbox => checkbox === 'Attorneys Name')) {
                 csvRow["Attorneys"] = row.original?.subRows[0].attorneys
                 if (index === 0) header.push('Attorneys')
@@ -50,6 +70,25 @@ export default function ExportServicesPDF(props) {
                 if (index === 0) header.push('Total')
             }
         } else {
+            const findAttorneyIndex = attorneysMapArray.findIndex(attorney => attorney.name === row.original.attorneys);
+            if (findAttorneyIndex === -1) {
+                attorneysMapArray.push(
+                    {
+                        name: row.original.attorneys,
+                        rate: row.original.pricing,
+                        hours: parseFloat(row.original.hours),
+                        minutes: parseFloat(row.original.minutes),
+                        amount: parseFloat(row.original.total)
+                    });
+            } else {
+                attorneysMapArray[findAttorneyIndex] = {
+                    ...attorneysMapArray[findAttorneyIndex],
+                    hours: attorneysMapArray[findAttorneyIndex].hours + parseFloat(row.original.hours),
+                    minutes: attorneysMapArray[findAttorneyIndex].minutes + parseFloat(row.original.minutes),
+                    amount: attorneysMapArray[findAttorneyIndex].amount + parseFloat(row.original.total)
+                };
+            }
+
             if (props.filterCheckboxes.find(checkbox => checkbox === 'Attorneys Name')) {
                 csvRow["Attorneys"] = row.original.attorneys
                 if (index === 0) header.push('Attorneys')
@@ -87,6 +126,26 @@ export default function ExportServicesPDF(props) {
                 if (props.filterCheckboxes.find(checkbox => checkbox === 'Rate Per Hour')) csvRow["Pricing"] = subRow.pricing
                 if (props.filterCheckboxes.find(checkbox => checkbox === 'Total')) csvRow["Total"] = subRow.total
                 csvRows.push(csvRow)
+
+                const findAttorneyIndex = attorneysMapArray.findIndex(attorney => attorney.name === subRow.attorneys);
+                if (findAttorneyIndex === -1) {
+                    attorneysMapArray.push(
+                        {
+                            name: subRow.attorneys,
+                            rate: subRow.pricing,
+                            hours: parseFloat(subRow.hours),
+                            minutes: parseFloat(subRow.minutes),
+                            amount: parseFloat(subRow.total)
+                        });
+                } else {
+                    attorneysMapArray[findAttorneyIndex] = {
+                        ...attorneysMapArray[findAttorneyIndex],
+                        hours: attorneysMapArray[findAttorneyIndex].hours + parseFloat(subRow.hours),
+                        minutes: attorneysMapArray[findAttorneyIndex].minutes + parseFloat(subRow.minutes),
+                        amount: attorneysMapArray[findAttorneyIndex].amount + parseFloat(subRow.total)
+                    };
+                }
+
                 csvRow = {}
             }
         })
@@ -101,10 +160,7 @@ export default function ExportServicesPDF(props) {
     const marginLeft = 40;
     const doc = new jsPDF(orientation, unit, size);
 
-    doc.setFontSize(15);
-
-    const title = "Services Report";
-    const report = props.title;
+    let title = props.title;
     const client = "Client: " + props.client;
     const period = "Period: " + fromDate + " to " + toDate;
     const headers = [header];
@@ -126,17 +182,40 @@ export default function ExportServicesPDF(props) {
         data.push(eachRowData);
     });
 
+    const attorneysData = [];
+    attorneysMapArray.forEach(attorney => {
+        const eachAttorneysData = [];
+        eachAttorneysData.push(attorney.name);
+        eachAttorneysData.push(attorney.rate);
+        eachAttorneysData.push(attorney.hours);
+        eachAttorneysData.push(attorney.minutes);
+        eachAttorneysData.push(attorney.amount);
+        attorneysData.push(eachAttorneysData);
+    })
+
+    let lMargin=30; //left margin in pt
+    let rMargin=10; //right margin in pt
+    let pdfInMM=842;  // width of A4 in pt
+    title = doc.splitTextToSize(title, (pdfInMM-lMargin-rMargin));
+    doc.text(title, marginLeft, 50);
+    const clientMargin = 50 + doc.getTextDimensions(title).h + 10;
+    doc.text(client, marginLeft, clientMargin);
+    const periodMargin = clientMargin + doc.getTextDimensions(client).h + 10;
+    doc.text(period, marginLeft, periodMargin);
+
     let content = {
-        startY: 150,
+        startY: periodMargin + doc.getTextDimensions(period).h + 10,
         head: headers,
         body: data
     };
 
-    doc.text(title, marginLeft, 40);
-    doc.text(report, marginLeft, 70);
-    doc.text(client, marginLeft, 100);
-    doc.text(period, marginLeft, 130);
+    let attorneysContent = {
+        head: summaryHeader,
+        body: attorneysData
+    };
+
     doc.autoTable(content);
+    doc.autoTable(attorneysContent);
     doc.save("service-report.pdf")
     return {};
 }

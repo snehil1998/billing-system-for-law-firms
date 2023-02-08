@@ -81,6 +81,26 @@ function Filters(props) {
                       onChange={(e) => setTitle(e.target.value)}
                   />
               </div>
+              <div id={'filters-client-name-container'} className={'dropdown-field-container'}>
+                  <div id={'filters-client-translation'} className={'dropdown-translation'}>
+                      {'Client: '}
+                  </div>
+                  <select id={'filters-client-name-select'} className={'dropdown-select'} value={clientID} onChange={handleChangeClients}>
+                      <option key={"placeholder-client"} value={""} disabled={true}>
+                          Select a client
+                      </option>
+                      {clientsOptions?.sort(
+                          function(a, b){
+                              let x = a.label.toLowerCase();
+                              let y = b.label.toLowerCase();
+                              if (x < y) {return -1;}
+                              if (x > y) {return 1;}
+                              return 0;
+                          }).map((option) => (
+                          <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                  </select>
+              </div>
               <div id={'filters-date-container'} className={'dropdown-field-container'}>
                   <div id={'filters-from-date-container'} className={'from-date-container'}>
                       <div id={'filters-from-translation'} className={'dropdown-translation'}>
@@ -112,19 +132,6 @@ function Filters(props) {
                           className={'DatePicker__input'}
                       />
                   </div>
-              </div>
-              <div id={'filters-client-name-container'} className={'dropdown-field-container'}>
-                  <div id={'filters-client-translation'} className={'dropdown-translation'}>
-                      {'Client: '}
-                  </div>
-                  <select id={'filters-client-name-select'} className={'dropdown-select'} value={clientID} onChange={handleChangeClients}>
-                      <option key={"placeholder-client"} value={""} disabled={true}>
-                          Select a client
-                      </option>
-                      {clientsOptions.map((option) => (
-                          <option key={option.value} value={option.value}>{option.label}</option>
-                      ))}
-                  </select>
               </div>
               <div id={'filters-filter-checkboxes-container'} className={'dropdown-field-container'}>
                   {props.type === 'services' && <ServicesFilterCheckboxes />}

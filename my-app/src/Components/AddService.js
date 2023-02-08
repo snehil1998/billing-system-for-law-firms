@@ -28,10 +28,11 @@ const AddService = (props) => {
 
     let handleSubmit = async (e) => {
         e.preventDefault();
+        window.scrollTo(0, 0);
         if(shouldPost){
             try {
                 if(selectedAttorneys === {} || caseID === '' || service === '' || date === 'undefined-undefined-undefined') {
-                    return props.addMessage('❗ Please complete all fields to add a service')
+                    return props.addMessage('❗ Please complete all fields to add a service.')
                 }
                 let attorneysList = []
                 Object.keys(selectedAttorneys).forEach( index => {
@@ -62,11 +63,12 @@ const AddService = (props) => {
                     setNumberOfAttorneys("0");
                     props.addMessage("Service was created successfully!");
                 } else {
-                    props.addMessage("❗ Error occurred while adding data into services");
+                    props.addMessage("❗ Error occurred while adding data into services.");
                 }
                 props.requestServices('');
             } catch (err) {
                 console.log("Error posting data into services: ", err);
+                props.addMessage("❗ Error occurred while adding data into services.");
             }
         }
     };
@@ -179,7 +181,14 @@ const AddService = (props) => {
                             <option key={"placeholder-case"} value={""} disabled={true}>
                                 Select a case
                             </option>
-                            {caseOptions.map((option) => (
+                            {caseOptions?.sort(
+                                function(a, b){
+                                    let x = a.label.toLowerCase();
+                                    let y = b.label.toLowerCase();
+                                    if (x < y) {return -1;}
+                                    if (x > y) {return 1;}
+                                    return 0;
+                                }).map((option) => (
                                 <option key={option.value} value={option.value}>{option.label}</option>
                             ))}
                         </select>
@@ -263,7 +272,14 @@ const AddService = (props) => {
                                     <option key={"placeholder-attorneys-"+ i} value={""}>
                                         Select attorney
                                     </option>
-                                    {attorneysOptions.map((option) => (
+                                    {attorneysOptions?.sort(
+                                        function(a, b){
+                                            let x = a.label.toLowerCase();
+                                            let y = b.label.toLowerCase();
+                                            if (x < y) {return -1;}
+                                            if (x > y) {return 1;}
+                                            return 0;
+                                        }).map((option) => (
                                         <option key={option.value} value={option.value}>{option.label}</option>
                                     ))}
                                 </select>

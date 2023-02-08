@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class AttorneysTransformer {
@@ -29,6 +30,19 @@ public class AttorneysTransformer {
         attorney.getFirstName(),
         attorney.getLastName(),
         servicePricingList
+    );
+  }
+
+  public Attorneys deleteServicePrice(Attorneys attorney, String clientID) throws ServiceException {
+    List<ServicePricing> servicePricingList = attorney.getServicePricing();
+    List<ServicePricing> filteredServicePricingList = servicePricingList.stream()
+        .filter(pricing -> !pricing.getClientId().equals(clientID))
+        .collect(Collectors.toList());
+    return new Attorneys(
+        attorney.getAttorneyId(),
+        attorney.getFirstName(),
+        attorney.getLastName(),
+        filteredServicePricingList
     );
   }
 

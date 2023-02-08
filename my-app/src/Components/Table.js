@@ -5,7 +5,7 @@ import {
     requestServices
 } from "../Redux/Services/ServicesActions";
 import {connect} from "react-redux";
-import {useMemo} from "react";
+import React, {useMemo} from "react";
 import {DefaultColumnFilter} from "./DefaultColumnFilter";
 import {defaultGlobalFilter} from "./DefaultGlobalFilter";
 import {GlobalFilter} from "./GlobalFilter";
@@ -29,6 +29,10 @@ import {getFromSearchDateForDisbursements, getToSearchDateForDisbursements} from
 import './Table.css';
 import {addMessage} from "../Redux/Message/MessageActions";
 import {Page} from "./PagesEnum";
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import {faTrash} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"; // Import css
 
 function Table(props) {
 
@@ -92,6 +96,7 @@ function Table(props) {
     );
 
     const handleDelete = (rows) => {
+        window.scrollTo(0, 0);
         let id = '';
         if(props.type === Page.SERVICES){
             id = rows.serviceid;
@@ -121,12 +126,29 @@ function Table(props) {
                     if (props.type === Page.DISBURSEMENTS) {
                         props.requestDisbursements('');
                     }
-                    props.addMessage("Row was deleted successfully");
+                    props.addMessage("Row was deleted successfully from " + props.type);
 
                     if (!response.ok) {
-                        return props.addMessage("There was a problem deleting the row");
+                        return props.addMessage("There was a problem deleting the row.");
                     }
-                }).catch(() => props.addMessage("There was a problem deleting the row"))
+                })
+            .catch(() => props.addMessage("There was a problem deleting the row."))
+    }
+
+    const submitDelete = (rows) => {
+        confirmAlert({
+            title: 'Confirm to delete',
+            message: 'Are you sure you want to delete the row?',
+            buttons: [
+                {
+                    label: 'Yes',
+                    onClick: () => handleDelete(rows)
+                },
+                {
+                    label: 'No',
+                }
+            ]
+        });
     }
 
     return (
@@ -166,7 +188,11 @@ function Table(props) {
                             {row.cells.map(cell => {
                                 return <TableCell className={'table-cell'} {...cell.getCellProps()}>{cell.render("Cell")}</TableCell>;
                             })}
-                            {!row.id.includes(".") && <TableCell><button onClick={() => handleDelete(row.original)}>X</button></TableCell>}
+                            {!row.id.includes(".") && <TableCell>
+                                <button id={'table-delete-button'} className={'dropdown-button'} onClick={() => submitDelete(row.original)}>
+                                    <FontAwesomeIcon icon={faTrash} style={{color: 'maroon'}} />
+                                </button>
+                            </TableCell>}
                         </TableRow>
                     );
                 })}

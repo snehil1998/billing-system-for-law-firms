@@ -129,7 +129,7 @@
 
     .header-columns {
         color: white !important;
-        font-size: 22px !important;
+        font-size: 32px !important;
         cursor: default;
     }
 
@@ -139,6 +139,6 @@
 
     .table-cell {
         color: white !important;
-        font-size: 22px !important;
+        font-size: 32px !important;
     }
 }

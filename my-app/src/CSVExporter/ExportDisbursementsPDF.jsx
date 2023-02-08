@@ -50,8 +50,7 @@ export default function ExportDisbursementsPDF(props) {
 
     doc.setFontSize(15);
 
-    const title = "Disbursements Report";
-    const report = props.title;
+    let title = props.title;
     const client = "Client: " + props.client;
     const period = "Period: " + fromDate + " to " + toDate;
     const headers = [header];
@@ -70,16 +69,22 @@ export default function ExportDisbursementsPDF(props) {
         data.push(eachRowData);
     });
 
+    let lMargin=30; //left margin in pt
+    let rMargin=10; //right margin in pt
+    let pdfInMM=842;  // width of A4 in pt
+    title = doc.splitTextToSize(title, (pdfInMM-lMargin-rMargin));
+    doc.text(title, marginLeft, 50);
+    const clientMargin = 50 + doc.getTextDimensions(title).h + 10;
+    doc.text(client, marginLeft, clientMargin);
+    const periodMargin = clientMargin + doc.getTextDimensions(client).h + 10;
+    doc.text(period, marginLeft, periodMargin);
+
     let content = {
-        startY: 150,
+        startY: periodMargin + doc.getTextDimensions(period).h + 10,
         head: headers,
         body: data
     };
 
-    doc.text(title, marginLeft, 40);
-    doc.text(report, marginLeft, 70);
-    doc.text(client, marginLeft, 100);
-    doc.text(period, marginLeft, 130);
     doc.autoTable(content);
     doc.save("disbursement-report.pdf")
     return {};
