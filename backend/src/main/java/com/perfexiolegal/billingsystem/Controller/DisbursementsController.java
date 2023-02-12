@@ -42,9 +42,7 @@ public class DisbursementsController {
       Optional<List<Disbursements>> listOfDisbursements = disbursementsService.getAllDisbursements();
       List<Disbursements> disbursements = listOfDisbursements.get();
       if (disbursements.size() == 0) {
-        Map<String, Object> message = new HashMap<>();
-        message.put("message", "No data for the request");
-        return new ResponseEntity(List.of(message), HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
       }
       return new ResponseEntity(listOfDisbursements, HttpStatus.OK);
     } catch (ServiceException e) {
@@ -56,7 +54,11 @@ public class DisbursementsController {
   public ResponseEntity<Disbursements> getDisbursementForId(@PathVariable("disbursementID") UUID disbursementID) {
     try {
       logger.info("retrieving disbursement from controller with disbursementID: " + disbursementID);
-      Disbursements disbursement = disbursementsService.getDisbursementsById(disbursementID).get();
+      Optional<Disbursements> retrievedDisbursement = disbursementsService.getDisbursementsById(disbursementID);
+      if (retrievedDisbursement.isEmpty()) {
+        return new ResponseEntity(HttpStatus.OK);
+      }
+      Disbursements disbursement = retrievedDisbursement.get();
       return new ResponseEntity(disbursement, HttpStatus.OK);
     } catch (ServiceException e) {
       return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -70,9 +72,7 @@ public class DisbursementsController {
       Optional<List<Disbursements>> listOfDisbursements = disbursementsService.getDisbursementsByCaseId(caseID);
       List<Disbursements> disbursements = listOfDisbursements.get();
       if (disbursements.size() == 0) {
-        Map<String, Object> message = new HashMap<>();
-        message.put("message", "No data for the request");
-        return new ResponseEntity(List.of(message), HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
       }
       return new ResponseEntity(listOfDisbursements, HttpStatus.OK);
     } catch (ServiceException e) {
@@ -87,9 +87,7 @@ public class DisbursementsController {
       Optional<List<Disbursements>> listOfDisbursements = disbursementsService.getDisbursementsByClientId(clientID);
       List<Disbursements> disbursements = listOfDisbursements.get();
       if (disbursements.size() == 0) {
-        Map<String, Object> message = new HashMap<>();
-        message.put("message", "No data for the request");
-        return new ResponseEntity(List.of(message), HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
       }
       return new ResponseEntity(listOfDisbursements, HttpStatus.OK);
     } catch (ServiceException e) {

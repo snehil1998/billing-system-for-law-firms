@@ -64,9 +64,9 @@ const DisplayClients = (props) => {
                 clientid: client.clientId,
                 clientname: client.clientName,
                 currencycode: client.currencyCode,
-                disbursementsamount: client.disbursementsAmount.toFixed(2),
-                servicesamount: client.servicesAmount.toFixed(2),
-                amount: client.amount.toFixed(2),
+                disbursementsamount: client.disbursementsAmount?.toFixed(2),
+                servicesamount: client.servicesAmount?.toFixed(2),
+                amount: client.amount?.toFixed(2),
             })
     });
 

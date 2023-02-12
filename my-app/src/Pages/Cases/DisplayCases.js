@@ -69,11 +69,11 @@ const DisplayCases = (props) => {
             {
                 caseid: Case.caseId,
                 casename: Case.caseName,
-                clientname: props.clientsData.find(data => data.clientId === Case.clientId)?.clientName,
+                clientname: props.clientsData.find(data => data.clientId === Case.clientId)?.clientName || 'N/A',
                 currencycode: Case.currencyCode,
-                disbursementsamount: Case.disbursementsAmount.toFixed(2),
-                servicesamount: Case.servicesAmount.toFixed(2),
-                amount: Case.amount.toFixed(2),
+                disbursementsamount: Case.disbursementsAmount?.toFixed(2),
+                servicesamount: Case.servicesAmount?.toFixed(2),
+                amount: Case.amount?.toFixed(2),
             })
     });
 

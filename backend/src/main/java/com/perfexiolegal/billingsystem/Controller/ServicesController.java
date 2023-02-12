@@ -43,9 +43,7 @@ public class ServicesController {
       Optional<List<Services>> listOfServices = servicesService.getAllServices();
       List<Services> services = listOfServices.get();
       if (services.size() == 0) {
-        Map<String, Object> message = new HashMap<>();
-        message.put("message", "No data for the request");
-        return new ResponseEntity(List.of(message), HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
       }
       return new ResponseEntity(listOfServices, HttpStatus.OK);
     } catch (ServiceException e) {
@@ -60,9 +58,7 @@ public class ServicesController {
       Optional<List<Services>> listOfServices = servicesService.getServicesForCase(caseID);
       List<Services> services = listOfServices.get();
       if (services.size() == 0) {
-        Map<String, Object> message = new HashMap<>();
-        message.put("message", "No data for the request");
-        return new ResponseEntity(List.of(message), HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
       }
       return new ResponseEntity(listOfServices, HttpStatus.OK);
     } catch (ServiceException e) {
@@ -74,7 +70,11 @@ public class ServicesController {
   public ResponseEntity<Services> getServicesFromId(@PathVariable("serviceID") UUID serviceID) {
     try {
       logger.info("retrieving service from controller with serviceID: " + serviceID);
-      Services service = servicesService.getServiceFromId(serviceID).get();
+      Optional<Services> retrievedService = servicesService.getServiceFromId(serviceID);
+      if (retrievedService.isEmpty()) {
+        return new ResponseEntity(HttpStatus.OK);
+      }
+      Services service = retrievedService.get();
       return new ResponseEntity(service, HttpStatus.OK);
     } catch (ServiceException e) {
       return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -82,15 +82,13 @@ public class ServicesController {
   }
 
   @GetMapping(value = "/services/client={clientID}")
-  public ResponseEntity<Services> getServicesForClient(@PathVariable("clientID") String clientID) {
+  public ResponseEntity<List<Services>> getServicesForClient(@PathVariable("clientID") String clientID) {
     try{
       logger.info("retrieving service from controller with clientID: " + clientID);
       Optional<List<Services>> listOfServices = servicesService.getServicesForClient(clientID);
       List<Services> services = listOfServices.get();
       if (services.size() == 0) {
-        Map<String, Object> message = new HashMap<>();
-        message.put("message", "No data for the request");
-        return new ResponseEntity(List.of(message), HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
       }
       return new ResponseEntity(listOfServices, HttpStatus.OK);
     } catch (ServiceException e) {

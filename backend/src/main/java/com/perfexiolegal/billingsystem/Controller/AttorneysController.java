@@ -48,9 +48,7 @@ public class AttorneysController {
       Optional<List<Attorneys>> listOfAttorneys = attorneysService.getAllAttorneys();
       List<Attorneys> attorneys = listOfAttorneys.get();
       if (attorneys.size() == 0) {
-        Map<String, Object> message = new HashMap<>();
-        message.put("message", "No data for the request");
-        return new ResponseEntity(List.of(message), HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
       }
       return new ResponseEntity(listOfAttorneys, HttpStatus.OK);
     } catch (ServiceException e) {
@@ -64,9 +62,7 @@ public class AttorneysController {
       logger.info("retrieving attorney from controller with attorneyID: " + attorneyID);
       Optional<Attorneys> retrievedAttorneys = attorneysService.getAttorneyById(attorneyID);
       if (retrievedAttorneys.isEmpty()) {
-        Map<String, Object> message = new HashMap<>();
-        message.put("message", "No data for the request");
-        return new ResponseEntity(message, HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
       }
       return new ResponseEntity(retrievedAttorneys.get(), HttpStatus.OK);
     } catch (ServiceException e) {

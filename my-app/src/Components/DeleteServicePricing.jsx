@@ -58,7 +58,7 @@ const DeleteServicePricing = (props) => {
     }
 
     const clientsOptions = props.attorneysData.find(attorney => attorney.attorneyId === selectedAttorney?.split(',')[0])?.servicePricing.map(pricing => {
-        return { label: props.clientsData.find(client => client.clientId === pricing.clientId)?.clientName, value: pricing.clientId }
+        return { label: props.clientsData.find(client => client.clientId === pricing.clientId)?.clientName || 'N/A', value: pricing.clientId }
     });
 
     const attorneysOptions = props.attorneysData.map(eachAttorney => {
@@ -104,8 +104,8 @@ const DeleteServicePricing = (props) => {
                         </option>
                         {attorneysOptions?.sort(
                             function(a, b){
-                                let x = a.label.toLowerCase();
-                                let y = b.label.toLowerCase();
+                                let x = a.label?.toLowerCase();
+                                let y = b.label?.toLowerCase();
                                 if (x < y) {return -1;}
                                 if (x > y) {return 1;}
                                 return 0;
@@ -126,8 +126,8 @@ const DeleteServicePricing = (props) => {
                             </option>
                             {clientsOptions?.sort(
                                 function(a, b){
-                                    let x = a.label.toLowerCase();
-                                    let y = b.label.toLowerCase();
+                                    let x = a.label?.toLowerCase();
+                                    let y = b.label?.toLowerCase();
                                     if (x < y) {return -1;}
                                     if (x > y) {return 1;}
                                     return 0;

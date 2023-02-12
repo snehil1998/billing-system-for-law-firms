@@ -179,18 +179,6 @@ const AddDisbursement = (props) => {
                         disabled={true}
                     />
                 </div>
-                <div id="add-disbursement-disbursement-container" className={'dropdown-field-container'}>
-                    <div id={'add-disbursement-disbursement-translation'} className={'dropdown-translation'}>
-                        {'Disbursement: '}
-                    </div>
-                    <input
-                        id={'add-disbursement-disbursement-input-field'}
-                        className={'dropdown-input-field'}
-                        type="text"
-                        value={disbursement}
-                        onChange={(e) => setDisbursement(e.target.value)}
-                    />
-                </div>
                 <div id="add-disbursement-date-container" className={'dropdown-field-container'}>
                     <div id={'add-disbursement-date-translation'} className={'dropdown-translation'}>
                         {'Date: '}
@@ -201,6 +189,18 @@ const AddDisbursement = (props) => {
                         inputPlaceholder="Select a date"
                         shouldHighlightWeekends
                         className={'DatePicker__input'}
+                    />
+                </div>
+                <div id="add-disbursement-disbursement-container" className={'dropdown-field-container'}>
+                    <div id={'add-disbursement-disbursement-translation'} className={'dropdown-translation'}>
+                        {'Disbursement: '}
+                    </div>
+                    <input
+                        id={'add-disbursement-disbursement-input-field'}
+                        className={'dropdown-input-field'}
+                        type="text"
+                        value={disbursement}
+                        onChange={(e) => setDisbursement(e.target.value)}
                     />
                 </div>
                 <div id="add-disbursement-currency-code-container" className={'dropdown-field-container'}>

@@ -46,9 +46,7 @@ public class CasesController {
       Optional<List<Cases>> listOfCases = casesService.getAllCases();
       List<Cases> cases = listOfCases.get();
       if (cases.size() == 0) {
-        Map<String, Object> message = new HashMap<>();
-        message.put("message", "No data for the request");
-        return new ResponseEntity(List.of(message), HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
       }
       return new ResponseEntity(listOfCases, HttpStatus.OK);
     } catch (ServiceException e) {
@@ -62,9 +60,7 @@ public class CasesController {
       logger.info("retrieving case from controller with caseID: " + caseID);
       Optional<Cases> retrievedCase = casesService.getCaseById(caseID);
       if (retrievedCase.isEmpty()) {
-        Map<String, Object> message = new HashMap<>();
-        message.put("message", "No data for the request");
-        return new ResponseEntity(message, HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
       }
       return new ResponseEntity(retrievedCase.get(), HttpStatus.OK);
     } catch (ServiceException e) {

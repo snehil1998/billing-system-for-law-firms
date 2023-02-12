@@ -10,12 +10,14 @@ export const requestAttorneys = (attorneyID) => async (dispatch) => {
             await fetch("/attorneys")
                 .then(response => response.json())
                 .then(json => {
-                    dispatch(requestClients(''))
                     dispatch({
                         type: ATTORNEYS.LOAD_SUCCESS,
                         data: json,
                         isError: false,
                     })})
+                .finally(() => {
+                    dispatch(requestClients(''))
+                })
         } else{
             await fetch("/attorneys="+attorneyID)
                 .then(response => response.json())

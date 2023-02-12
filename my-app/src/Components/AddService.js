@@ -102,7 +102,7 @@ const AddService = (props) => {
 
     const filteredAttorneysData = props.attorneysData
         .filter(attorney => attorney.servicePricing
-        .find(servicePrice => servicePrice.clientId === clientID) !== undefined);
+        ?.find(servicePrice => servicePrice.clientId === clientID) !== undefined);
 
 
     let numberOfAttorneysList = [];
@@ -183,8 +183,8 @@ const AddService = (props) => {
                             </option>
                             {caseOptions?.sort(
                                 function(a, b){
-                                    let x = a.label.toLowerCase();
-                                    let y = b.label.toLowerCase();
+                                    let x = a.label?.toLowerCase();
+                                    let y = b.label?.toLowerCase();
                                     if (x < y) {return -1;}
                                     if (x > y) {return 1;}
                                     return 0;
@@ -205,18 +205,6 @@ const AddService = (props) => {
                             disabled={true}
                         />
                     </div>
-                    <div id="add-service-service-container" className={'dropdown-field-container'}>
-                        <div id={'add-service-service-translation'} className={'dropdown-translation'}>
-                            {'Service: '}
-                        </div>
-                        <input
-                            id={'add-service-service-input-field'}
-                            className={'dropdown-input-field'}
-                            type="text"
-                            value={service}
-                            onChange={(e) => setService(e.target.value)}
-                        />
-                    </div>
                     <div id="add-service-date-container" className={'dropdown-field-container'}>
                         <div id={'add-service-date-translation'} className={'dropdown-translation'}>
                             {'Date: '}
@@ -227,6 +215,18 @@ const AddService = (props) => {
                             inputPlaceholder="Select a date"
                             shouldHighlightWeekends
                             className={'DatePicker__input'}
+                        />
+                    </div>
+                    <div id="add-service-service-container" className={'dropdown-field-container'}>
+                        <div id={'add-service-service-translation'} className={'dropdown-translation'}>
+                            {'Service: '}
+                        </div>
+                        <input
+                            id={'add-service-service-input-field'}
+                            className={'dropdown-input-field'}
+                            type="text"
+                            value={service}
+                            onChange={(e) => setService(e.target.value)}
                         />
                     </div>
                     <div id="add-service-currency-code-container" className={'dropdown-field-container'}>

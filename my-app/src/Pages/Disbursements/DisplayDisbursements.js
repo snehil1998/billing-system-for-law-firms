@@ -69,13 +69,13 @@ const DisplayServices = (props) => {
 
     let tableData = [];
     props.data.forEach((disbursement) => {
-        const filterCases = Object.values(props.casesData).filter(filteredCase => filteredCase.caseId === disbursement.caseId);
-        const filterClients = Object.values(props.clientsData).filter(filteredClient => filteredClient.clientId === disbursement.clientId)
+        const filterCases = Object.values(props.casesData).find(filteredCase => filteredCase.caseId === disbursement.caseId);
+        const filterClients = Object.values(props.clientsData).find(filteredClient => filteredClient.clientId === disbursement.clientId);
         tableData.push(
             {
                 disbursementid: disbursement.disbursementId,
-                casename: filterCases[0]?.caseName,
-                clientname: filterClients[0]?.clientName,
+                casename: filterCases?.caseName || 'N/A',
+                clientname: filterClients?.clientName || 'N/A',
                 disbursement: disbursement.disbursement,
                 date: disbursement.date,
                 currencycode: disbursement.currencyCode,

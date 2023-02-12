@@ -12,16 +12,18 @@ export const requestServices = (clientID) => async (dispatch) => {
             await fetch("/services")
                 .then(response => response.json())
                 .then(json => {
-                    dispatch(requestCases(''));
-                    dispatch(requestClients(''));
-                    dispatch(requestAttorneys(''));
-                    dispatch(addFromSearchDateServices(null));
-                    dispatch(addToSearchDateServices(null));
                     dispatch({
                         type: SERVICES.LOAD_SUCCESS,
                         data: json,
                         isError: false,
                     })})
+                .finally(() => {
+                    dispatch(requestCases(''));
+                    dispatch(requestClients(''));
+                    dispatch(requestAttorneys(''));
+                    dispatch(addFromSearchDateServices(null));
+                    dispatch(addToSearchDateServices(null));
+                })
         } else{
             await fetch("/services/client="+clientID)
                 .then(response => response.json())

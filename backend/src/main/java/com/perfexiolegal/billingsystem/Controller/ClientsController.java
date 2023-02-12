@@ -43,9 +43,7 @@ public class ClientsController {
       Optional<List<Clients>> listOfClients = clientsService.getAllClients();
       List<Clients> clients = listOfClients.get();
       if (clients.size() == 0) {
-        Map<String, Object> message = new HashMap<>();
-        message.put("message", "No data for the request");
-        return new ResponseEntity(List.of(message), HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
       }
       return new ResponseEntity(listOfClients, HttpStatus.OK);
     } catch (ServiceException e) {
@@ -59,9 +57,7 @@ public class ClientsController {
       logger.info("retrieving client from controller with clientID: " + clientID);
       Optional<Clients> retrievedClients = clientsService.getClientById(clientID);
       if (retrievedClients.isEmpty()) {
-        Map<String, Object> message = new HashMap<>();
-        message.put("message", "No data for the request");
-        return new ResponseEntity(message, HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
       }
       return new ResponseEntity(retrievedClients.get(), HttpStatus.OK);
     } catch (ServiceException e) {

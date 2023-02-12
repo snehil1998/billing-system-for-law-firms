@@ -122,7 +122,7 @@ const DisplayServices = (props) => {
         const minutes = []
         const hours = []
         const total = []
-        service.attorneys.map(serviceAttorney => {
+        service.attorneys?.map(serviceAttorney => {
             filterAttorneys.push(Object.values(props.attorneysData).filter(filteredAttorney => filteredAttorney.attorneyId ===
                 serviceAttorney.id));
             minutes.push(serviceAttorney.minutes);
@@ -132,9 +132,9 @@ const DisplayServices = (props) => {
         const attorneyNamesList = []
         const attorneyPricingList = []
         filterAttorneys.forEach(attorney => {
-            attorneyNamesList.push(attorney[0]?.firstName + " " + attorney[0]?.lastName)
+            attorneyNamesList.push((attorney[0]?.firstName || 'N/A') + " " + (attorney[0]?.lastName || ''))
             attorney[0]?.servicePricing.filter(price => price.clientId === service.clientId)
-                .forEach(price => attorneyPricingList.push(price.price.toFixed(2)))
+                .forEach(price => attorneyPricingList.push(price.price.toFixed(2))) || attorneyPricingList.push('N/A')
         })
         
         minutes.forEach(minute => hours.push((minute/60.0).toFixed(2)))
@@ -148,12 +148,12 @@ const DisplayServices = (props) => {
                 service: service.service,
                 date: service.date,
                 currencycode: filterClients[0]?.currencyCode,
-                attorneys: attorneyNamesList.toString(),
+                attorneys: attorneyNamesList?.toString(),
                 minutes: minutes.toString(),
                 hours: hours.toString(),
-                amount: service.amount.toFixed(2),
-                pricing: attorneyPricingList.toString(),
-                total: total.toString(),
+                amount: service.amount?.toFixed(2),
+                pricing: attorneyPricingList?.toString(),
+                total: total?.toString(),
                 subRows: attorneyNamesList.length <= 1
                     ? null : attorneyNamesList.map((name, index) => {
                     return {

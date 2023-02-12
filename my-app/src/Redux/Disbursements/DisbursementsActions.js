@@ -11,15 +11,17 @@ export const requestDisbursements = (clientID) => async (dispatch) => {
             await fetch("/disbursements")
                 .then(response => response.json())
                 .then(json => {
-                    dispatch(requestCases(''));
-                    dispatch(requestClients(''));
-                    dispatch(addFromSearchDateDisbursements(null));
-                    dispatch(addToSearchDateDisbursements(null));
                     dispatch({
                         type: DISBURSEMENTS.LOAD_SUCCESS,
                         data: json,
                         isError: false,
                     })})
+                .finally( () => {
+                    dispatch(requestClients(''));
+                    dispatch(requestCases(''));
+                    dispatch(addFromSearchDateDisbursements(null));
+                    dispatch(addToSearchDateDisbursements(null));
+                })
         } else{
             await fetch("/disbursements/client="+clientID)
                 .then(response => response.json())

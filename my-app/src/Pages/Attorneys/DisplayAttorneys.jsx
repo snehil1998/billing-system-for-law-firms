@@ -92,12 +92,12 @@ const DisplayAttorneys = (props) => {
         const price = [];
         const clientName = [];
         const currencyCode = [];
-        attorney.servicePricing.forEach(pricing => {
+        attorney.servicePricing?.forEach(pricing => {
             clientName.push(props.clientsData.find(client => client.clientId ===
-                pricing.clientId)?.clientName);
+                pricing.clientId)?.clientName || 'N/A');
             price.push(pricing.price.toFixed(2));
             currencyCode.push(props.clientsData.find(client => client.clientId ===
-                pricing.clientId)?.currencyCode)
+                pricing.clientId)?.currencyCode || 'N/A')
         })
 
         tableData.push(
