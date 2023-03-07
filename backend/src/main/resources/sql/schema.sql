@@ -1,5 +1,5 @@
 -- create database billing_system;
-\connect billing_system;
+\connect ebdb;
 
 -- All services
 CREATE TABLE services

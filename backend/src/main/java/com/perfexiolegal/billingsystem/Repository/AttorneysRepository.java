@@ -27,7 +27,7 @@ public class AttorneysRepository {
 
   public Optional<List<Attorneys>> getAllAttorneys() throws RepositoryException {
     try {
-      String sql = "SELECT * FROM attorneys";
+      String sql = "SELECT * FROM ebdb.public.attorneys";
       logger.info("Retrieving data for all attorneys");
       List<Attorneys> attorneysList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
@@ -55,7 +55,7 @@ public class AttorneysRepository {
 
   public Optional<Attorneys> getAttorneyById(String attorneyID) throws RepositoryException {
     try {
-      String sql = "SELECT * FROM attorneys where attorney_id = '" + attorneyID + "'";
+      String sql = "SELECT * FROM ebdb.public.attorneys where attorney_id = '" + attorneyID + "'";
       logger.info("Retrieving data for attorney with attorney ID: " + attorneyID);
       Attorneys attorney = jdbcTemplate.queryForObject(sql,
           (resultSet, i) -> {
@@ -88,7 +88,7 @@ public class AttorneysRepository {
       PGobject jsonObject = new PGobject();
       jsonObject.setType("json");
       jsonObject.setValue(objectMapper.writeValueAsString(attorneys.getServicePricing()));
-      jdbcTemplate.update("insert into attorneys (attorney_id, first_name, last_name, service_pricing) " +
+      jdbcTemplate.update("insert into ebdb.public.attorneys (attorney_id, first_name, last_name, service_pricing) " +
               "values (?,?,?,?)",
           attorneys.getAttorneyId(), attorneys.getFirstName(), attorneys.getLastName(), jsonObject);
       return attorneys;
@@ -104,7 +104,7 @@ public class AttorneysRepository {
       PGobject jsonObject = new PGobject();
       jsonObject.setType("json");
       jsonObject.setValue(objectMapper.writeValueAsString(attorneys.getServicePricing()));
-      jdbcTemplate.update("update attorneys set first_name=?, last_name=?, service_pricing=? " +
+      jdbcTemplate.update("update ebdb.public.attorneys set first_name=?, last_name=?, service_pricing=? " +
               "where attorney_id=?", attorneys.getFirstName(), attorneys.getLastName(), jsonObject,
           attorneys.getAttorneyId());
       return attorneys;
@@ -116,7 +116,7 @@ public class AttorneysRepository {
   public int deleteById(String attorneyID) throws RepositoryException {
     try {
       logger.info("Deleting attorney with ID: " + attorneyID);
-      return jdbcTemplate.update("delete from attorneys where attorney_id=?", attorneyID);
+      return jdbcTemplate.update("delete from ebdb.public.attorneys where attorney_id=?", attorneyID);
     } catch (DataAccessException e) {
       throw new RepositoryException("Failed to delete attorney", e);
     }

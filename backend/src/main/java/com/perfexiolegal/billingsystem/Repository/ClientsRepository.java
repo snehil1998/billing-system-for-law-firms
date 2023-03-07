@@ -21,7 +21,7 @@ public class ClientsRepository {
 
   public Optional<List<Clients>> getAllClients() throws RepositoryException {
     try {
-      String sql = "SELECT * FROM clients";
+      String sql = "SELECT * FROM ebdb.public.clients";
       logger.info("Retrieving data for all clients");
       List<Clients> clientsList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
@@ -42,7 +42,7 @@ public class ClientsRepository {
 
   public Optional<Clients> getClientsById(String clientID) throws RepositoryException {
     try {
-      String sql = "SELECT * FROM clients where client_id = '" + clientID + "'";
+      String sql = "SELECT * FROM ebdb.public.clients where client_id = '" + clientID + "'";
       logger.info("Retrieving data for client with client ID: " + clientID);
       Clients client = jdbcTemplate.queryForObject(sql,
           (resultSet, i) -> {
@@ -64,7 +64,7 @@ public class ClientsRepository {
   public Clients postClients(Clients client) throws RepositoryException {
     try {
       logger.info("Creating client: " + client.getClientId());
-      jdbcTemplate.update("insert into clients (client_id, client_name, currency_code, disbursements_amount, services_amount, amount) values (?,?,?,?,?,?)",
+      jdbcTemplate.update("insert into ebdb.public.clients (client_id, client_name, currency_code, disbursements_amount, services_amount, amount) values (?,?,?,?,?,?)",
           client.getClientId(), client.getClientName(), client.getCurrencyCode(), client.getDisbursementsAmount(), client.getServicesAmount(), client.getAmount());
       return client;
     } catch (DataAccessException e){
@@ -75,7 +75,7 @@ public class ClientsRepository {
   public Clients updateClients(Clients client) throws RepositoryException {
     try {
       logger.info("Updating client: " + client.getClientId());
-      jdbcTemplate.update("update clients set client_name=?, currency_code=?, disbursements_amount=?, services_amount=?, amount=? " +
+      jdbcTemplate.update("update ebdb.public.clients set client_name=?, currency_code=?, disbursements_amount=?, services_amount=?, amount=? " +
               "where client_id=?", client.getClientName(), client.getCurrencyCode(), client.getDisbursementsAmount(), client.getServicesAmount(),
           client.getAmount(), client.getClientId());
       return client;
@@ -87,7 +87,7 @@ public class ClientsRepository {
   public int deleteById(String clientID) throws RepositoryException {
     try {
       logger.info("Deleting client with ID: " + clientID);
-      return jdbcTemplate.update("delete from clients where client_id=?", clientID);
+      return jdbcTemplate.update("delete from ebdb.public.clients where client_id=?", clientID);
     } catch (DataAccessException e) {
       throw new RepositoryException("Failed to delete client", e);
     }

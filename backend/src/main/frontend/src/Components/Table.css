@@ -1,0 +1,144 @@
+@media only screen and (max-width: 600px) {
+    .table-container {
+        text-align: left;
+        max-width: 100%;
+    }
+
+    .table {
+        table-layout: auto;
+        overflow-x: auto;
+        overflow-y: auto;
+        max-width: 100%;
+    }
+
+    .header-columns {
+        color: white !important;
+        font-size: 12px !important;
+        cursor: default;
+    }
+
+    .header-columns-span {
+        color: white !important;
+    }
+
+    .table-cell {
+        color: white !important;
+        font-size: 12px !important;
+    }
+}
+
+@media only screen and (max-width: 768px) and (min-width: 601px) {
+    .table-container {
+        text-align: left;
+        max-width: 100%;
+    }
+
+    .table {
+        table-layout: auto;
+        overflow-x: auto;
+        overflow-y: auto;
+        max-width: 100%;
+    }
+
+    .header-columns {
+        color: white !important;
+        font-size: 16px !important;
+        cursor: default;
+    }
+
+    .header-columns-span {
+        color: white !important;
+    }
+
+    .table-cell {
+        color: white !important;
+        font-size: 16px !important;
+    }
+}
+
+@media only screen and (max-width: 1024px) and (min-width: 769px) {
+    .table-container {
+        text-align: left;
+        max-width: 100%;
+    }
+
+    .table {
+        table-layout: auto;
+        overflow-x: auto;
+        overflow-y: auto;
+        max-width: 100%;
+    }
+
+    .header-columns {
+        color: white !important;
+        font-size: 18px !important;
+        cursor: default;
+    }
+
+    .header-columns-span {
+        color: white !important;
+    }
+
+    .table-cell {
+        color: white !important;
+        font-size: 18px !important;
+    }
+}
+
+@media only screen and (max-width: 1440px) and (min-width: 1025px) {
+    .table-container {
+        text-align: left;
+        max-width: 100%;
+    }
+
+    .table {
+        table-layout: auto;
+        overflow-x: auto;
+        overflow-y: auto;
+        max-width: 100%;
+    }
+
+    .header-columns {
+        color: white !important;
+        font-size: 20px !important;
+        cursor: default;
+    }
+
+    .header-columns-span {
+        color: white !important;
+    }
+
+    .table-cell {
+        color: white !important;
+        font-size: 20px !important;
+    }
+}
+
+@media only screen and (min-width: 1441px) {
+    .table-container {
+        text-align: left;
+        max-width: 100%;
+    }
+
+    .table {
+        table-layout: auto;
+        overflow-x: auto;
+        overflow-y: auto;
+        max-width: 100%;
+    }
+
+    .header-columns {
+        color: white !important;
+        font-size: 32px !important;
+        cursor: default;
+    }
+
+    .header-columns-span {
+        color: white !important;
+    }
+
+    .table-cell {
+        color: white !important;
+        font-size: 32px !important;
+    }
+}

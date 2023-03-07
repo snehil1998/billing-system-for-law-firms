@@ -21,7 +21,7 @@ public class CasesRepository {
 
   public Optional<List<Cases>> getAllCases() throws RepositoryException {
     try {
-      String sql = "SELECT * FROM cases";
+      String sql = "SELECT * FROM ebdb.public.cases";
       logger.info("Retrieving data for all cases");
       List<Cases> casesList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
@@ -43,7 +43,7 @@ public class CasesRepository {
 
   public Optional<Cases> getCaseById(String caseID) throws RepositoryException {
     try {
-      String sql = "SELECT * FROM cases where case_id = '" + caseID + "'";
+      String sql = "SELECT * FROM ebdb.public.cases where case_id = '" + caseID + "'";
       logger.info("Retrieving data for case with case ID: " + caseID);
       Cases caseList = jdbcTemplate.queryForObject(sql,
           (resultSet, i) -> {
@@ -66,7 +66,7 @@ public class CasesRepository {
   public Cases postCases(Cases postCase) throws RepositoryException {
     try {
       logger.info("Creating case: " + postCase.getCaseId());
-      jdbcTemplate.update("insert into cases (case_id, case_name, client_id, currency_code, disbursements_amount, services_amount, amount) values (?,?,?,?,?,?,?)",
+      jdbcTemplate.update("insert into ebdb.public.cases (case_id, case_name, client_id, currency_code, disbursements_amount, services_amount, amount) values (?,?,?,?,?,?,?)",
           postCase.getCaseId(), postCase.getCaseName(), postCase.getClientId(), postCase.getCurrencyCode(), postCase.getDisbursementsAmount(), postCase.getServicesAmount(), postCase.getAmount());
       return postCase;
     } catch (DataAccessException e){
@@ -77,7 +77,7 @@ public class CasesRepository {
   public Cases updateCases(Cases updatedCase) throws RepositoryException {
     try {
       logger.info("Updating case: " + updatedCase.getCaseId());
-      jdbcTemplate.update("update cases set case_name=?, client_id=?, currency_code=?, disbursements_amount=?, services_amount=?, amount=? " +
+      jdbcTemplate.update("update ebdb.public.cases set case_name=?, client_id=?, currency_code=?, disbursements_amount=?, services_amount=?, amount=? " +
               "where case_id=?", updatedCase.getCaseName(), updatedCase.getClientId(), updatedCase.getCurrencyCode(), updatedCase.getDisbursementsAmount(),
           updatedCase.getServicesAmount(), updatedCase.getAmount(), updatedCase.getCaseId());
       return updatedCase;
@@ -89,7 +89,7 @@ public class CasesRepository {
   public int deleteById(String caseID) throws RepositoryException {
     try {
       logger.info("Deleting case with ID: " + caseID);
-      return jdbcTemplate.update("delete from cases where case_id=?", caseID);
+      return jdbcTemplate.update("delete from ebdb.public.cases where case_id=?", caseID);
     } catch (DataAccessException e) {
       throw new RepositoryException("Failed to delete case", e);
     }

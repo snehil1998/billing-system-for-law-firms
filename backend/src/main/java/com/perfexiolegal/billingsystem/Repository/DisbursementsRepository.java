@@ -23,7 +23,7 @@ public class DisbursementsRepository {
 
   public Optional<List<Disbursements>> getAllDisbursements() throws RepositoryException {
     try {
-      String sql = "SELECT * FROM disbursements";
+      String sql = "SELECT * FROM ebdb.public.disbursements";
       logger.info("Retrieving data for all disbursements");
       List<Disbursements> disbursementList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
@@ -48,7 +48,7 @@ public class DisbursementsRepository {
 
   public Optional<Disbursements> getDisbursementsById(UUID disbursementId) throws RepositoryException {
     try {
-      String sql = "SELECT * FROM disbursements where disbursement_id = '" + disbursementId + "'";
+      String sql = "SELECT * FROM ebdb.public.disbursements where disbursement_id = '" + disbursementId + "'";
       logger.info("Retrieving data for disbursement with disbursement ID: " + disbursementId);
       Disbursements disbursements = jdbcTemplate.queryForObject(sql,
           (resultSet, i) -> {
@@ -72,7 +72,7 @@ public class DisbursementsRepository {
 
   public Optional<List<Disbursements>> getDisbursementsByClientId(String clientID) throws RepositoryException {
     try {
-      String sql = "SELECT * FROM disbursements where client_id = '" + clientID + "'";
+      String sql = "SELECT * FROM ebdb.public.disbursements where client_id = '" + clientID + "'";
       logger.info("Retrieving data for disbursements with client ID: " + clientID);
       List<Disbursements> disbursementList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
@@ -97,7 +97,7 @@ public class DisbursementsRepository {
 
   public Optional<List<Disbursements>> getDisbursementsByCaseId(String caseID) throws RepositoryException {
     try {
-      String sql = "SELECT * FROM disbursements where case_id = '" + caseID + "'";
+      String sql = "SELECT * FROM ebdb.public.disbursements where case_id = '" + caseID + "'";
       logger.info("Retrieving data for disbursements with case ID: " + caseID);
       List<Disbursements> disbursementList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
@@ -123,7 +123,7 @@ public class DisbursementsRepository {
   public void postDisbursements(Disbursements disbursement) throws RepositoryException {
     try {
       logger.info("Creating disbursement: " + disbursement.getDisbursementId());
-      jdbcTemplate.update("insert into Disbursements (disbursement_id, case_id, client_id, disbursement, date," +
+      jdbcTemplate.update("insert into ebdb.public.disbursements (disbursement_id, case_id, client_id, disbursement, date," +
               "currency_code, conversion_rate, inr_amount, conversion_amount) values (?,?,?,?,?,?,?,?,?)",
           disbursement.getDisbursementId(), disbursement.getCaseId(), disbursement.getClientId(), disbursement.getDisbursement(),
           disbursement.getDate(), disbursement.getCurrencyCode(), disbursement.getConversionRate(), disbursement.getInrAmount(),
@@ -136,7 +136,7 @@ public class DisbursementsRepository {
   public void updateDisbursements(Disbursements disbursement) throws RepositoryException {
     try {
       logger.info("Updating disbursement: " + disbursement.getDisbursementId());
-      jdbcTemplate.update("update Disbursements set case_id=?, client_id=?, disbursement=?, date=?," +
+      jdbcTemplate.update("update ebdb.public.disbursements set case_id=?, client_id=?, disbursement=?, date=?," +
               "currency_code=?, conversion_rate=?, inr_amount=?, conversion_amount=? " +
               "where disbursement_id=?", disbursement.getCaseId(), disbursement.getClientId(), disbursement.getDisbursement(),
           disbursement.getDate(), disbursement.getCurrencyCode(), disbursement.getConversionRate(), disbursement.getInrAmount(),
@@ -149,7 +149,7 @@ public class DisbursementsRepository {
   public int deleteDisbursementById(UUID disbursementId) throws RepositoryException {
     try {
       logger.info("Deleting disbursement with ID: " + disbursementId);
-      return jdbcTemplate.update("delete from disbursements where disbursement_id=?", disbursementId);
+      return jdbcTemplate.update("delete from ebdb.public.disbursements where disbursement_id=?", disbursementId);
     } catch (DataAccessException e) {
       throw new RepositoryException("Failed to delete disbursement", e);
     }

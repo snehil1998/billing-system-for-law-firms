@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @org.springframework.stereotype.Controller
+@RequestMapping("/backend")
 public class ClientsController {
 
   final Logger logger = LoggerFactory.getLogger(ClientsController.class);

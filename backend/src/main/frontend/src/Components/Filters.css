@@ -1,0 +1,94 @@
+@media only screen and (max-width: 600px) {
+    .filters-container {
+        text-align: left;
+        margin-top: 2%;
+    }
+
+    #filters-span-container {
+        width: 207px;
+    }
+
+    #filters-date-container {
+        display: flex;
+    }
+
+    .to-date-container {
+        padding-left: 2%;
+    }
+}
+
+@media only screen and (max-width: 768px) and (min-width: 601px) {
+    .filters-container {
+        text-align: left;
+        margin-top: 2%;
+    }
+
+    #filters-span-container {
+        width: 265px;
+    }
+
+    #filters-date-container {
+        display: flex;
+    }
+
+    .to-date-container {
+        padding-left: 2%;
+    }
+}
+
+@media only screen and (max-width: 1024px) and (min-width: 769px) {
+    .filters-container {
+        text-align: left;
+        margin-top: 2%;
+    }
+
+    #filters-span-container {
+        width: 295px;
+    }
+
+    #filters-date-container {
+        display: flex;
+    }
+
+    .to-date-container {
+        padding-left: 2%;
+    }
+}
+
+@media only screen and (max-width: 1440px) and (min-width: 1025px) {
+    .filters-container {
+        text-align: left;
+        margin-top: 2%;
+    }
+
+    #filters-span-container {
+        width: 325px;
+    }
+
+    #filters-date-container {
+        display: flex;
+    }
+
+    .to-date-container {
+        padding-left: 2%;
+    }
+}
+
+@media only screen and (min-width: 1441px) {
+    .filters-container {
+        text-align: left;
+        margin-top: 2%;
+    }
+
+    #filters-span-container {
+        width: 500px;
+    }
+
+    #filters-date-container {
+        display: flex;
+    }
+
+    .to-date-container {
+        padding-left: 2%;
+    }
+}

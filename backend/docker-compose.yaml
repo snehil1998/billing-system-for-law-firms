@@ -9,7 +9,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=billing_system
+      - POSTGRES_DB=ebdb
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
       - ./src/main/resources/sql:/docker-entrypoint-initdb.d/

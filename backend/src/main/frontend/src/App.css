@@ -1,0 +1,402 @@
+.App {
+  text-align: center;
+  background-color: maroon;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: maroon;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-body {
+  background-color: maroon;
+  flex-direction: column;
+  align-items: center;
+  font-size: calc(10px + 2vmin);
+  color: maroon;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.dropdown-checkbox {
+  cursor: pointer;
+  padding-right: 0.3%;
+}
+
+.dropdown-checkboxes {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.DatePicker__input::placeholder {
+  width: 85%;
+}
+
+.DatePicker__input {
+  width: 85%;
+}
+
+.dropdown-components-container {
+  text-align: left;
+}
+
+.dropdown-span-container {
+  background-color: black;
+}
+
+.dropdown-container-span {
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.dropdown-form-container {
+  background-color: grey;
+}
+
+.dropdown-input-field {
+  width: 57%;
+}
+
+.dropdown-select {
+  width: 58%;
+}
+
+.dropdown-button {
+  cursor: pointer;
+}
+
+.dropdown-checkboxes {
+  display: flex;
+}
+
+@media only screen and (max-width: 600px) {
+  .dropdown-checkbox {
+   font-size: 12px;
+  }
+
+  .DatePicker__input::placeholder {
+    font-size: 12px;
+  }
+
+  .DatePicker__input {
+    font-size: 12px;
+  }
+
+  .dropdown-components-container {
+    margin-top: 2%;
+  }
+
+  .dropdown-span-container {
+    padding-left: 1%;
+  }
+
+  .dropdown-container-span {
+    font-size: 12px;
+    padding-left: 1%;
+  }
+
+  .dropdown-form-container {
+    background-color: grey;
+  }
+
+  .dropdown-field-container {
+    margin-left: 1%;
+    padding-top: 3%;
+  }
+
+  .dropdown-translation {
+    font-size: 12px;
+  }
+
+  .dropdown-input-field {
+    font-size: 12px;
+
+  }
+
+  .dropdown-select {
+    font-size: 12px;
+  }
+
+  .dropdown-button-container {
+    margin-left: 1%;
+    padding-top: 3%;
+  }
+
+  .dropdown-button {
+    font-size: 12px;
+    margin-bottom: 5%;
+  }
+}
+
+@media only screen and (max-width: 768px) and (min-width: 601px) {
+  .dropdown-checkbox {
+    font-size: 16px;
+  }
+
+  .DatePicker__input::placeholder {
+    font-size: 16px;
+  }
+
+  .DatePicker__input {
+    font-size: 16px;
+  }
+
+  .dropdown-components-container {
+    margin-top: 2%;
+  }
+
+  .dropdown-span-container {
+    padding-left: 1%;
+  }
+
+  .dropdown-container-span {
+    font-size: 16px;
+    padding-left: 1%;
+  }
+
+  .dropdown-form-container {
+    background-color: grey;
+  }
+
+  .dropdown-field-container {
+    margin-left: 1%;
+    padding-top: 3%;
+  }
+
+  .dropdown-translation {
+    font-size: 16px;
+  }
+
+  .dropdown-input-field {
+    font-size: 16px;
+
+  }
+
+  .dropdown-select {
+    font-size: 16px;
+  }
+
+  .dropdown-button-container {
+    margin-left: 1%;
+    padding-top: 3%;
+  }
+
+  .dropdown-button {
+    font-size: 16px;
+    margin-bottom: 5%;
+  }
+}
+
+@media only screen and (max-width: 1024px) and (min-width: 769px) {
+  .dropdown-checkbox {
+    font-size: 18px;
+  }
+
+  .DatePicker__input::placeholder {
+    font-size: 18px;
+  }
+
+  .DatePicker__input {
+    font-size: 18px;
+  }
+
+  .dropdown-components-container {
+    margin-top: 1.5%;
+  }
+
+  .dropdown-span-container {
+    background-color: black;
+    padding-left: 1%;
+  }
+
+  .dropdown-container-span {
+    font-size: 18px;
+    padding-left: 1%;
+  }
+
+  .dropdown-form-container {
+    background-color: grey;
+  }
+
+  .dropdown-field-container {
+    margin-left: 1%;
+    padding-top: 2%;
+  }
+
+  .dropdown-translation {
+    font-size: 18px;
+  }
+
+  .dropdown-input-field {
+    font-size: 18px;
+
+  }
+
+  .dropdown-select {
+    font-size: 18px;
+  }
+
+  .dropdown-button-container {
+    margin-left: 1%;
+    padding-top: 2%;
+  }
+
+  .dropdown-button {
+    font-size: 18px;
+    margin-bottom: 3%;
+  }
+}
+
+@media only screen and (max-width: 1440px) and (min-width: 1025px) {
+  .dropdown-checkbox {
+    font-size: 20px;
+  }
+
+  .DatePicker__input::placeholder {
+    font-size: 20px;
+  }
+
+  .DatePicker__input {
+    font-size: 20px;
+  }
+
+  .dropdown-components-container {
+    margin-top: 1%;
+  }
+
+  .dropdown-span-container {
+    background-color: black;
+    padding-left: 0.5%;
+  }
+
+  .dropdown-container-span {
+    font-size: 20px;
+    padding-left: 0.5%;
+  }
+
+  .dropdown-form-container {
+    background-color: grey;
+  }
+
+  .dropdown-field-container {
+    margin-left: 0.5%;
+    padding-top: 1%;
+  }
+
+  .dropdown-translation {
+    font-size: 20px;
+  }
+
+  .dropdown-input-field {
+    font-size: 20px;
+
+  }
+
+  .dropdown-select {
+    font-size: 20px;
+  }
+
+  .dropdown-button-container {
+    margin-left: 0.5%;
+    padding-top: 1%;
+  }
+
+  .dropdown-button {
+    font-size: 20px;
+    margin-bottom: 2%;
+  }
+}
+
+@media only screen and (min-width: 1441px) {
+  .dropdown-checkbox {
+    font-size: 32px;
+  }
+
+  .DatePicker__input::placeholder {
+    width: 100%;
+    font-size: 28px;
+    height: 30px;
+  }
+
+  .DatePicker__input {
+    width: 100%;
+    font-size: 28px;
+    height: 30px;
+  }
+
+  .dropdown-components-container {
+    margin-top: 0.5%;
+  }
+
+  .dropdown-span-container {
+    padding-left: 0.5%;
+  }
+
+  .dropdown-container-span {
+    font-size: 32px;
+    padding-left: 0.5%;
+  }
+
+  .dropdown-field-container {
+    margin-left: 0.5%;
+    padding-top: 0.5%;
+  }
+
+  .dropdown-translation {
+    font-size: 32px;
+  }
+
+  .dropdown-input-field {
+    font-size: 32px;
+  }
+
+  .dropdown-select {
+    font-size: 32px;
+  }
+
+  .dropdown-button-container {
+    margin-left: 0.5%;
+    padding-top: 0.5%;
+  }
+
+  .dropdown-button {
+    font-size: 32px;
+    margin-bottom: 1%;
+  }
+
+  .dropdown-checkboxes {
+    font-size: 32px;
+  }
+}

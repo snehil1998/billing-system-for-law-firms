@@ -1,0 +1,64 @@
+@media only screen and (max-width: 600px) {
+    .global-filter-container {
+        text-align: left;
+        width: 10%;
+        margin: 3% 1% 1%;
+    }
+
+    .global-filter-search-input-field {
+        height: 10%;
+        font-size: 12px;
+    }
+}
+
+@media only screen and (max-width: 768px) and (min-width: 601px) {
+    .global-filter-container {
+        text-align: left;
+        width: 10%;
+        margin: 3% 1% 1%;
+    }
+
+    .global-filter-search-input-field {
+        height: 10%;
+        font-size: 16px;
+    }
+}
+
+@media only screen and (max-width: 1024px) and (min-width: 769px) {
+    .global-filter-container {
+        text-align: left;
+        width: 10%;
+        margin: 3% 1% 1%;
+    }
+
+    .global-filter-search-input-field {
+        height: 10%;
+        font-size: 18px;
+    }
+}
+
+@media only screen and (max-width: 1440px) and (min-width: 1025px) {
+    .global-filter-container {
+        text-align: left;
+        width: 10%;
+        margin: 3% 1% 1%;
+    }
+
+    .global-filter-search-input-field {
+        height: 10%;
+        font-size: 20px;
+    }
+}
+
+@media only screen and (min-width: 1441px) {
+    .global-filter-container {
+        text-align: left;
+        width: 10%;
+        margin: 3% 1% 1%;
+    }
+
+    .global-filter-search-input-field {
+        height: 10%;
+        font-size: 32px;
+    }
+}

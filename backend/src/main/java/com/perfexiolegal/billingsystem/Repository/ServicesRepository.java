@@ -29,7 +29,7 @@ public class ServicesRepository {
 
   public Optional<List<Services>> getAllServices() throws RepositoryException {
     try {
-      String sql = "SELECT * FROM services";
+      String sql = "SELECT * FROM ebdb.public.services";
       logger.info("Retrieving data for all bills");
       List<Services> servicesList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
@@ -60,7 +60,7 @@ public class ServicesRepository {
 
   public Optional<List<Services>> getServicesForCase(String caseID) throws RepositoryException {
     try {
-      String sql = "SELECT * FROM services where case_id = '" + caseID + "'";
+      String sql = "SELECT * FROM ebdb.public.services where case_id = '" + caseID + "'";
       logger.info("Retrieving data for bill with case ID: " + caseID);
       List<Services> servicesForCaseList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
@@ -93,7 +93,7 @@ public class ServicesRepository {
 
   public Optional<List<Services>> getServicesForClient(String clientID) throws RepositoryException {
     try {
-      String sql = "SELECT * FROM services where client_id = '" + clientID + "'";
+      String sql = "SELECT * FROM ebdb.public.services where client_id = '" + clientID + "'";
       logger.info("Retrieving data for bill with client ID: " + clientID);
       List<Services> servicesForClientList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
@@ -126,7 +126,7 @@ public class ServicesRepository {
 
   public Optional<Services> getServiceFromId(UUID serviceID) throws RepositoryException {
     try {
-      String sql = "SELECT * FROM services where service_id = '" + serviceID + "'";
+      String sql = "SELECT * FROM ebdb.public.services where service_id = '" + serviceID + "'";
       logger.info("Retrieving data for bill with service ID: " + serviceID);
       Services serviceFromId = jdbcTemplate.queryForObject(sql,
           (resultSet, i) -> {
@@ -163,7 +163,7 @@ public class ServicesRepository {
       jsonObject.setType("json");
       jsonObject.setValue(objectMapper.writeValueAsString(service.getAttorneys()));
       logger.info("Creating service with attorneys: " + jsonObject);
-      jdbcTemplate.update("insert into services (Service_Id, Case_Id, Client_Id, Service, Date, Attorneys, Amount) values (?,?,?,?,?,?,?)",
+      jdbcTemplate.update("insert into ebdb.public.services (Service_Id, Case_Id, Client_Id, Service, Date, Attorneys, Amount) values (?,?,?,?,?,?,?)",
           service.getServiceId(), service.getCaseId(), service.getClientId(), service.getService(),
           service.getDate(), jsonObject, service.getAmount());
       return service;
@@ -179,7 +179,7 @@ public class ServicesRepository {
       PGobject jsonObject = new PGobject();
       jsonObject.setType("json");
       jsonObject.setValue(objectMapper.writeValueAsString(service.getAttorneys()));
-      jdbcTemplate.update("update services set case_id=?, client_id=?, service=?, " +
+      jdbcTemplate.update("update ebdb.public.services set case_id=?, client_id=?, service=?, " +
               "date=?, attorneys=?, amount=? where service_id=?", service.getCaseId(), service.getClientId(),
           service.getService(), service.getDate(), jsonObject,
           service.getAmount(), service.getServiceId());
@@ -192,7 +192,7 @@ public class ServicesRepository {
   public int deleteById(UUID serviceID) throws RepositoryException {
     try {
       logger.info("Deleting service with ID: " + serviceID);
-      return jdbcTemplate.update("delete from services where service_id=?", serviceID);
+      return jdbcTemplate.update("delete from ebdb.public.services where service_id=?", serviceID);
     } catch (DataAccessException e) {
       throw new RepositoryException("Failed to delete task", e);
     }
@@ -201,7 +201,7 @@ public class ServicesRepository {
   public int deleteByCase(String caseID) throws RepositoryException {
     try {
       logger.info("Deleting services with case ID: " + caseID);
-      return jdbcTemplate.update("delete from services where case_id=?", caseID);
+      return jdbcTemplate.update("delete from ebdb.public.services where case_id=?", caseID);
     } catch (DataAccessException e) {
       throw new RepositoryException("failed to delete tasks", e);
     }
