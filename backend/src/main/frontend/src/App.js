@@ -1,7 +1,7 @@
 import './App.css';
 import DisplayServices from "./Pages/Services/DisplayServices";
 import NavBar from './Components/NavBar';
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import {HashRouter as Router, Routes, Route} from 'react-router-dom';
 import DisplayClients from "./Pages/Clients/DisplayClients";
 import DisplayCases from "./Pages/Cases/DisplayCases";
 import DisplayAttorneys from "./Pages/Attorneys/DisplayAttorneys";
