@@ -1,7 +1,0 @@
-
-const MESSAGE = {
-    ADD_MESSAGE: "ADD_MESSAGE",
-    CLEAR_MESSAGE: "CLEAR_MESSAGE"
-};
-
-export default MESSAGE;
