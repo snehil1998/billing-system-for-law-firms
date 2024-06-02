@@ -5,7 +5,7 @@ import './NavBar.css';
 
 const NavBar = () => {
     return (
-        <div className={'navbar-container'} style={{display: 'flex', width: '100%', position: 'relative'}}>
+        <div className={'navbars'} style={{display: 'flex', width: '100%'}}>
             <img className={'navbar-logo'} src={MyImage} alt="logo"/>
             <Link to="/attorneys" id={'navbar-attorneys'} style={{justifyContent: 'center', alignItems:'center', display:'flex', backgroundColor:'gray', color:'white',
                 textDecoration:'none', border:'1px solid white'}}>ATTORNEYS</Link>

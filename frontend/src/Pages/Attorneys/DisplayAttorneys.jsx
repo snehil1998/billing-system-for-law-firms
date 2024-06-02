@@ -126,9 +126,15 @@ const DisplayAttorneys = (props) => {
         <>
             <div className={"display-attorneys-table-container"}>
                 <div id={"display-attorneys-table"} className={"table"}>
-                    <AddAttorney/>
-                    <AddServicePricing/>
-                    <DeleteServicePricing/>
+                    <div className="dropdown">
+                        <AddAttorney/>
+                    </div>
+                    <div className="dropdown">
+                        <AddServicePricing/>
+                    </div>
+                    <div className="dropdown">
+                        <DeleteServicePricing/>
+                    </div> 
                     <Table columns={columns} data={tableData} type={Page.ATTORNEYS}
                            filterByColumn={'attorneyid'} isDescending={false} />
                 </div>

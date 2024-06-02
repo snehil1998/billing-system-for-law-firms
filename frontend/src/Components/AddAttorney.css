@@ -1,33 +1,3 @@
 #add-attorney-clear-button {
     margin-left: 1%;
 }
-
-@media only screen and (max-width: 600px) {
-    #add-attorney-span-container {
-        width: 110px;
-    }
-}
-
-@media only screen and (max-width: 768px) and (min-width: 601px) {
-    #add-attorney-span-container {
-        width: 150px;
-    }
-}
-
-@media only screen and (max-width: 1024px) and (min-width: 769px) {
-    #add-attorney-span-container {
-        width: 165px;
-    }
-}
-
-@media only screen and (max-width: 1440px) and (min-width: 1025px) {
-    #add-attorney-span-container {
-        width: 180px;
-    }
-}
-
-@media only screen and (min-width: 1441px) {
-    #add-attorney-span-container {
-        width: 195px;
-    }
-}

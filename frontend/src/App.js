@@ -9,30 +9,38 @@ import DisplayDisbursements from "./Pages/Disbursements/DisplayDisbursements";
 import {connect} from "react-redux";
 import PropTypes from "prop-types";
 import {getMessage} from "./Redux/Message/MessageSelectors";
-
+import React, {useEffect, useState} from "react"
 
 function App(props) {
+    const [ isMobile, setIsMobile ] = useState(window.innerWidth < 600)
+    useEffect(() => {
+        const setIsMobileValue = () => setIsMobile(window.innerWidth < 600);
+        window.addEventListener("resize", setIsMobileValue);
+        return () => window.removeEventListener("resize", setIsMobileValue);
+      }, []);
   return (
     <div className="App">
-      <header className="App-header" style={{display:'flex', flexDirection: 'row', width: '100%'}}>
-          <div className={'navbar-container'} style={{height:'100%', width: '100%'}}>
-              <Router>
-                  <NavBar/>
-                  {!!props.message && <div id={'message'} className={'dropdown-translation'} style={{border:'2px solid red',backgroundColor: 'white', color:'red', fontWeight:'bold'}}>
-                      {props.message}
-                  </div>}
-                  <Routes>
-                      <Route path='/' exact element={<DisplayServices />} />
-                      <Route path='/attorneys' element={<DisplayAttorneys />} />
-                      <Route path='/clients' element={<DisplayClients />} />
-                      <Route path='/cases' element={<DisplayCases />} />
-                      <Route path='/disbursements' element={<DisplayDisbursements />} />
-                      <Route path='/services' element={<DisplayServices />} />
-                  </Routes>
-              </Router>
-          </div>
-      </header>
-        <div className="App-body"/>
+        {isMobile ? <div style={{color:'white'}}>Please use the portrait mode the view application</div> :
+        <div className="App-body">
+        <Router>
+            <div className={'navbar-container'}>
+            <NavBar/>
+                {!!props.message && <div id={'message'} className={'dropdown-translation'} style={{border:'2px solid red',backgroundColor: 'white', color:'red', fontWeight:'bold'}}>
+                    {props.message}
+                </div>}
+            </div>
+            <div className={'table-container'}>
+                <Routes>
+                    <Route path='/' exact element={<DisplayServices />} />
+                    <Route path='/attorneys' element={<DisplayAttorneys />} />
+                    <Route path='/clients' element={<DisplayClients />} />
+                    <Route path='/cases' element={<DisplayCases />} />
+                    <Route path='/disbursements' element={<DisplayDisbursements />} />
+                    <Route path='/services' element={<DisplayServices />} />
+                </Routes>
+            </div>
+        </Router>
+    </div>}
     </div>
   );
 }

@@ -1,179 +1,28 @@
-@media only screen and (max-width: 600px) {
-    .navbar-container {
-        height: 5%;
-    }
-
-    .navbar-logo {
-        width: 15%;
-    }
-
-    #navbar-attorneys {
-        width: 20%;
-        font-size: 9px;
-    }
-
-    #navbar-clients {
-        width: 20%;
-        font-size: 9px;
-
-    }
-
-    #navbar-cases {
-        width: 15%;
-        font-size: 9px;
-    }
-
-    #navbar-services {
-        width: 20%;
-        font-size: 9px;
-    }
-
-    #navbar-disbursements {
-        width: 30%;
-        font-size: 9px;
-    }
+.navbars {
+    height: 100%;
 }
 
-@media only screen and (max-width: 768px) and (min-width: 601px) {
-    .navbar-container {
-        height: 5%;
-    }
-
-    .navbar-logo {
-        width: 15%;
-    }
-
-    #navbar-attorneys {
-        width: 20%;
-        font-size: 18px;
-    }
-
-    #navbar-clients {
-        width: 20%;
-        font-size: 18px;
-
-    }
-
-    #navbar-cases {
-        width: 15%;
-        font-size: 18px;
-    }
-
-    #navbar-services {
-        width: 20%;
-        font-size: 18px;
-    }
-
-    #navbar-disbursements {
-        width: 30%;
-        font-size: 18px;
-    }
+.navbar-logo {
+    max-width: 10%;
 }
 
-@media only screen and (max-width: 1024px) and (min-width: 769px) {
-    .navbar-container {
-        height: 5%;
-    }
-
-    .navbar-logo {
-        width: 15%;
-    }
-
-    #navbar-attorneys {
-        width: 20%;
-        font-size: 22px;
-    }
-
-    #navbar-clients {
-        width: 20%;
-        font-size: 22px;
-
-    }
-
-    #navbar-cases {
-        width: 15%;
-        font-size: 22px;
-    }
-
-    #navbar-services {
-        width: 20%;
-        font-size: 22px;
-    }
-
-    #navbar-disbursements {
-        width: 30%;
-        font-size: 22px;
-    }
+#navbar-attorneys {
+    width: 22%;
 }
 
-@media only screen and (max-width: 1440px) and (min-width: 1025px) {
-    .navbar-container {
-        height: 5%;
-    }
-
-    .navbar-logo {
-        width: 10%;
-    }
-
-    #navbar-attorneys {
-        width: 20%;
-        font-size: 28px;
-    }
-
-    #navbar-clients {
-        width: 20%;
-        font-size: 28px;
-
-    }
-
-    #navbar-cases {
-        width: 15%;
-        font-size: 28px;
-    }
-
-    #navbar-services {
-        width: 20%;
-        font-size: 28px;
-    }
-
-    #navbar-disbursements {
-        width: 30%;
-        font-size: 28px;
-    }
+#navbar-clients {
+    width: 20%;
 }
 
-@media only screen and (min-width: 1441px) {
-    .navbar-container {
-        height: 5%;
-    }
-
-    .navbar-logo {
-        width: 10%;
-    }
-
-    #navbar-attorneys {
-        width: 20%;
-        font-size: 40px;
-    }
-
-    #navbar-clients {
-        width: 20%;
-        font-size: 40px;
-
-    }
-
-    #navbar-cases {
-        width: 15%;
-        font-size: 40px;
-    }
-
-    #navbar-services {
-        width: 20%;
-        font-size: 40px;
-    }
-
-    #navbar-disbursements {
-        width: 30%;
-        font-size: 40px;
-    }
+#navbar-cases {
+    width: 15%;
 }
+
+#navbar-services {
+    width: 18%;
+}
+
+#navbar-disbursements {
+    width: 30%;
+}
+
