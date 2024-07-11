@@ -1,13 +1,12 @@
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 import {connect} from "react-redux";
-import  './MultiselectDropdown.css'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
-import {requestAttorneys} from "../Redux/Attorneys/AttorneysActions";
+import  '../MultiselectDropdown.css'
+import {requestAttorneys} from "../../Redux/Attorneys/AttorneysActions";
 import PropTypes from "prop-types";
-import {getClientsData} from "../Redux/Clients/ClientsSelectors";
+import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
 import './AddAttorney.css';
-import {addMessage} from "../Redux/Message/MessageActions";
+import {addMessage} from "../../Redux/Message/MessageActions";
+import { requestClients } from "../../Redux/Clients/ClientsActions";
 
 const AddAttorney = (props) => {
     const [attorneyID, setAttorneyID] = useState("");
@@ -15,10 +14,9 @@ const AddAttorney = (props) => {
     const [lastName, setLastName] = useState("");
     const [clientIdList, setClientIdList] = useState({});
     const [priceList, setPriceList] = useState({});
-    const [showAddService, setShowAddService] = useState(false);
     const [numberOfServicePricing, setNumberOfServicePricing] = useState("0");
 
-    let handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         window.scrollTo(0, 0);
         try {
@@ -90,30 +88,17 @@ const AddAttorney = (props) => {
         setClientIdList({...clientIdList, [i]: event.target.value});
     };
 
-    const handleAddService = () => {
-        if (showAddService) {
-            setShowAddService(false)
-        } else{
-            setShowAddService(true)
-        }
-    }
-
     const handleNumberOfServicePricing = (event) => {
         setNumberOfServicePricing(event.target.value);
     };
 
-    const faCaretSquare = () => {
-        return showAddService ? <FontAwesomeIcon icon={faCaretSquareUp} /> : <FontAwesomeIcon icon={faCaretSquareDown} />
-    }
+    useEffect(() => {
+        props.requestClients('')
+    }, [])
 
     return (
         <div id="add-attorney-container" className={'dropdown-components-container'}>
-            <div id="add-attorney-span-container" className={'dropdown-span-container'}>
-                <span id={"add-attorney-container-span"} className={'dropdown-container-span'} onClick={handleAddService}>
-                    ADD ATTORNEY   {faCaretSquare()}
-                </span>
-            </div>
-            {showAddService && <form id={'add-attorney-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit} onReset={handleClear}>
+            <form id={'add-attorney-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit} onReset={handleClear}>
                 <div id="add-attorney-attorney-id-container" className={'dropdown-field-container'}>
                     <div id={'add-attorney-attorney-id-translation'} className={'dropdown-translation'}>
                         {'Attorney ID: '}
@@ -165,7 +150,7 @@ const AddAttorney = (props) => {
                     </select>
                 </div>
                 <div id="add-attorney-service-pricing-container" className={'dropdown-field-container'}>
-                    {[...Array(parseInt(numberOfServicePricing))].map((e, i) => {
+                    {[...Array(parseInt(numberOfServicePricing))].map((_, i) => {
                         return(
                             <div id={"add-attorney-service-pricing-"+i} className={"dropdown-field-container"}>
                                 <div id={'add-attorney-service-pricing' + i + '-translation'} className={'dropdown-translation'}>
@@ -208,7 +193,7 @@ const AddAttorney = (props) => {
                         CLEAR
                     </button>
                 </div>
-            </form>}
+            </form>
         </div>
     );
 }
@@ -225,6 +210,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     requestAttorneys: (attorneyID) => {
         dispatch(requestAttorneys(attorneyID))
+    },
+    requestClients: (clientID) => {
+        dispatch(requestClients(clientID))
     },
     addMessage: (message) => {
         dispatch(addMessage(message))

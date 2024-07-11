@@ -1,17 +1,16 @@
 import React, {useEffect, useState} from "react"
 import {connect} from "react-redux";
-import {requestServices} from "../Redux/Services/ServicesActions";
-import  './MultiselectDropdown.css'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
+import {requestServices} from "../../Redux/Services/ServicesActions";
+import  '../MultiselectDropdown.css'
 import '@amir04lm26/react-modern-calendar-date-picker/lib/DatePicker.css';
 import DatePicker from '@amir04lm26/react-modern-calendar-date-picker';
 import PropTypes from "prop-types";
-import {getClientsData} from "../Redux/Clients/ClientsSelectors";
-import {getCasesData} from "../Redux/Cases/CasesSelectors";
-import {getAttorneysData} from "../Redux/Attorneys/AttorneysSelectors";
+import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
+import {getCasesData} from "../../Redux/Cases/CasesSelectors";
+import {getAttorneysData} from "../../Redux/Attorneys/AttorneysSelectors";
 import './AddService.css';
-import {addMessage, clearMessage} from "../Redux/Message/MessageActions";
+import {addMessage, clearMessage} from "../../Redux/Message/MessageActions";
+import { requestAttorneys } from "../../Redux/Attorneys/AttorneysActions";
 
 const AddService = (props) => {
     const [caseID, setCaseID] = useState("");
@@ -21,7 +20,6 @@ const AddService = (props) => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [minutes, setMinutes] = useState({});
     const [selectedAttorneys, setSelectedAttorneys] = useState({});
-    const [showAddService, setShowAddService] = useState(false);
     const [numberOfAttorneys, setNumberOfAttorneys] = useState("0");
     const [currencyCode, setCurrencyCode] = useState("");
     const [shouldPost, setShouldPost] = useState(true);
@@ -31,7 +29,7 @@ const AddService = (props) => {
         window.scrollTo(0, 0);
         if(shouldPost){
             try {
-                if(selectedAttorneys === {} || caseID === '' || service === '' || date === 'undefined-undefined-undefined') {
+                if(selectedAttorneys.keys().length === 0 || caseID === '' || service === '' || date.includes('undefined')) {
                     return props.addMessage('❗ Please complete all fields to add a service.')
                 }
                 let attorneysList = []
@@ -128,14 +126,6 @@ const AddService = (props) => {
         setSelectedAttorneys({...selectedAttorneys, [i]: event.target.value})
     }
 
-    const handleAddService = () => {
-        if (showAddService) {
-            setShowAddService(false)
-        } else{
-            setShowAddService(true)
-        }
-    }
-
     const handleNumberOfAttorneys = (event) => {
         setNumberOfAttorneys(event.target.value);
     };
@@ -156,23 +146,19 @@ const AddService = (props) => {
         }
     }
 
-    const faCaretSquare = () => {
-        return showAddService ? <FontAwesomeIcon icon={faCaretSquareUp} /> : <FontAwesomeIcon icon={faCaretSquareDown} />
-    }
-
     const getClientNameForSelectedCase = () => {
         return caseID === '' ? '' : props.clientsData.find(data => data.clientId === props.casesData
             .find(data => data.caseId === caseID)?.clientId)?.clientName
     }
 
+    useEffect(() => {
+        props.requestAttorneys('');
+        props.requestCases('');
+    }, [])
+
     return (
         <div id="add-service-container" className={'dropdown-components-container'}>
-            <div id="add-service-span-container" className={'dropdown-span-container'}>
-                <span id={'add-service-span'} className={'dropdown-container-span'} onClick={handleAddService}>
-                    ADD A SERVICE   {faCaretSquare()}
-                </span>
-            </div>
-            {showAddService && <form id={'add-service-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit} onReset={handleClear}>
+            <form id={'add-service-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit} onReset={handleClear}>
                     <div id="add-service-case-name-container" className={'dropdown-field-container'}>
                         <div id={'add-service-case-name-translation'} className={'dropdown-translation'}>
                             {'Case: '}
@@ -305,7 +291,7 @@ const AddService = (props) => {
                         CLEAR
                     </button>
                 </div>
-            </form>}
+            </form>
         </div>
     );
 }
@@ -328,6 +314,12 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({
     requestServices: (clientID) => {
         dispatch(requestServices(clientID));
+    },
+    requestCases: (caseID) => {
+        dispatch(requestServices(caseID));
+    },
+    requestAttorneys: (attorneyID) => {
+        dispatch(requestAttorneys(attorneyID));
     },
     addMessage: (message) => {
         dispatch(addMessage(message));

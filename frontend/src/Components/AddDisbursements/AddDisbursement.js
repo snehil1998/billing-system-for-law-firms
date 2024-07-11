@@ -1,17 +1,16 @@
 import React, {useEffect, useState} from "react"
 import {connect} from "react-redux";
-import  './MultiselectDropdown.css'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
+import  '../MultiselectDropdown.css'
 import '@amir04lm26/react-modern-calendar-date-picker/lib/DatePicker.css';
 import DatePicker from '@amir04lm26/react-modern-calendar-date-picker';
 import PropTypes from "prop-types";
-import {getClientsData} from "../Redux/Clients/ClientsSelectors";
-import {getCasesData} from "../Redux/Cases/CasesSelectors";
-import {getAttorneysData} from "../Redux/Attorneys/AttorneysSelectors";
-import {requestDisbursements} from "../Redux/Disbursements/DisbursementsActions";
+import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
+import {getCasesData} from "../../Redux/Cases/CasesSelectors";
+import {getAttorneysData} from "../../Redux/Attorneys/AttorneysSelectors";
+import {requestDisbursements} from "../../Redux/Disbursements/DisbursementsActions";
 import './AddDisbursement.css';
-import {addMessage} from "../Redux/Message/MessageActions";
+import {addMessage} from "../../Redux/Message/MessageActions";
+import { requestCases } from "../../Redux/Cases/CasesActions";
 
 const AddDisbursement = (props) => {
     const [caseID, setCaseID] = useState("");
@@ -23,7 +22,6 @@ const AddDisbursement = (props) => {
     const [inrAmount, setInrAmount] = useState("0");
     const [conversionAmount, setConversionAmount] = useState(0);
     const [selectedDate, setSelectedDate] = useState(null);
-    const [showAddDisbursement, setShowAddDisbursement] = useState(false);
 
     let handleSubmit = async (e) => {
         e.preventDefault();
@@ -97,19 +95,6 @@ const AddDisbursement = (props) => {
         setCaseID(event.target.value);
     };
 
-    const handleAddDisbursement = () => {
-        if (showAddDisbursement) {
-            setShowAddDisbursement(false)
-        } else {
-            setShowAddDisbursement(true)
-        }
-    }
-
-    const faCaretSquare = () => {
-        return showAddDisbursement ? <FontAwesomeIcon icon={faCaretSquareUp}/> :
-            <FontAwesomeIcon icon={faCaretSquareDown}/>
-    }
-
     useEffect(() => {
         async function fetchData() {
             const endpoint = "https://api.exchangerate.host/";
@@ -139,14 +124,13 @@ const AddDisbursement = (props) => {
             .find(data => data.caseId === caseID)?.clientId)?.clientName
     }
 
+    useEffect(() => {
+        props.requestCases('');
+    }, [])
+
     return (
         <div id="add-disbursement" className={'dropdown-components-container'}>
-            <div id="add-disbursement-span-container" className={'dropdown-span-container'}>
-                <span id={'add-disbursement-container-span'} className={'dropdown-container-span'} onClick={handleAddDisbursement}>
-                    ADD A DISBURSEMENT {faCaretSquare()}
-                </span>
-            </div>
-            {showAddDisbursement && <form id={'add-disbursement-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit} onReset={handleClear}>
+            <form id={'add-disbursement-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit} onReset={handleClear}>
                 <div id="add-disbursement-case-name-container" className={'dropdown-field-container'}>
                     <div id={'add-disbursement-case-name-translation'} className={'dropdown-translation'}>
                         {'Case: '}
@@ -260,7 +244,7 @@ const AddDisbursement = (props) => {
                         CLEAR
                     </button>
                 </div>
-            </form>}
+            </form>
         </div>
     );
 }
@@ -283,6 +267,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({
     requestDisbursements: (clientID) => {
         dispatch(requestDisbursements(clientID));
+    },
+    requestCases: (caseID) => {
+        dispatch(requestCases(caseID));
     },
     addMessage: (message) => {
         dispatch(addMessage(message));

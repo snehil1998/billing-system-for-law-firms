@@ -1,18 +1,21 @@
-import React, {useEffect, useMemo} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {connect, useDispatch} from "react-redux";
 import {requestServices} from "../../Redux/Services/ServicesActions";
-import Table from "../../Components/Table";
-import AddService from "../../Components/AddService";
+import AddService from "../../Components/AddServices/AddService";
 import {getFilteredServiceData, getServiceIsLoading} from "../../Redux/Services/ServicesSelectors";
 import PropTypes from 'prop-types';
 import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
 import {getCasesData} from "../../Redux/Cases/CasesSelectors";
 import {getAttorneysData} from "../../Redux/Attorneys/AttorneysSelectors";
 import {clearMessage} from "../../Redux/Message/MessageActions";
-import {Page} from "../../Components/PagesEnum";
+import {
+    MaterialReactTable,
+    useMaterialReactTable,
+  } from 'material-react-table';
 
 const DisplayServices = (props) => {
     const dispatch = useDispatch();
+    const [tableData, setTableData] = useState([]);
     useEffect(() => {
         dispatch(clearMessage());
         dispatch(requestServices(''));
@@ -21,100 +24,59 @@ const DisplayServices = (props) => {
     const columns = useMemo(
         () => [
             {
-                id: 'expander', // Make sure it has an ID
-                Header: ({ getToggleAllRowsExpandedProps, isAllRowsExpanded }) => (
-                    <span {...getToggleAllRowsExpandedProps()}>
-                        {isAllRowsExpanded ? '⬇️' : '➡️'}
-                    </span>
-                ),
-                Cell: ({ row }) =>
-                    row.canExpand ? (
-                        <span
-                            {...row.getToggleRowExpandedProps({
-                                style: {
-                                    paddingLeft: `${row.depth * 2}rem`,
-                                },
-                            })}
-                        >
-                            {row.isExpanded ? '⬇️' : '➡️'}
-                        </span>
-                    ) : null,
+                header: 'Services',
+                columns: [
+                    {
+                        header: 'Case Name',
+                        accessorKey: 'casename',
+                    }, {
+                        header: 'Client Name',
+                        accessorKey: 'clientname',
+                    }, {
+                        header: 'Service',
+                        accessorKey: 'service',
+                    }, {
+                        header: 'Date',
+                        accessorKey: 'date',
+                    }, {
+                        header: 'Currency Code',
+                        accessorKey: 'currencycode',
+
+                    }, {
+                        header: 'Amount',
+                        accessorKey: 'amount',
+                    },
+                ]
             },
             {
-                Header: 'Services',
+                header: 'Attorneys',
                 columns: [
                     {
-                        Header: 'Case Name',
-                        accessor: 'casename',
-                        sortType: "basic",
-                        filter: "text"
-                    }, {
-                        Header: 'Client Name',
-                        accessor: 'clientname',
-                        sortType: "basic",
-                        filter: "text"
-                    }, {
-                        Header: 'Service',
-                        accessor: 'service',
-                        sortType: "basic",
-                        filter: "text"
-                    }, {
-                        Header: 'Date',
-                        accessor: 'date',
-                        sortType: "basic",
-                        filter: "text"
-                    }, {
-                        Header: 'Currency Code',
-                        accessor: 'currencycode',
-                        sortType: "basic",
-                        filter: "text",
-
-                    }, {
-                        Header: 'Amount',
-                        accessor: 'amount',
-                        sortType: "basic",
-                        filter: "text"
-                    },
-            ]},
-            {
-                Header: 'Attorneys',
-                columns: [
-                    {
-                        Header: 'Name',
-                        accessor: 'attorneys',
-                        sortType: "basic",
-                        filter: "text",
+                        header: 'Name',
+                        accessorKey: 'attorneys',
 
                     },
                     {
-                        Header: 'Time Spent (in Minutes)',
-                        accessor: 'minutes',
-                        sortType: "basic",
-                        filter: "numeric"
+                        header: 'Time Spent (in Minutes)',
+                        accessorKey: 'minutes',
                     },
                     {
-                        Header: 'Time Spent (in hours)',
-                        accessor: 'hours',
-                        sortType: "basic",
-                        filter: "numeric"
+                        header: 'Time Spent (in hours)',
+                        accessorKey: 'hours',
                     },
                     {
-                        Header: 'Rate per hour',
-                        accessor: 'pricing',
-                        sortType: "basic",
-                        filter: "numeric"
+                        header: 'Rate per hour',
+                        accessorKey: 'pricing',
                     },
                     {
-                        Header: 'Total',
-                        accessor: 'total',
-                        sortType: "basic",
-                        filter: "numeric"
+                        header: 'Total',
+                        accessorKey: 'total',
                     }
                 ]
             }
     ], []);
 
-    let tableData = [];
+    let data = [];
     props.data.forEach((service) => {
         const filterCases = Object.values(props.casesData).filter(filteredCase => filteredCase.caseId === service.caseId);
         const filterClients = Object.values(props.clientsData).filter(filteredClient => filteredClient.clientId === service.clientId)
@@ -122,11 +84,10 @@ const DisplayServices = (props) => {
         const minutes = []
         const hours = []
         const total = []
-        service.attorneys?.map(serviceAttorney => {
+        service.attorneys?.forEach(serviceAttorney => {
             filterAttorneys.push(Object.values(props.attorneysData).filter(filteredAttorney => filteredAttorney.attorneyId ===
                 serviceAttorney.id));
             minutes.push(serviceAttorney.minutes);
-            return 0;
         })
         
         const attorneyNamesList = []
@@ -142,7 +103,7 @@ const DisplayServices = (props) => {
         minutes.forEach(minute => hours.push((minute/60.0).toFixed(2)))
         hours.forEach((hour, index) => total.push((hour * attorneyPricingList[index]).toFixed(2)))
         
-        tableData.push(
+        data.push(
             {
                 serviceid: service.serviceId,
                 casename: filterCases[0]?.caseName,
@@ -176,16 +137,25 @@ const DisplayServices = (props) => {
             })
     });
 
+    useEffect(() => {
+        setTableData(data);
+     }, [data])
+
+    const table = useMaterialReactTable({
+        columns,
+        data: tableData,
+        enableExpandAll: true,
+        enableExpanding: true,
+        filterFromLeafRows: true, 
+        getSubRows: (row) => row.subRows,
+        initialState: { expanded: true }, 
+        paginateExpandedRows: false,
+      });
+
     return (
-        <>
-            <div className={"display-services-table-container"}>
-                <div id={'display-services-table'} className={"table"}>
-                    <AddService/>
-                    <Table columns={columns} data={tableData} type={Page.SERVICES}
-                           filterByColumn={'date'} isDescending={false} />
-                </div>
-            </div>
-        </>
+        <div className={"display-services-table-container"}>
+            <MaterialReactTable table={table} />
+        </div>
     );
 };
 

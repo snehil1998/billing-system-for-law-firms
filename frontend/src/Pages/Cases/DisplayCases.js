@@ -1,71 +1,61 @@
-import React, {useEffect, useMemo} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {connect, useDispatch} from "react-redux";
-import Table from "../../Components/Table";
 import PropTypes from 'prop-types';
 import {requestCases} from "../../Redux/Cases/CasesActions";
 import {getCasesData, getCasesIsLoading} from "../../Redux/Cases/CasesSelectors";
-import AddCase from "../../Components/AddCase";
+import AddCase from "../../Components/AddCases/AddCase";
 import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
 import {clearMessage} from "../../Redux/Message/MessageActions";
-import {Page} from "../../Components/PagesEnum";
-
+import {
+    MaterialReactTable,
+    useMaterialReactTable,
+  } from 'material-react-table';
 
 const DisplayCases = (props) => {
     const dispatch = useDispatch();
+    const [tableData, setTableData] = useState([]);
+    let data = [];
     useEffect(() => {
         dispatch(clearMessage());
         dispatch(requestCases(''));
     }, [dispatch]);
 
-    const columns = useMemo(
-        () => [
-            {
-                Header: 'Cases',
-                columns: [
+        const newcols = useMemo(
+            () => [
                     {
-                        Header: 'Case ID',
-                        accessor: 'caseid',
-                        sortType: "basic",
-                        filter: "text"
+                        header: 'Case ID',
+                        accessorKey: 'caseid',
+                        size: 150
                     },
                     {
-                        Header: 'Case Name',
-                        accessor: 'casename',
-                        sortType: "basic",
-                        filter: "text"
+                        header: 'Case Name',
+                        accessorKey: 'casename',
+                        size: 300
                     }, {
-                        Header: 'Client Name',
-                        accessor: 'clientname',
-                        sortType: "basic",
-                        filter: "text"
+                        header: 'Client Name',
+                        accessorKey: 'clientname',
+                        size: 200
                     }, {
-                        Header: 'Currency Code',
-                        accessor: 'currencycode',
-                        sortType: "basic",
-                        filter: "text"
+                        header: 'Currency Code',
+                        accessorKey: 'currencycode',
+                        size: 150
                     }, {
-                        Header: 'Disbursements Amount',
-                        accessor: 'disbursementsamount',
-                        sortType: "basic",
-                        filter: "text"
+                        header: 'Disbursements Amount',
+                        accessorKey: 'disbursementsamount',
+                        size: 150
                     }, {
-                        Header: 'Services Amount',
-                        accessor: 'servicesamount',
-                        sortType: "basic",
-                        filter: "text"
+                        header: 'Services Amount',
+                        accessorKey: 'servicesamount',
+                        size: 150
                     }, {
-                        Header: 'Amount',
-                        accessor: 'amount',
-                        sortType: "basic",
-                        filter: "text"
+                        header: 'Amount',
+                        accessorKey: 'amount',
+                        size: 150
                     },
-                ]
-            },
-        ], []);
+                ], []);
 
-    let tableData = [];
     props.data.forEach((Case) => {
-        tableData.push(
+        data.push(
             {
                 caseid: Case.caseId,
                 casename: Case.caseName,
@@ -77,16 +67,19 @@ const DisplayCases = (props) => {
             })
     });
 
+    useEffect(() => {
+        setTableData(data);
+     }, [data])
+
+    const table = useMaterialReactTable({
+        columns: newcols,
+        data: tableData
+      });
+
     return (
-        <>
-            <div className={"display-cases-table-container"}>
-                <div id={'display-cases-table'} className={"table"}>
-                    <AddCase/>
-                    <Table columns={columns} data={tableData} type={Page.CASES}
-                           filterByColumn={'caseid'} isDescending={false} />
-                </div>
-            </div>
-        </>
+        <div className={"display-cases-table-container"}>
+            <MaterialReactTable table={table} />
+        </div>
     );
 };
 

@@ -1,17 +1,20 @@
-import React, {useEffect, useMemo} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {connect, useDispatch} from "react-redux";
-import Table from "../../Components/Table";
 import PropTypes from 'prop-types';
 import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
 import {getCasesData} from "../../Redux/Cases/CasesSelectors";
 import {requestDisbursements} from "../../Redux/Disbursements/DisbursementsActions";
 import {getDisbursementsData, getDisbursementsIsLoading} from "../../Redux/Disbursements/DisbursementsSelectors";
-import AddDisbursement from "../../Components/AddDisbursement";
+import AddDisbursement from "../../Components/AddDisbursements/AddDisbursement";
 import {clearMessage} from "../../Redux/Message/MessageActions";
-import {Page} from "../../Components/PagesEnum";
+import {
+    MaterialReactTable,
+    useMaterialReactTable,
+  } from 'material-react-table';
 
 const DisplayServices = (props) => {
     const dispatch = useDispatch();
+    const [tableData, setTableData] = useState([]);
     useEffect(() => {
         dispatch(clearMessage());
         dispatch(requestDisbursements(''));
@@ -19,59 +22,46 @@ const DisplayServices = (props) => {
 
     const columns = useMemo(
         () => [
-            {
-                Header: 'Disbursements',
-                columns: [
-                    {
-                        Header: 'Case Name',
-                        accessor: 'casename',
-                        sortType: "basic",
-                        filter: "text"
-                    }, {
-                        Header: 'Client Name',
-                        accessor: 'clientname',
-                        sortType: "basic",
-                        filter: "text"
-                    }, {
-                        Header: 'Disbursement',
-                        accessor: 'disbursement',
-                        sortType: "basic",
-                        filter: "text"
-                    }, {
-                        Header: 'Date',
-                        accessor: 'date',
-                        sortType: "basic",
-                        filter: "text"
-                    }, {
-                        Header: 'Currency Code',
-                        accessor: 'currencycode',
-                        sortType: "basic",
-                        filter: "text",
+                {
+                    header: 'Case Name',
+                    accessorKey: 'casename',
+                    size: 300,
+                }, {
+                    header: 'Client Name',
+                    accessorKey: 'clientname',
+                    size: 300,
+                }, {
+                    header: 'Disbursement',
+                    accessorKey: 'disbursement',
+                    size: 150,
+                }, {
+                    header: 'Date',
+                    accessorKey: 'date',
+                    size: 150,
+                }, {
+                    header: 'Currency Code',
+                    accessorKey: 'currencycode',
+                    size: 150
+                }, {
+                    header: 'Conversion Rate',
+                    accessorKey: 'conversionrate',
+                    size: 150,
+                }, {
+                    header: 'INR Amount',
+                    accessorKey: 'inramount',
+                    size: 150,
+                }, {
+                    header: 'Conversion Amount',
+                    accessorKey: 'conversionamount',
+                    size: 150,
+                },
+            ], []);
 
-                    }, {
-                        Header: 'Conversion Rate',
-                        accessor: 'conversionrate',
-                        sortType: "basic",
-                        filter: "numeric"
-                    }, {
-                        Header: 'INR Amount',
-                        accessor: 'inramount',
-                        sortType: "basic",
-                        filter: "numeric"
-                    }, {
-                        Header: 'Conversion Amount',
-                        accessor: 'conversionamount',
-                        sortType: "basic",
-                        filter: "numeric"
-                    },
-            ]},
-    ], []);
-
-    let tableData = [];
+    let data = [];
     props.data.forEach((disbursement) => {
         const filterCases = Object.values(props.casesData).find(filteredCase => filteredCase.caseId === disbursement.caseId);
         const filterClients = Object.values(props.clientsData).find(filteredClient => filteredClient.clientId === disbursement.clientId);
-        tableData.push(
+        data.push(
             {
                 disbursementid: disbursement.disbursementId,
                 casename: filterCases?.caseName || 'N/A',
@@ -85,16 +75,19 @@ const DisplayServices = (props) => {
             })
     });
 
+    useEffect(() => {
+        setTableData(data);
+     }, [data])
+
+    const table = useMaterialReactTable({
+        columns: columns,
+        data: tableData
+      });
+
     return (
-        <>
-            <div className={"display-disbursements-table-container"}>
-                <div id={'display-disbursements-table'} className={"table"}>
-                    <AddDisbursement/>
-                    <Table columns={columns} data={tableData} type={Page.DISBURSEMENTS}
-                           filterByColumn={'date'} isDescending={false} />
-                </div>
-            </div>
-        </>
+        <div className={"display-disbursements-table-container"}>
+            <MaterialReactTable table={table} />
+        </div>
     );
 };
 
