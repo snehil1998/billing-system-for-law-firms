@@ -74,7 +74,6 @@ const AddServicePricing = (props) => {
     const handleChangeAttorneys = (event) => {
         setSelectedAttorney(event.target.value);
     };
-
     useEffect(() => {
         props.requestClients('');
         props.requestAttorneys('');

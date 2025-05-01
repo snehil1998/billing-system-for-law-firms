@@ -55,7 +55,9 @@ const AddClient = (props) => {
     <div className="add-form-container">
       <form onSubmit={handleSubmit} onReset={handleClear} className="add-form">
         <div className="form-group">
-          <label htmlFor="clientId" className="form-label">Client ID:</label>
+          <label htmlFor="clientId" className="form-label">
+            Client ID:
+          </label>
           <input
             id="clientId"
             className="form-input"
@@ -66,7 +68,9 @@ const AddClient = (props) => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="clientName" className="form-label">Client Name:</label>
+          <label htmlFor="clientName" className="form-label">
+            Client Name:
+          </label>
           <input
             id="clientName"
             className="form-input"
@@ -77,7 +81,9 @@ const AddClient = (props) => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="currencyCode" className="form-label">Currency Code:</label>
+          <label htmlFor="currencyCode" className="form-label">
+            Currency Code:
+          </label>
           <input
             id="currencyCode"
             className="form-input"

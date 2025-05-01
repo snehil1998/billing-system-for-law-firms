@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import FormField from "../common/FormField";
 import ButtonGroup from "../common/ButtonGroup";
-import "./AddClient.css";
 
 const initialFormState = {
   clientId: "",
