@@ -1,16 +1,15 @@
 import React, { useEffect, useState} from "react"
 import {connect} from "react-redux";
-import  '../MultiselectDropdown.css'
 import {requestAttorneys} from "../../redux/attorneys/AttorneysActions";
 import PropTypes from "prop-types";
 import {getAttorneysData} from "../../redux/attorneys/AttorneysSelectors";
 import {getClientsData} from "../../redux/clients/ClientsSelectors";
-import './AddServicePricing.css';
 import {addMessage} from "../../redux/message/MessageActions";
 import { requestClients } from "../../redux/clients/ClientsActions";
+import "../common/AddForm.css";
 
 const AddServicePricing = (props) => {
-    const [selectedAttorney, setSelectedAttorney] = useState({});
+    const [selectedAttorney, setSelectedAttorney] = useState("");
     const [clientId, setClientId] = useState("");
     const [price, setPrice] = useState("");
 
@@ -18,7 +17,7 @@ const AddServicePricing = (props) => {
         e.preventDefault();
         window.scrollTo(0, 0);
         try {
-            if(clientId === "" || price === "" || selectedAttorney.keys().length === 0) {
+            if(clientId === "" || price === "" || selectedAttorney === "") {
                 return props.addMessage('Please complete all the fields to add service pricing.');
             }
             const servicePricingList = [{clientId: clientId, price: parseInt(price)}]
@@ -36,7 +35,7 @@ const AddServicePricing = (props) => {
                 }),
             });
             if (res.status === 200 || res.status === 201) {
-                setSelectedAttorney({});
+                setSelectedAttorney("");
                 setClientId("");
                 setPrice("");
                 props.addMessage("Service pricing was added successfully!");
@@ -54,7 +53,7 @@ const AddServicePricing = (props) => {
 
     const handleClear = async (e) => {
         e.preventDefault();
-        setSelectedAttorney({});
+        setSelectedAttorney("");
         setClientId("");
         setPrice("");
     }
@@ -75,72 +74,72 @@ const AddServicePricing = (props) => {
     const handleChangeAttorneys = (event) => {
         setSelectedAttorney(event.target.value);
     };
+
     useEffect(() => {
         props.requestClients('');
         props.requestAttorneys('');
     }, [])
 
     return (
-        <div id="add-service-pricing-container" className={'dropdown-components-container'}>
-            <form id={'add-service-pricing-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit} onReset={handleClear}>
-                <div id="add-service-pricing-attorney-name-container" className={'dropdown-field-container'}>
-                    <div id={'add-service-pricing-first-name-translation'} className={'dropdown-translation'}>
-                        {'Attorney: '}
-                    </div>
-                    <select id={'add-service-pricing-first-name-select'} className={'dropdown-select'} value={selectedAttorney} onChange={handleChangeAttorneys}>
-                        <option key={"placeholder-selected-attorney"} value={{}} disabled={true}>
-                            Select an attorney
-                        </option>
-                        {attorneysOptions?.sort(
-                            function(a, b){
-                                let x = a.label.toLowerCase();
-                                let y = b.label.toLowerCase();
-                                if (x < y) {return -1;}
-                                if (x > y) {return 1;}
-                                return 0;
-                            }).map((option, i) => (
-                            <option key={option.value} value={option.value}>{option.label}</option>
+        <div className="add-form-container">
+            <form onSubmit={handleSubmit} onReset={handleClear} className="add-form">
+                <div className="form-group">
+                    <label htmlFor="attorney" className="form-label">Attorney:</label>
+                    <select
+                        id="attorney"
+                        className="form-input"
+                        value={selectedAttorney}
+                        onChange={handleChangeAttorneys}
+                    >
+                        <option value="" disabled>Select an attorney</option>
+                        {attorneysOptions?.sort((a, b) => {
+                            let x = a.label.toLowerCase();
+                            let y = b.label.toLowerCase();
+                            return x < y ? -1 : x > y ? 1 : 0;
+                        }).map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
                         ))}
                     </select>
                 </div>
-                <div id="add-service-pricing-service-pricing-container" className={'dropdown-field-container'}>
-                    <div>
-                        <div id={'add-service-pricing-service-pricing-translation'} className={'dropdown-translation'}>
-                            {'Service Pricing: '}
-                        </div>
-                        <select id={'add-service-pricing-service-pricing-select'} className={'dropdown-select'}
-                                key={"add-service-pricing-service-pricing-selector"} value={clientId} onChange={handleChangeClients}>
-                            <option key={"placeholder-client"} value={""}>
-                                Select a client
+                <div className="form-group">
+                    <label htmlFor="client" className="form-label">Client:</label>
+                    <select
+                        id="client"
+                        className="form-input"
+                        value={clientId}
+                        onChange={handleChangeClients}
+                    >
+                        <option value="">Select a client</option>
+                        {clientsOptions?.sort((a, b) => {
+                            let x = a.label.toLowerCase();
+                            let y = b.label.toLowerCase();
+                            return x < y ? -1 : x > y ? 1 : 0;
+                        }).map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
                             </option>
-                            {clientsOptions?.sort(
-                                function(a, b){
-                                    let x = a.label.toLowerCase();
-                                    let y = b.label.toLowerCase();
-                                    if (x < y) {return -1;}
-                                    if (x > y) {return 1;}
-                                    return 0;
-                                }).map((option) => (
-                                <option key={option.value} value={option.value}>{option.label}</option>
-                            ))}
-                        </select>
-                    </div>
+                        ))}
+                    </select>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="price" className="form-label">Price:</label>
                     <input
-                        id={'add-service-pricing-service-pricing-price-input-field'}
-                        className={'dropdown-input-field'}
-                        key={"service-pricing-price-input-field"}
+                        id="price"
+                        className="form-input"
                         type="number"
                         value={price}
-                        placeholder="Price"
                         onChange={(e) => setPrice(e.target.value)}
+                        placeholder="Enter price"
                     />
                 </div>
-                <div id={'add-service-pricing-add-button-container'} className={'dropdown-button-container'}>
-                    <button type="submit" id="add-service-pricing-add-button" className={'dropdown-button'}>
-                        ADD
+                <div className="form-buttons">
+                    <button type="submit" className="form-submit-btn">
+                        Add Service Pricing
                     </button>
-                    <button type="reset" id="add-service-pricing-clear-button" className={'dropdown-button'}>
-                        CLEAR
+                    <button type="reset" className="form-clear-btn">
+                        Clear
                     </button>
                 </div>
             </form>
