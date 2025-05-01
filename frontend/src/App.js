@@ -1,22 +1,22 @@
 import './App.css';
-import DisplayServices from "./Pages/Services/DisplayServices";
-import NavBarComponent from './Components/Navbar/NavBar';
+import DisplayServices from "./pages/services/DisplayServices";
+import NavBarComponent from './components/navbar/NavBar';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import DisplayClients from "./Pages/Clients/DisplayClients";
-import DisplayCases from "./Pages/Cases/DisplayCases";
-import DisplayAttorneys from "./Pages/Attorneys/DisplayAttorneys";
-import DisplayDisbursements from "./Pages/Disbursements/DisplayDisbursements";
+import DisplayClients from "./pages/clients/DisplayClients";
+import DisplayCases from "./pages/cases/DisplayCases";
+import DisplayAttorneys from "./pages/attorneys/DisplayAttorneys";
+import DisplayDisbursements from "./pages/disbursements/DisplayDisbursements";
 import {connect} from "react-redux";
 import PropTypes from "prop-types";
-import {getMessage} from "./Redux/Message/MessageSelectors";
+import {getMessage} from "./redux/message/MessageSelectors";
 import React, {useEffect, useState} from "react"
-import AddService from './Components/AddServices/AddService';
-import AddDisbursement from './Components/AddDisbursements/AddDisbursement';
-import AddAttorney from './Components/AddAttorney/AddAttorney';
-import AddServicePricing from './Components/AddServicePricing/AddServicePricing';
-import DeleteServicePricing from './Components/DeleteServicePricing/DeleteServicePricing';
-import AddClient from './Components/AddClients/AddClient';
-import AddCase from './Components/AddCases/AddCase';
+import AddService from './components/addServices/AddService';
+import AddDisbursement from './components/addDisbursements/AddDisbursement';
+import AddAttorney from './components/addAttorney/AddAttorney';
+import AddServicePricing from './components/addServicePricing/AddServicePricing';
+import DeleteServicePricing from './components/deleteServicePricing/DeleteServicePricing';
+import AddClient from './components/addClients/AddClient';
+import AddCase from './components/addCases/AddCase';
 
 function App(props) {
     const [ isMobile, setIsMobile ] = useState(window.innerWidth < 600)

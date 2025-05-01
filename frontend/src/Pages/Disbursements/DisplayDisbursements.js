@@ -1,12 +1,11 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {connect, useDispatch} from "react-redux";
 import PropTypes from 'prop-types';
-import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
-import {getCasesData} from "../../Redux/Cases/CasesSelectors";
-import {requestDisbursements} from "../../Redux/Disbursements/DisbursementsActions";
-import {getDisbursementsData, getDisbursementsIsLoading} from "../../Redux/Disbursements/DisbursementsSelectors";
-import AddDisbursement from "../../Components/AddDisbursements/AddDisbursement";
-import {clearMessage} from "../../Redux/Message/MessageActions";
+import {getClientsData} from "../../redux/clients/ClientsSelectors";
+import {getCasesData} from "../../redux/cases/CasesSelectors";
+import {requestDisbursements} from "../../redux/disbursements/DisbursementsActions";
+import {getDisbursementsData, getDisbursementsIsLoading} from "../../redux/disbursements/DisbursementsSelectors";
+import {clearMessage} from "../../redux/message/MessageActions";
 import {
     MaterialReactTable,
     useMaterialReactTable,

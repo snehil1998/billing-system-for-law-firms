@@ -1,10 +1,9 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {connect, useDispatch} from "react-redux";
 import PropTypes from 'prop-types';
-import {requestClients} from "../../Redux/Clients/ClientsActions";
-import {getClientsData, getClientsIsLoading} from "../../Redux/Clients/ClientsSelectors";
-import AddClient from "../../Components/AddClients/AddClient";
-import {clearMessage} from "../../Redux/Message/MessageActions";
+import {requestClients} from "../../redux/clients/ClientsActions";
+import {getClientsData, getClientsIsLoading} from "../../redux/clients/ClientsSelectors";
+import {clearMessage} from "../../redux/message/MessageActions";
 import {
     MaterialReactTable,
     useMaterialReactTable,

@@ -4,13 +4,13 @@ import  '../MultiselectDropdown.css'
 import '@amir04lm26/react-modern-calendar-date-picker/lib/DatePicker.css';
 import DatePicker from '@amir04lm26/react-modern-calendar-date-picker';
 import PropTypes from "prop-types";
-import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
-import {getCasesData} from "../../Redux/Cases/CasesSelectors";
-import {getAttorneysData} from "../../Redux/Attorneys/AttorneysSelectors";
-import {requestDisbursements} from "../../Redux/Disbursements/DisbursementsActions";
+import {getClientsData} from "../../redux/clients/ClientsSelectors";
+import {getCasesData} from "../../redux/cases/CasesSelectors";
+import {getAttorneysData} from "../../redux/attorneys/AttorneysSelectors";
+import {requestDisbursements} from "../../redux/disbursements/DisbursementsActions";
 import './AddDisbursement.css';
-import {addMessage} from "../../Redux/Message/MessageActions";
-import { requestCases } from "../../Redux/Cases/CasesActions";
+import {addMessage} from "../../redux/message/MessageActions";
+import { requestCases } from "../../redux/cases/CasesActions";
 
 const AddDisbursement = (props) => {
     const [caseID, setCaseID] = useState("");

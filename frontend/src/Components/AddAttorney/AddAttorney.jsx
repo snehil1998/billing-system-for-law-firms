@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react"
 import {connect} from "react-redux";
 import  '../MultiselectDropdown.css'
-import {requestAttorneys} from "../../Redux/Attorneys/AttorneysActions";
+import {requestAttorneys} from "../../redux/attorneys/AttorneysActions";
 import PropTypes from "prop-types";
-import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
+import {getClientsData} from "../../redux/clients/ClientsSelectors";
 import './AddAttorney.css';
-import {addMessage} from "../../Redux/Message/MessageActions";
-import { requestClients } from "../../Redux/Clients/ClientsActions";
+import {addMessage} from "../../redux/message/MessageActions";
+import { requestClients } from "../../redux/clients/ClientsActions";
 
 const AddAttorney = (props) => {
     const [attorneyID, setAttorneyID] = useState("");

@@ -1,13 +1,12 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {connect, useDispatch} from "react-redux";
-import {requestServices} from "../../Redux/Services/ServicesActions";
-import AddService from "../../Components/AddServices/AddService";
-import {getFilteredServiceData, getServiceIsLoading} from "../../Redux/Services/ServicesSelectors";
+import {requestServices} from "../../redux/services/ServicesActions";
+import {getFilteredServiceData, getServiceIsLoading} from "../../redux/services/ServicesSelectors";
 import PropTypes from 'prop-types';
-import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
-import {getCasesData} from "../../Redux/Cases/CasesSelectors";
-import {getAttorneysData} from "../../Redux/Attorneys/AttorneysSelectors";
-import {clearMessage} from "../../Redux/Message/MessageActions";
+import {getClientsData} from "../../redux/clients/ClientsSelectors";
+import {getCasesData} from "../../redux/cases/CasesSelectors";
+import {getAttorneysData} from "../../redux/attorneys/AttorneysSelectors";
+import {clearMessage} from "../../redux/message/MessageActions";
 import {
     MaterialReactTable,
     useMaterialReactTable,
@@ -148,7 +147,7 @@ const DisplayServices = (props) => {
         enableExpanding: true,
         filterFromLeafRows: true, 
         getSubRows: (row) => row.subRows,
-        initialState: { expanded: true }, 
+        initialState: { expanded: false }, 
         paginateExpandedRows: false,
       });
 

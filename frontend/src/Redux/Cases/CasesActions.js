@@ -1,5 +1,5 @@
 import CASES from "./CasesConstants";
-import {requestClients} from "../Clients/ClientsActions";
+import {requestClients} from "../clients/ClientsActions";
 
 export const requestCases = (casesID) => async (dispatch) => {
     dispatch({

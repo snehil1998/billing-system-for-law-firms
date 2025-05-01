@@ -1,11 +1,10 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {connect, useDispatch} from "react-redux";
 import PropTypes from 'prop-types';
-import {requestCases} from "../../Redux/Cases/CasesActions";
-import {getCasesData, getCasesIsLoading} from "../../Redux/Cases/CasesSelectors";
-import AddCase from "../../Components/AddCases/AddCase";
-import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
-import {clearMessage} from "../../Redux/Message/MessageActions";
+import {requestCases} from "../../redux/cases/CasesActions";
+import {getCasesData, getCasesIsLoading} from "../../redux/cases/CasesSelectors";
+import {getClientsData} from "../../redux/clients/ClientsSelectors";
+import {clearMessage} from "../../redux/message/MessageActions";
 import {
     MaterialReactTable,
     useMaterialReactTable,

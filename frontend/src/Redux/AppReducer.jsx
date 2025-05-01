@@ -1,10 +1,10 @@
 import {combineReducers} from "redux";
-import ServicesReducer from "./Services/ServicesReducer";
-import ClientsReducer from "./Clients/ClientsReducer";
-import CasesReducer from "./Cases/CasesReducer";
-import AttorneysReducer from "./Attorneys/AttorneysReducer";
-import DisbursementsReducer from "./Disbursements/DisbursementsReducer";
-import MessageReducer from "./Message/MessageReducer";
+import ServicesReducer from "./services/ServicesReducer";
+import ClientsReducer from "./clients/ClientsReducer";
+import CasesReducer from "./cases/CasesReducer";
+import AttorneysReducer from "./attorneys/AttorneysReducer";
+import DisbursementsReducer from "./disbursements/DisbursementsReducer";
+import MessageReducer from "./message/MessageReducer";
 
 
 const AppReducer = combineReducers({

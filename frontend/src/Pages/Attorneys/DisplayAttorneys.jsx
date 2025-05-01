@@ -1,10 +1,10 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {connect, useDispatch} from "react-redux";
 import PropTypes from 'prop-types';
-import {requestAttorneys} from "../../Redux/Attorneys/AttorneysActions";
-import {getAttorneysData, getAttorneysIsLoading} from "../../Redux/Attorneys/AttorneysSelectors";
-import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
-import {clearMessage} from "../../Redux/Message/MessageActions";
+import {requestAttorneys} from "../../redux/attorneys/AttorneysActions";
+import {getAttorneysData, getAttorneysIsLoading} from "../../redux/attorneys/AttorneysSelectors";
+import {getClientsData} from "../../redux/clients/ClientsSelectors";
+import {clearMessage} from "../../redux/message/MessageActions";
 import {
     MaterialReactTable,
     useMaterialReactTable,
@@ -101,7 +101,7 @@ const DisplayAttorneys = (props) => {
         enableExpanding: true,
         getSubRows: (row) => row.subRows,
         initialState: { expanded: false },
-        paginateExpandedRows: true,
+        paginateExpandedRows: false,
       });
 
     return (

@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from "react"
 import {connect} from "react-redux";
-import {requestServices} from "../../Redux/Services/ServicesActions";
+import {requestServices} from "../../redux/services/ServicesActions";
 import  '../MultiselectDropdown.css'
 import '@amir04lm26/react-modern-calendar-date-picker/lib/DatePicker.css';
 import DatePicker from '@amir04lm26/react-modern-calendar-date-picker';
 import PropTypes from "prop-types";
-import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
-import {getCasesData} from "../../Redux/Cases/CasesSelectors";
-import {getAttorneysData} from "../../Redux/Attorneys/AttorneysSelectors";
+import {getClientsData} from "../../redux/clients/ClientsSelectors";
+import {getCasesData} from "../../redux/cases/CasesSelectors";
+import {getAttorneysData} from "../../redux/attorneys/AttorneysSelectors";
 import './AddService.css';
-import {addMessage, clearMessage} from "../../Redux/Message/MessageActions";
-import { requestAttorneys } from "../../Redux/Attorneys/AttorneysActions";
+import {addMessage, clearMessage} from "../../redux/message/MessageActions";
+import { requestAttorneys } from "../../redux/attorneys/AttorneysActions";
 
 const AddService = (props) => {
     const [caseID, setCaseID] = useState("");
