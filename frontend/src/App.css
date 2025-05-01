@@ -1,8 +1,9 @@
 .App {
   text-align: center;
-  background-color: maroon;
-  height: 100%;
-  width: 100%;
+  min-height: 100vh;
+  background-color: var(--color-background-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-base);
 }
 
 .App-logo {
@@ -17,18 +18,46 @@
 
 .table-container {
   width: 100%;
-  font-size: calc(7px + 2vmin);
-  color: white;
-  padding-top: 1%;
+  margin-top: var(--spacing-md);
+  overflow-x: auto;
+  background-color: var(--color-background-secondary);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+.table-container table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: var(--color-background-secondary);
+}
+
+.table-container th,
+.table-container td {
+  padding: var(--spacing-md);
+  text-align: left;
+  border-bottom: 1px solid var(--color-gray-200);
+  color: var(--color-text-dark);
+  background-color: var(--color-white);
+}
+
+.table-container th {
+  background-color: var(--color-white);
+  color: var(--color-text-dark);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.table-container tr:hover {
+  background-color: var(--color-gray-100);
 }
 
 .App-body {
-  background-color: maroon;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(9px + 2vmin);
-  color: white;
-  height: 100%;
+  padding: var(--spacing-lg);
+  width: 100%;
+  margin: 0;
+  background-color: var(--color-background-primary);
 }
 
 .App-link {
@@ -36,72 +65,122 @@
 }
 
 .dropdown-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
   cursor: pointer;
-  padding-right: 0.3%;
+  color: var(--color-text-dark);
 }
 
 .dropdown-checkboxes {
   display: flex;
-  flex-direction: row;
   flex-wrap: wrap;
-  width: 100%;
-}
-
-.DatePicker__input::placeholder {
-  width: 85%;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background-color: var(--color-gray-100);
+  border-radius: var(--border-radius-sm);
 }
 
 .DatePicker__input {
-  width: 85%;
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
+  background-color: var(--color-white);
+}
+
+.DatePicker__input::placeholder {
+  color: var(--color-gray-500);
 }
 
 .dropdown-components-container {
-  text-align: left;
-  max-width: 100%;
+  width: 100%;
+  background-color: var(--color-background-secondary);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-lg);
+  border: none;
+  box-shadow: none;
 }
 
 .dropdown-span-container {
-  background-color: black;
-  display: inline-block;
-  padding-left: 0.5%;
+  width: 100%;
+  padding: var(--spacing-md);
+  background-color: var(--color-background-primary);
+  border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+  border-bottom: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .dropdown-container-span {
+  color: var(--color-text-primary);
   cursor: pointer;
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .dropdown-form-container {
-  background-color: grey;
-  padding-bottom: 1%;
-  padding-left: 1%;
-  width: 50%;
-}
-
-.dropdown-select {
-  width: 90%;
-  font-size: calc(3px + 2vmin);
-}
-
-.dropdown-input-field {
-  width: 90%;
-  font-size: calc(3px + 2vmin);
+  width: 100%;
+  padding: var(--spacing-lg);
+  background-color: var(--color-background-secondary);
+  border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
 }
 
 .dropdown-field-container {
-  padding-bottom: 1%;
-  font-size: calc(3px + 2vmin);
+  width: 100%;
+  margin-bottom: var(--spacing-md);
+}
+
+.dropdown-translation {
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-dark);
+  font-weight: var(--font-weight-medium);
+}
+
+.dropdown-input-field,
+.dropdown-select {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
+  transition: all var(--transition-fast);
+  background-color: var(--color-white);
+}
+
+.dropdown-input-field:focus,
+.dropdown-select:focus {
+  outline: none;
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.25);
 }
 
 .dropdown-button {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-background-primary);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
   cursor: pointer;
+  transition: all var(--transition-fast);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid var(--color-secondary);
 }
 
-.dropdown-button-container {
-  font-size: calc(3px + 2vmin);
+.dropdown-button:hover {
+  background-color: var(--color-secondary);
+  color: var(--color-text-dark);
 }
 
-.dropdown-checkboxes {
-  display: flex;
+.dropdown-button:disabled {
+  background-color: var(--color-gray-400);
+  border-color: var(--color-gray-400);
+  cursor: not-allowed;
 }
 
 .dropdown {
@@ -114,4 +193,48 @@
 
 .MuiTable-root > table {
   font-size: alc(3px + 2vmin);;
+}
+
+:root {
+  --color-background-primary: #8B0000;
+  --color-background-secondary: #F5F5F5;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #F5F5F5;
+  --color-text-accent: #D4AF37;
+  --color-text-dark: #2C1810;
+  --color-primary: #8B0000;
+  --color-primary-light: #A52A2A;
+  --color-primary-dark: #5C0000;
+  --color-secondary: #D4AF37;
+  --color-secondary-light: #F4CF47;
+  --color-secondary-dark: #B48B00;
+  --color-gray-100: #F8F8F8;
+  --color-gray-200: #E8E8E8;
+  --color-gray-300: #D8D8D8;
+  --color-gray-400: #C8C8C8;
+  --color-gray-500: #B8B8B8;
+  --color-gray-600: #A8A8A8;
+  --color-gray-700: #787878;
+  --color-gray-800: #484848;
+  --color-gray-900: #282828;
+  
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  --font-size-base: 1rem;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  
+  --border-radius-sm: 0.25rem;
+  --border-radius-md: 0.5rem;
+  
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
+  --transition-fast: 0.15s ease-in-out;
+  
+  --font-family-base: 'Playfair Display', Georgia, serif;
 }

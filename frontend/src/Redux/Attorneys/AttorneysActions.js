@@ -1,5 +1,5 @@
 import ATTORNEYS from "./AttorneysConstants";
-import {requestClients} from "../Clients/ClientsActions";
+import {requestClients} from "../clients/ClientsActions";
 
 export const requestAttorneys = (attorneyID) => async (dispatch) => {
     dispatch({

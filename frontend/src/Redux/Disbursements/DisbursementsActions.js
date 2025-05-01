@@ -1,6 +1,6 @@
   import DISBURSEMENTS from "./DisbursementsConstants";
-  import {requestCases} from "../Cases/CasesActions";
-  import {requestClients} from "../Clients/ClientsActions";
+  import {requestCases} from "../cases/CasesActions";
+  import {requestClients} from "../clients/ClientsActions";
 
 export const requestDisbursements = (clientID) => async (dispatch) => {
     dispatch({

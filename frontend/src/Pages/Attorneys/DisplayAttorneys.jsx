@@ -1,18 +1,18 @@
-import React, {useEffect, useMemo} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {connect, useDispatch} from "react-redux";
-import Table from "../../Components/Table";
 import PropTypes from 'prop-types';
-import {requestAttorneys} from "../../Redux/Attorneys/AttorneysActions";
-import {getAttorneysData, getAttorneysIsLoading} from "../../Redux/Attorneys/AttorneysSelectors";
-import {getClientsData} from "../../Redux/Clients/ClientsSelectors";
-import AddAttorney from "../../Components/AddAttorney";
-import AddServicePricing from "../../Components/AddServicePricing";
-import {clearMessage} from "../../Redux/Message/MessageActions";
-import {Page} from "../../Components/PagesEnum";
-import DeleteServicePricing from "../../Components/DeleteServicePricing";
+import {requestAttorneys} from "../../redux/attorneys/AttorneysActions";
+import {getAttorneysData, getAttorneysIsLoading} from "../../redux/attorneys/AttorneysSelectors";
+import {getClientsData} from "../../redux/clients/ClientsSelectors";
+import {clearMessage} from "../../redux/message/MessageActions";
+import {
+    MaterialReactTable,
+    useMaterialReactTable,
+  } from 'material-react-table';
 
 const DisplayAttorneys = (props) => {
     const dispatch = useDispatch();
+    const [tableData, setTableData] = useState([]);
     useEffect(() => {
         dispatch(clearMessage());
         dispatch(requestAttorneys(''));
@@ -21,73 +21,41 @@ const DisplayAttorneys = (props) => {
     const columns = useMemo(
         () => [
             {
-                id: 'expander', // Make sure it has an ID
-                Header: ({ getToggleAllRowsExpandedProps, isAllRowsExpanded }) => (
-                    <span {...getToggleAllRowsExpandedProps()}>
-                        {isAllRowsExpanded ? '⬇️' : '➡️'}
-                    </span>
-                ),
-                Cell: ({ row }) =>
-                    row.canExpand ? (
-                        <span
-                            {...row.getToggleRowExpandedProps({
-                                style: {
-                                    paddingLeft: `${row.depth * 2}rem`,
-                                },
-                            })}
-                        >
-                            {row.isExpanded ? '⬇️' : '➡️'}
-                        </span>
-                    ) : null,
-            },
-            {
-                Header: 'Attorneys',
+                header: 'Attorneys',
                 columns: [
                     {
-                        Header: 'Attorney ID',
-                        accessor: 'attorneyid',
-                        sortType: "basic",
-                        filter: "text"
+                        header: 'Attorney ID',
+                        accessorKey: 'attorneyid',
                     }, {
-                        Header: 'First Name',
-                        accessor: 'firstname',
-                        sortType: "basic",
-                        filter: "text"
+                        header: 'First Name',
+                        accessorKey: 'firstname',
                     }, {
-                        Header: 'Last Name',
-                        accessor: 'lastname',
-                        sortType: "basic",
-                        filter: "text"
+                        header: 'Last Name',
+                        accessorKey: 'lastname',
                     },
                 ]},
             {
-                Header: 'Service Pricing',
+                header: 'Service Pricing',
                 columns: [
                     {
-                        Header: 'Client Name',
-                        accessor: 'clientname',
-                        sortType: "basic",
-                        filter: "text",
+                        header: 'Client Name',
+                        accessorKey: 'clientname',
 
                     },
                     {
-                        Header: 'Currency Code',
-                        accessor: 'currencycode',
-                        sortType: "basic",
-                        filter: "text",
+                        header: 'Currency Code',
+                        accessorKey: 'currencycode',
 
                     },
                     {
-                        Header: 'Price',
-                        accessor: 'price',
-                        sortType: "basic",
-                        filter: "numeric"
+                        header: 'Price',
+                        accessorKey: 'price',
                     },
                 ]
             }
         ], []);
 
-    let tableData = [];
+    let data = [];
     props.data.forEach((attorney) => {
         const price = [];
         const clientName = [];
@@ -100,7 +68,7 @@ const DisplayAttorneys = (props) => {
                 pricing.clientId)?.currencyCode || 'N/A')
         })
 
-        tableData.push(
+        data.push(
             {
                 attorneyid: attorney.attorneyId,
                 firstname: attorney.firstName,
@@ -109,7 +77,7 @@ const DisplayAttorneys = (props) => {
                 currencycode: currencyCode.toString(),
                 price: price.toString(),
                 subRows: clientName.length <= 1
-                    ? null : clientName.map((name, index) => {
+                ? null : clientName.map((name, index) => {
                         return {
                             attorneyid: "",
                             firstname: "",
@@ -122,24 +90,24 @@ const DisplayAttorneys = (props) => {
             })
     });
 
+    useEffect(() => {
+        setTableData(data);
+     }, [data])
+
+    const table = useMaterialReactTable({
+        columns,
+        data: tableData,
+        enableExpandAll: true,
+        enableExpanding: true,
+        getSubRows: (row) => row.subRows,
+        initialState: { expanded: false },
+        paginateExpandedRows: false,
+      });
+
     return (
-        <>
-            <div className={"display-attorneys-table-container"}>
-                <div id={"display-attorneys-table"} className={"table"}>
-                    <div className="dropdown">
-                        <AddAttorney/>
-                    </div>
-                    <div className="dropdown">
-                        <AddServicePricing/>
-                    </div>
-                    <div className="dropdown">
-                        <DeleteServicePricing/>
-                    </div> 
-                    <Table columns={columns} data={tableData} type={Page.ATTORNEYS}
-                           filterByColumn={'attorneyid'} isDescending={false} />
-                </div>
-            </div>
-        </>
+        <div className={"display-attorneys-table-container"}>
+            <MaterialReactTable table={table} />
+        </div>
     );
 };
 

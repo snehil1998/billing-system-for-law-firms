@@ -1,7 +1,7 @@
 import SERVICES from "./ServicesConstants";
-import {requestCases} from "../Cases/CasesActions";
-import {requestClients} from "../Clients/ClientsActions";
-import {requestAttorneys} from "../Attorneys/AttorneysActions";
+import {requestCases} from "../cases/CasesActions";
+import {requestClients} from "../clients/ClientsActions";
+import {requestAttorneys} from "../attorneys/AttorneysActions";
 
 export const requestServices = (clientID) => async (dispatch) => {
     dispatch({

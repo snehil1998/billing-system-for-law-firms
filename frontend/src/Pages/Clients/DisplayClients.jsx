@@ -1,16 +1,18 @@
-import React, {useEffect, useMemo} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {connect, useDispatch} from "react-redux";
-import Table from "../../Components/Table";
 import PropTypes from 'prop-types';
-import {requestClients} from "../../Redux/Clients/ClientsActions";
-import {getClientsData, getClientsIsLoading} from "../../Redux/Clients/ClientsSelectors";
-import AddClient from "../../Components/AddClient";
-import {clearMessage} from "../../Redux/Message/MessageActions";
-import {Page} from "../../Components/PagesEnum";
-
+import {requestClients} from "../../redux/clients/ClientsActions";
+import {getClientsData, getClientsIsLoading} from "../../redux/clients/ClientsSelectors";
+import {clearMessage} from "../../redux/message/MessageActions";
+import {
+    MaterialReactTable,
+    useMaterialReactTable,
+  } from 'material-react-table';
 
 const DisplayClients = (props) => {
     const dispatch = useDispatch();
+    const [tableData, setTableData] = useState([]);
+    let data = [];
     useEffect(() => {
         dispatch(clearMessage());
         dispatch(requestClients(''));
@@ -18,48 +20,36 @@ const DisplayClients = (props) => {
 
     const columns = useMemo(
         () => [
-            {
-                Header: 'Clients',
-                columns: [
-                    {
-                        Header: 'Client ID',
-                        accessor: 'clientid',
-                        sortType: "basic",
-                        filter: "text"
-                    },
-                    {
-                        Header: 'Client Name',
-                        accessor: 'clientname',
-                        sortType: "basic",
-                        filter: "text"
-                    }, {
-                        Header: 'Currency Code',
-                        accessor: 'currencycode',
-                        sortType: "basic",
-                        filter: "text"
-                    }, {
-                        Header: 'Disbursements Amount',
-                        accessor: 'disbursementsamount',
-                        sortType: "basic",
-                        filter: "text"
-                    }, {
-                        Header: 'Services Amount',
-                        accessor: 'servicesamount',
-                        sortType: "basic",
-                        filter: "text"
-                    }, {
-                        Header: 'Amount',
-                        accessor: 'amount',
-                        sortType: "basic",
-                        filter: "text"
-                    },
-                ]
-            },
-        ], []);
+                {
+                    header: 'Client ID',
+                    accessorKey: 'clientid',
+                    size: 150,
+                },
+                {
+                    header: 'Client Name',
+                    accessorKey: 'clientname',
+                    size: 300,
+                }, {
+                    header: 'Currency Code',
+                    accessorKey: 'currencycode',
+                    size: 150,
+                }, {
+                    header: 'Disbursements Amount',
+                    accessorKey: 'disbursementsamount',
+                    size: 200,
+                }, {
+                    header: 'Services Amount',
+                    accessorKey: 'servicesamount',
+                    size: 200,
+                }, {
+                    header: 'Amount',
+                    accessorKey: 'amount',
+                    size: 200,
+                },
+            ], []);
 
-    let tableData = [];
     props.data.forEach((client) => {
-        tableData.push(
+        data.push(
             {
                 clientid: client.clientId,
                 clientname: client.clientName,
@@ -70,16 +60,19 @@ const DisplayClients = (props) => {
             })
     });
 
+    useEffect(() => {
+        setTableData(data);
+     }, [data])
+
+    const table = useMaterialReactTable({
+        columns: columns,
+        data: tableData
+      });
+
     return (
-        <>
-            <div className={"display-clients-table-container"}>
-                <div id={'display-clients-table'} className={"table"}>
-                    <AddClient/>
-                    <Table columns={columns} data={tableData} type={Page.CLIENTS}
-                           filterByColumn={'clientid'} isDescending={false} />
-                </div>
-            </div>
-        </>
+        <div className={"display-clients-table-container"}>
+            <MaterialReactTable table={table} />
+        </div>
     );
 };
 
