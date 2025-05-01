@@ -1,87 +1,81 @@
 import React, {useEffect, useState} from "react"
 import {connect} from "react-redux";
 import {requestServices} from "../../redux/services/ServicesActions";
-import  '../MultiselectDropdown.css'
-import '@amir04lm26/react-modern-calendar-date-picker/lib/DatePicker.css';
-import DatePicker from '@amir04lm26/react-modern-calendar-date-picker';
-import PropTypes from "prop-types";
-import {getClientsData} from "../../redux/clients/ClientsSelectors";
+import {requestCases} from "../../redux/cases/CasesActions";
 import {getCasesData} from "../../redux/cases/CasesSelectors";
+import {servicesApi} from "../../services/api";
+import "../common/AddForm.css";
+import {addMessage} from "../../redux/message/MessageActions";
+import {clearMessage} from "../../redux/message/MessageActions";
+import {requestAttorneys} from "../../redux/attorneys/AttorneysActions";
+import {getClientsData} from "../../redux/clients/ClientsSelectors";
 import {getAttorneysData} from "../../redux/attorneys/AttorneysSelectors";
 import './AddService.css';
-import {addMessage, clearMessage} from "../../redux/message/MessageActions";
-import { requestAttorneys } from "../../redux/attorneys/AttorneysActions";
 
 const AddService = (props) => {
+    const [serviceID, setServiceID] = useState("");
+    const [serviceName, setServiceName] = useState("");
     const [caseID, setCaseID] = useState("");
-    const [clientID, setClientID] = useState("");
-    const [service, setService] = useState("");
+    const [attorneyID, setAttorneyID] = useState("");
+    const [description, setDescription] = useState("");
     const [date, setDate] = useState("");
+    const [hours, setHours] = useState("");
+    const [clientID, setClientID] = useState("");
+    const [currencyCode, setCurrencyCode] = useState("");
     const [selectedDate, setSelectedDate] = useState(null);
     const [minutes, setMinutes] = useState({});
     const [selectedAttorneys, setSelectedAttorneys] = useState({});
     const [numberOfAttorneys, setNumberOfAttorneys] = useState("0");
-    const [currencyCode, setCurrencyCode] = useState("");
     const [shouldPost, setShouldPost] = useState(true);
 
-    let handleSubmit = async (e) => {
+    useEffect(() => {
+        props.requestCases("");
+    }, []);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         window.scrollTo(0, 0);
-        if(shouldPost){
-            try {
-                if(selectedAttorneys.keys().length === 0 || caseID === '' || service === '' || date.includes('undefined')) {
-                    return props.addMessage('❗ Please complete all fields to add a service.')
-                }
-                let attorneysList = []
-                Object.keys(selectedAttorneys).forEach( index => {
-                    attorneysList.push({id: selectedAttorneys[index], minutes: parseInt(minutes[index])})
-                })
-                let res = await fetch("/backend/services", {
-                    method: "POST",
-                    headers: {
-                        'Accept': 'application/json, text/plain, */*',
-                        'Content-Type': 'application/json; charset=utf-8'
-                    },
-                    body: JSON.stringify({
-                        caseId: caseID,
-                        clientId: clientID,
-                        service: service,
-                        date: date,
-                        attorneys: attorneysList,
-                    }),
-                });
-                if (res.status === 200 || res.status === 201) {
-                    setCaseID("");
-                    setClientID("");
-                    setService("");
-                    setDate("");
-                    setSelectedDate(null);
-                    setMinutes({});
-                    setSelectedAttorneys({});
-                    setNumberOfAttorneys("0");
-                    props.addMessage("Service was created successfully!");
-                } else {
-                    props.addMessage("❗ Error occurred while adding data into services.");
-                }
-                props.requestServices('');
-            } catch (err) {
-                console.log("Error posting data into services: ", err);
+        if (!serviceID || !serviceName || !caseID || !attorneyID || !description || !date || !hours) {
+            return props.addMessage("Please complete all fields to add a service.");
+        }
+        try {
+            await servicesApi.create({
+                serviceId: serviceID,
+                serviceName: serviceName,
+                caseId: caseID,
+                attorneyId: attorneyID,
+                description: description,
+                date: date,
+                hours: parseFloat(hours),
+            });
+            setServiceID("");
+            setServiceName("");
+            setCaseID("");
+            setAttorneyID("");
+            setDescription("");
+            setDate("");
+            setHours("");
+            props.addMessage("Service was created successfully!");
+            props.requestServices("");
+        } catch (error) {
+            if (error.status === 410) {
+                props.addMessage(`Please use a different service ID. ${serviceID} already exists.`);
+            } else {
                 props.addMessage("❗ Error occurred while adding data into services.");
             }
         }
     };
 
-    const handleClear = async (e) => {
+    const handleClear = (e) => {
         e.preventDefault();
+        setServiceID("");
+        setServiceName("");
         setCaseID("");
-        setClientID("");
-        setService("");
+        setAttorneyID("");
+        setDescription("");
         setDate("");
-        setSelectedDate(null);
-        setMinutes({});
-        setSelectedAttorneys({});
-        setNumberOfAttorneys("0");
-    }
+        setHours("");
+    };
 
     useEffect(() => {
         setDate(selectedDate?.year+'-'+
@@ -94,14 +88,14 @@ const AddService = (props) => {
         setCurrencyCode(clientID === '' ? '' : props.clientsData.find(data => data.clientId === clientID)?.currencyCode);
     }, [caseID, clientID, props.casesData, props.clientsData])
 
-    const caseOptions = props.casesData?.map(eachCase => {
-            return { label: eachCase.caseName, value: eachCase.caseId }
-        });
+    const casesOptions = props.casesData.map((eachCase) => ({
+        label: eachCase.caseName,
+        value: eachCase.caseId,
+    }));
 
     const filteredAttorneysData = props.attorneysData
         .filter(attorney => attorney.servicePricing
         ?.find(servicePrice => servicePrice.clientId === clientID) !== undefined);
-
 
     let numberOfAttorneysList = [];
     for(let num=1; num<=filteredAttorneysData?.length; num++) {
@@ -153,154 +147,125 @@ const AddService = (props) => {
 
     useEffect(() => {
         props.requestAttorneys('');
-        props.requestCases('');
     }, [])
 
     return (
-        <div id="add-service-container" className={'dropdown-components-container'}>
-            <form id={'add-service-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit} onReset={handleClear}>
-                    <div id="add-service-case-name-container" className={'dropdown-field-container'}>
-                        <div id={'add-service-case-name-translation'} className={'dropdown-translation'}>
-                            {'Case: '}
-                        </div>
-                        <select id={'add-service-case-name-select'} className={'dropdown-select'} value={caseID} onChange={handleChangeCases}>
-                            <option key={"placeholder-case"} value={""} disabled={true}>
-                                Select a case
-                            </option>
-                            {caseOptions?.sort(
-                                function(a, b){
-                                    let x = a.label?.toLowerCase();
-                                    let y = b.label?.toLowerCase();
-                                    if (x < y) {return -1;}
-                                    if (x > y) {return 1;}
-                                    return 0;
-                                }).map((option) => (
-                                <option key={option.value} value={option.value}>{option.label}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div id="add-service-client-name-container" className={'dropdown-field-container'}>
-                        <div id={'add-service-client-name-translation'} className={'dropdown-translation'}>
-                            {'Client: '}
-                        </div>
-                        <input
-                            id={'add-service-client-name-input-field'}
-                            className={'dropdown-input-field'}
-                            type="text"
-                            value={getClientNameForSelectedCase()}
-                            disabled={true}
-                        />
-                    </div>
-                    <div id="add-service-date-container" className={'dropdown-field-container'}>
-                        <div id={'add-service-date-translation'} className={'dropdown-translation'}>
-                            {'Date: '}
-                        </div>
-                        <DatePicker
-                            value={selectedDate}
-                            onChange={setSelectedDate}
-                            inputPlaceholder="Select a date"
-                            shouldHighlightWeekends
-                            className={'DatePicker__input'}
-                        />
-                    </div>
-                    <div id="add-service-service-container" className={'dropdown-field-container'}>
-                        <div id={'add-service-service-translation'} className={'dropdown-translation'}>
-                            {'Service: '}
-                        </div>
-                        <input
-                            id={'add-service-service-input-field'}
-                            className={'dropdown-input-field'}
-                            type="text"
-                            value={service}
-                            onChange={(e) => setService(e.target.value)}
-                        />
-                    </div>
-                    <div id="add-service-currency-code-container" className={'dropdown-field-container'}>
-                        <div id={'add-service-currency-code-translation'} className={'dropdown-translation'}>
-                            {'Currency code: '}
-                        </div>
-                        <input
-                            id={'add-service-currency-code-input-field'}
-                            className={'dropdown-input-field'}
-                            type="text"
-                            value={currencyCode}
-                            disabled={true}
-                        />
-                    </div>
-                    <div id="add-service-number-of-attorneys-container" className={'dropdown-field-container'}>
-                        <div id={'add-service-number-of-attorneys-translation'} className={'dropdown-translation'}>
-                            {'Number of attorneys: '}
-                        </div>
-                        <select id={'add-service-number-of-attorneys-select'} className={'dropdown-select'} value={numberOfAttorneys} onChange={handleNumberOfAttorneys}>
-                            {clientID === "" ?
-                                <option key={"placeholder-number-of-attorneys"} value={"0"} disabled={true}>
-                                    Select a client first
-                                </option> :
-                                <option key={"placeholder-number-of-attorneys"} value={"0"} disabled={true}>
-                                Select number of attorneys
+        <div className="add-form-container">
+            <form onSubmit={handleSubmit} onReset={handleClear} className="add-form">
+                <div className="form-group">
+                    <label htmlFor="serviceId" className="form-label">
+                        Service ID:
+                    </label>
+                    <input
+                        id="serviceId"
+                        className="form-input"
+                        type="text"
+                        value={serviceID}
+                        onChange={(e) => setServiceID(e.target.value)}
+                        placeholder="Enter service ID"
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="serviceName" className="form-label">
+                        Service Name:
+                    </label>
+                    <input
+                        id="serviceName"
+                        className="form-input"
+                        type="text"
+                        value={serviceName}
+                        onChange={(e) => setServiceName(e.target.value)}
+                        placeholder="Enter service name"
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="caseId" className="form-label">
+                        Case:
+                    </label>
+                    <select
+                        id="caseId"
+                        className="form-input"
+                        value={caseID}
+                        onChange={handleChangeCases}
+                    >
+                        <option value="">Select a case</option>
+                        {casesOptions
+                            ?.sort((a, b) => {
+                                let x = a.label.toLowerCase();
+                                let y = b.label.toLowerCase();
+                                return x < y ? -1 : x > y ? 1 : 0;
+                            })
+                            .map((option) => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
                                 </option>
-                            }
-                            {numberOfAttorneysOptions.map((option) => (
-                                <option key={option.value} value={option.value}>{option.label}</option>
                             ))}
-                        </select>
-                    </div>
-                    <div id="add-service-attorneys-container" className={'dropdown-field-container'}>
-                        {[...Array(parseInt(numberOfAttorneys))].map((e, i) => {
-                            return(
-                            <div className={"attorney-"+i}>
-                                <div id={'attorney' + i + '-translation'} className={'dropdown-translation'}>
-                                    {'Attorney ' + (i+1).toString() + ': '}
-                                </div>
-                                <select id={'add-service-attorney-name-selector'} className={'dropdown-select'}
-                                        key={"attorney-name-selector-"+i} value={selectedAttorneys[i]} onChange={(event) =>
-                                    handleChangeAttorneys(event, i)}>
-                                    <option key={"placeholder-attorneys-"+ i} value={""}>
-                                        Select attorney
-                                    </option>
-                                    {attorneysOptions?.sort(
-                                        function(a, b){
-                                            let x = a.label.toLowerCase();
-                                            let y = b.label.toLowerCase();
-                                            if (x < y) {return -1;}
-                                            if (x > y) {return 1;}
-                                            return 0;
-                                        }).map((option) => (
-                                        <option key={option.value} value={option.value}>{option.label}</option>
-                                    ))}
-                                </select>
-                                <input
-                                    key={"attorney-minutes-input-"+i}
-                                    id={'add-service-attorney-minutes-input'}
-                                    className={'dropdown-input-field'}
-                                    type="number"
-                                    value={minutes[i]}
-                                    placeholder="Minutes"
-                                    onChange={(e) =>
-                                        setMinutes({...minutes, [i]: e.target.value})}
-                                    onBlur={validateMinutes}
-                                />
-                            </div>)
-                        })}
-                    </div>
-                <div id="add-service-button-container" className={'dropdown-button-container'}>
-                    <button type="submit" id={'add-service-add-button'} className={'dropdown-button'}>
-                        ADD
+                    </select>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="attorneyId" className="form-label">
+                        Attorney ID:
+                    </label>
+                    <input
+                        id="attorneyId"
+                        className="form-input"
+                        type="text"
+                        value={attorneyID}
+                        onChange={(e) => setAttorneyID(e.target.value)}
+                        placeholder="Enter attorney ID"
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="description" className="form-label">
+                        Description:
+                    </label>
+                    <textarea
+                        id="description"
+                        className="form-input"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder="Enter service description"
+                        rows="4"
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="date" className="form-label">
+                        Date:
+                    </label>
+                    <input
+                        id="date"
+                        className="form-input"
+                        type="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="hours" className="form-label">
+                        Hours:
+                    </label>
+                    <input
+                        id="hours"
+                        className="form-input"
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        value={hours}
+                        onChange={(e) => setHours(e.target.value)}
+                        placeholder="Enter hours"
+                    />
+                </div>
+                <div className="form-buttons">
+                    <button type="submit" className="form-submit-btn">
+                        Add Service
                     </button>
-                    <button type="reset" id={'add-service-clear-button'} className={'dropdown-button'}>
-                        CLEAR
+                    <button type="reset" className="form-clear-btn">
+                        Clear
                     </button>
                 </div>
             </form>
         </div>
     );
-}
-
-AddService.propTypes = {
-    clientsData: PropTypes.array.isRequired,
-    casesData: PropTypes.array.isRequired,
-    attorneysData: PropTypes.array.isRequired,
-    requestServices: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = state => {
@@ -312,11 +277,11 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => ({
-    requestServices: (clientID) => {
-        dispatch(requestServices(clientID));
+    requestServices: (serviceID) => {
+        dispatch(requestServices(serviceID));
     },
     requestCases: (caseID) => {
-        dispatch(requestServices(caseID));
+        dispatch(requestCases(caseID));
     },
     requestAttorneys: (attorneyID) => {
         dispatch(requestAttorneys(attorneyID));

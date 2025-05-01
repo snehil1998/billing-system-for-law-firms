@@ -1,13 +1,12 @@
 import React, {useEffect, useState} from "react"
 import {connect} from "react-redux";
-import  '../MultiselectDropdown.css'
 import {requestAttorneys} from "../../redux/attorneys/AttorneysActions";
 import PropTypes from "prop-types";
 import {getAttorneysData} from "../../redux/attorneys/AttorneysSelectors";
 import {getClientsData} from "../../redux/clients/ClientsSelectors";
-import './DeleteServicePricing.css';
 import {addMessage} from "../../redux/message/MessageActions";
 import { requestClients } from "../../redux/clients/ClientsActions";
+import "../common/AddForm.css";
 
 const DeleteServicePricing = (props) => {
     const [selectedAttorney, setSelectedAttorney] = useState('');
@@ -76,57 +75,54 @@ const DeleteServicePricing = (props) => {
     }, [])
 
     return (
-        <div id="delete-service-pricing-container" className={'dropdown-components-container'}>
-            <form id={'delete-service-pricing-form-container'} className={'dropdown-form-container'} onSubmit={handleSubmit} onReset={handleClear}>
-                <div id="delete-service-pricing-attorney-name-container" className={'dropdown-field-container'}>
-                    <div id={'delete-service-pricing-first-name-translation'} className={'dropdown-translation'}>
-                        {'Attorney: '}
-                    </div>
-                    <select id={'delete-service-pricing-first-name-select'} className={'dropdown-select'} value={selectedAttorney} onChange={handleChangeAttorneys}>
-                        <option key={"placeholder-selected-attorney"} value={''} disabled={true}>
-                            Select an attorney
-                        </option>
-                        {attorneysOptions?.sort(
-                            function(a, b){
-                                let x = a.label?.toLowerCase();
-                                let y = b.label?.toLowerCase();
-                                if (x < y) {return -1;}
-                                if (x > y) {return 1;}
-                                return 0;
-                            }).map((option, i) => (
-                            <option key={option.value} value={option.value}>{option.label}</option>
+        <div className="add-form-container">
+            <form onSubmit={handleSubmit} onReset={handleClear} className="add-form">
+                <div className="form-group">
+                    <label htmlFor="attorney" className="form-label">Attorney:</label>
+                    <select
+                        id="attorney"
+                        className="form-input"
+                        value={selectedAttorney}
+                        onChange={handleChangeAttorneys}
+                    >
+                        <option value="" disabled>Select an attorney</option>
+                        {attorneysOptions?.sort((a, b) => {
+                            let x = a.label?.toLowerCase();
+                            let y = b.label?.toLowerCase();
+                            return x < y ? -1 : x > y ? 1 : 0;
+                        }).map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
                         ))}
                     </select>
                 </div>
-                <div id="delete-service-pricing-service-pricing-container" className={'dropdown-field-container'}>
-                    <div>
-                        <div id={'delete-service-pricing-service-pricing-translation'} className={'dropdown-translation'}>
-                            {'Client: '}
-                        </div>
-                        <select id={'delete-service-pricing-service-pricing-select'} className={'dropdown-select'}
-                                key={"delete-service-pricing-service-pricing-selector"} value={clientId} onChange={handleChangeClients}>
-                            <option key={"placeholder-client"} value={""}>
-                                Select a client
+                <div className="form-group">
+                    <label htmlFor="client" className="form-label">Client:</label>
+                    <select
+                        id="client"
+                        className="form-input"
+                        value={clientId}
+                        onChange={handleChangeClients}
+                    >
+                        <option value="">Select a client</option>
+                        {clientsOptions?.sort((a, b) => {
+                            let x = a.label?.toLowerCase();
+                            let y = b.label?.toLowerCase();
+                            return x < y ? -1 : x > y ? 1 : 0;
+                        }).map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
                             </option>
-                            {clientsOptions?.sort(
-                                function(a, b){
-                                    let x = a.label?.toLowerCase();
-                                    let y = b.label?.toLowerCase();
-                                    if (x < y) {return -1;}
-                                    if (x > y) {return 1;}
-                                    return 0;
-                                }).map((option) => (
-                                <option key={option.value} value={option.value}>{option.label}</option>
-                            ))}
-                        </select>
-                    </div>
+                        ))}
+                    </select>
                 </div>
-                <div id={'delete-service-pricing-add-button-container'} className={'dropdown-button-container'}>
-                    <button type="submit" id="delete-service-pricing-add-button" className={'dropdown-button'}>
-                        DELETE
+                <div className="form-buttons">
+                    <button type="submit" className="form-submit-btn">
+                        Delete Service Pricing
                     </button>
-                    <button type="reset" id="delete-service-pricing-clear-button" className={'dropdown-button'}>
-                        CLEAR
+                    <button type="reset" className="form-clear-btn">
+                        Clear
                     </button>
                 </div>
             </form>

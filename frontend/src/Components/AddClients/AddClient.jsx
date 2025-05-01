@@ -4,7 +4,7 @@ import { addMessage } from "../../redux/message/MessageActions";
 import { requestClients } from "../../redux/clients/ClientsActions";
 import { getClientsData } from "../../redux/clients/ClientsSelectors";
 import { clientsApi } from "../../services/api";
-import "./AddClient.css";
+import "../common/AddForm.css";
 
 const AddClient = (props) => {
   const [clientID, setClientID] = useState("");
@@ -52,50 +52,53 @@ const AddClient = (props) => {
   };
 
   return (
-    <div id="add-client-container" className="dropdown-components-container">
-      <form onSubmit={handleSubmit} onReset={handleClear} id="add-client-form-container" className="dropdown-form-container">
-        <div id="add-client-client-id-container" className="dropdown-field-container">
-          <div id="add-client-client-id-translation" className="dropdown-translation">
-            {"Client ID: "}
-          </div>
+    <div className="add-form-container">
+      <form onSubmit={handleSubmit} onReset={handleClear} className="add-form">
+        <div className="form-group">
+          <label htmlFor="clientId" className="form-label">
+            Client ID:
+          </label>
           <input
-            id="add-client-client-id-input-field"
-            className="dropdown-input-field"
+            id="clientId"
+            className="form-input"
             type="text"
             value={clientID}
             onChange={(e) => setClientID(e.target.value)}
+            placeholder="Enter client ID"
           />
         </div>
-        <div id="add-client-client-name-container" className="dropdown-field-container">
-          <div id="add-client-client-name-translation" className="dropdown-translation">
-            {"Client Name: "}
-          </div>
+        <div className="form-group">
+          <label htmlFor="clientName" className="form-label">
+            Client Name:
+          </label>
           <input
-            id="add-client-client-name-input-field"
-            className="dropdown-input-field"
+            id="clientName"
+            className="form-input"
             type="text"
             value={clientName}
             onChange={(e) => setClientName(e.target.value)}
+            placeholder="Enter client name"
           />
         </div>
-        <div id="add-client-currency-code-container" className="dropdown-field-container">
-          <div id="add-client-currency-code-translation" className="dropdown-translation">
-            {"Currency Code: "}
-          </div>
+        <div className="form-group">
+          <label htmlFor="currencyCode" className="form-label">
+            Currency Code:
+          </label>
           <input
-            id="add-client-currency-code-input-field"
-            className="dropdown-input-field"
+            id="currencyCode"
+            className="form-input"
             type="text"
             value={currencyCode}
             onChange={(e) => setCurrencyCode(e.target.value)}
+            placeholder="Enter currency code"
           />
         </div>
-        <div id="add-client-add-button-container" className="dropdown-button-container">
-          <button type="submit" id="add-client-add-button" className="dropdown-button">
-            ADD
+        <div className="form-buttons">
+          <button type="submit" className="form-submit-btn">
+            Add Client
           </button>
-          <button type="reset" id="add-client-clear-button" className="dropdown-button">
-            CLEAR
+          <button type="reset" className="form-clear-btn">
+            Clear
           </button>
         </div>
       </form>
