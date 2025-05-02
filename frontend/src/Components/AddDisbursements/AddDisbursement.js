@@ -12,6 +12,7 @@ import { requestCases } from "../../redux/cases/CasesActions";
 import "../common/AddForm.css";
 
 const AddDisbursement = (props) => {
+    const today = new Date();
     const [caseID, setCaseID] = useState("");
     const [clientID, setClientID] = useState("");
     const [disbursement, setDisbursement] = useState("");
@@ -20,7 +21,7 @@ const AddDisbursement = (props) => {
     const [conversionRate, setConversionRate] = useState(0);
     const [inrAmount, setInrAmount] = useState("0");
     const [conversionAmount, setConversionAmount] = useState(0);
-    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedDate, setSelectedDate] = useState({year: today.getFullYear(), month: today.getMonth()+1, day: today.getDate()});
 
     let handleSubmit = async (e) => {
         e.preventDefault();
@@ -51,7 +52,7 @@ const AddDisbursement = (props) => {
                 setClientID("");
                 setDisbursement("");
                 setDate("");
-                setSelectedDate(null);
+                setSelectedDate({year: today.getFullYear(), month: today.getMonth()+1, day: today.getDate()});
                 setCurrencyCode("");
                 setConversionRate(0);
                 setInrAmount("0");
@@ -73,7 +74,7 @@ const AddDisbursement = (props) => {
         setClientID("");
         setDisbursement("");
         setDate("");
-        setSelectedDate(null);
+        setSelectedDate({year: today.getFullYear(), month: today.getMonth()+1, day: today.getDate()});
         setCurrencyCode("");
         setConversionRate(0);
         setInrAmount("0");
@@ -96,12 +97,19 @@ const AddDisbursement = (props) => {
 
     useEffect(() => {
         async function fetchData() {
-            const endpoint = "https://api.exchangerate.host/";
             if (currencyCode !== "" && currencyCode !== undefined && date !== "") {
-                await fetch(`${endpoint}${date}?base=${currencyCode}`)
+                const apiKey = "fca_live_vcE4usEJziAUlGk0J5DcgZQAKfjS0M8kAF0sYP4A";
+                let endpoint = `https://api.freecurrencyapi.com/v1/historical?apikey=${apiKey}&base_currency=${currencyCode}&date=${date}`;
+                const dateSplit = date.split('-');
+                if (parseInt(dateSplit[0]) === today.getFullYear() && parseInt(dateSplit[1]) === today.getMonth()+1 && parseInt(dateSplit[2]) === today.getDate()) {
+                    endpoint = `https://api.freecurrencyapi.com/v1/latest?apikey=${apiKey}&base_currency=${currencyCode}`;
+                }
+                console.log(endpoint);
+                await fetch(endpoint)
                     .then(response => response.json())
                     .then(json => {
-                        setConversionRate(json['rates']['INR'].toFixed(2));
+                        const rate = json['data'][date] ? json['data'][date]['INR'].toFixed(2) : json['data']['INR'].toFixed(2)
+                        setConversionRate(rate);
                         const amount = (parseFloat(inrAmount) / conversionRate);
                         setConversionAmount(amount.toFixed(2));
                     }).catch(error => {
@@ -111,7 +119,7 @@ const AddDisbursement = (props) => {
             }
         }
         fetchData();
-    }, [currencyCode, date, conversionRate, inrAmount])
+    }, [currencyCode, date, conversionRate, inrAmount, today])
 
     useEffect(() => {
         setClientID(props.casesData.find(data => data.caseId === caseID)?.clientId)

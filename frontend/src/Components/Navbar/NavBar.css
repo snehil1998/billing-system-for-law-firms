@@ -1,28 +1,13 @@
-.navbars {
-    height: 100%;
+.navbar-flex-container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding-left: 1.5rem;
 }
 
 .navbar-logo {
-    max-width: 5%;
-}
-
-#navbar-attorneys {
-    width: 22%;
-}
-
-#navbar-clients {
-    width: 20%;
-}
-
-#navbar-cases {
-    width: 15%;
-}
-
-#navbar-services {
-    width: 18%;
-}
-
-#navbar-disbursements {
-    width: 30%;
+  max-width: 70px;
+  height: auto;
+  margin-right: 1rem;
 }
 
