@@ -1,0 +1,39 @@
+.dynamic-input-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.dynamic-input-item {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  margin-bottom: 0;
+}
+
+.dynamic-input-inputs {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+}
+
+.dynamic-input-inputs .form-input {
+  max-width: 400px;
+}
+
+.dynamic-input-inputs input[type="number"] {
+  max-width: 300px;
+}
+
+@media (max-width: 768px) {
+  .dynamic-input-list {
+    margin-top: 1rem;
+  }
+  .dynamic-input-inputs {
+    flex-direction: column;
+  }
+  .dynamic-input-inputs .form-input {
+    max-width: none;
+  }
+} 

@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react"
 import {connect} from "react-redux";
-import '@amir04lm26/react-modern-calendar-date-picker/lib/DatePicker.css';
-import DatePicker from '@amir04lm26/react-modern-calendar-date-picker';
+import dayjs from 'dayjs';
 import PropTypes from "prop-types";
 import {getClientsData} from "../../redux/clients/ClientsSelectors";
 import {getCasesData} from "../../redux/cases/CasesSelectors";
@@ -12,22 +11,21 @@ import { requestCases } from "../../redux/cases/CasesActions";
 import "../common/AddForm.css";
 
 const AddDisbursement = (props) => {
-    const today = new Date();
+    const today = dayjs();
     const [caseID, setCaseID] = useState("");
     const [clientID, setClientID] = useState("");
     const [disbursement, setDisbursement] = useState("");
-    const [date, setDate] = useState("");
+    const [date, setDate] = useState(today.format('YYYY-MM-DD'));
     const [currencyCode, setCurrencyCode] = useState("");
     const [conversionRate, setConversionRate] = useState(0);
     const [inrAmount, setInrAmount] = useState("0");
     const [conversionAmount, setConversionAmount] = useState(0);
-    const [selectedDate, setSelectedDate] = useState({year: today.getFullYear(), month: today.getMonth()+1, day: today.getDate()});
 
     let handleSubmit = async (e) => {
         e.preventDefault();
         window.scrollTo(0, 0);
         try {
-            if(caseID === '' || disbursement === '' || date === 'undefined-undefined-undefined' || inrAmount === '0') {
+            if(caseID === '' || disbursement === '' || !date || inrAmount === '0') {
                 return props.addMessage('❗ Please complete all fields to add a disbursement.')
             }
             let res = await fetch("/backend/disbursements", {
@@ -51,8 +49,7 @@ const AddDisbursement = (props) => {
                 setCaseID("");
                 setClientID("");
                 setDisbursement("");
-                setDate("");
-                setSelectedDate({year: today.getFullYear(), month: today.getMonth()+1, day: today.getDate()});
+                setDate(today.format('YYYY-MM-DD'));
                 setCurrencyCode("");
                 setConversionRate(0);
                 setInrAmount("0");
@@ -73,19 +70,12 @@ const AddDisbursement = (props) => {
         setCaseID("");
         setClientID("");
         setDisbursement("");
-        setDate("");
-        setSelectedDate({year: today.getFullYear(), month: today.getMonth()+1, day: today.getDate()});
+        setDate(today.format('YYYY-MM-DD'));
         setCurrencyCode("");
         setConversionRate(0);
         setInrAmount("0");
         setConversionAmount(0);
     }
-
-    useEffect(() => {
-        setDate(selectedDate?.year + '-' +
-            selectedDate?.month.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false}) + '-'
-            + selectedDate?.day.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false}))
-    }, [selectedDate])
 
     const caseOptions = props.casesData?.map(eachCase => {
         return {label: eachCase.caseName, value: eachCase.caseId}
@@ -101,17 +91,14 @@ const AddDisbursement = (props) => {
                 const apiKey = "fca_live_vcE4usEJziAUlGk0J5DcgZQAKfjS0M8kAF0sYP4A";
                 let endpoint = `https://api.freecurrencyapi.com/v1/historical?apikey=${apiKey}&base_currency=${currencyCode}&date=${date}`;
                 const dateSplit = date.split('-');
-                if (parseInt(dateSplit[0]) === today.getFullYear() && parseInt(dateSplit[1]) === today.getMonth()+1 && parseInt(dateSplit[2]) === today.getDate()) {
+                if (parseInt(dateSplit[0]) === today.year() && parseInt(dateSplit[1]) === today.month()+1 && parseInt(dateSplit[2]) === today.date()) {
                     endpoint = `https://api.freecurrencyapi.com/v1/latest?apikey=${apiKey}&base_currency=${currencyCode}`;
                 }
-                console.log(endpoint);
                 await fetch(endpoint)
                     .then(response => response.json())
                     .then(json => {
                         const rate = json['data'][date] ? json['data'][date]['INR'].toFixed(2) : json['data']['INR'].toFixed(2)
                         setConversionRate(rate);
-                        const amount = (parseFloat(inrAmount) / conversionRate);
-                        setConversionAmount(amount.toFixed(2));
                     }).catch(error => {
                         props.addMessage("❗ Error occurred while fetching data from currency api.");
                         console.log("error fetching data from currency api: " + error);
@@ -122,18 +109,25 @@ const AddDisbursement = (props) => {
     }, [currencyCode, date, conversionRate, inrAmount, today])
 
     useEffect(() => {
+        if (conversionRate !== undefined && conversionRate !== null) {
+            const amount = (parseFloat(inrAmount) / conversionRate);
+            setConversionAmount(amount.toFixed(2));
+        }
+    }, [conversionRate, inrAmount])
+
+    useEffect(() => {
         setClientID(props.casesData.find(data => data.caseId === caseID)?.clientId)
         setCurrencyCode(props.clientsData.find(data => data.clientId === clientID)?.currencyCode);
     }, [caseID, clientID, props.casesData, props.clientsData])
+
+    useEffect(() => {
+        props.requestCases('');
+    }, [])
 
     const getClientNameForSelectedCase = () => {
         return caseID === '' ? '' : props.clientsData.find(data => data.clientId === props.casesData
             .find(data => data.caseId === caseID)?.clientId)?.clientName
     }
-
-    useEffect(() => {
-        props.requestCases('');
-    }, [])
 
     return (
         <div className="add-form-container">
@@ -178,12 +172,12 @@ const AddDisbursement = (props) => {
                     <label htmlFor="date" className="form-label">
                         Date:
                     </label>
-                    <DatePicker
-                        value={selectedDate}
-                        onChange={setSelectedDate}
-                        inputPlaceholder="Select a date"
-                        shouldHighlightWeekends
+                     <input
+                        id="date"
                         className="form-input"
+                        type="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
                     />
                 </div>
                 <div className="form-group">
@@ -194,8 +188,8 @@ const AddDisbursement = (props) => {
                         id="disbursement"
                         className="form-input"
                         type="text"
-                        value={disbursement}
-                        onChange={(e) => setDisbursement(e.target.value)}
+                        value={disbursement || ""}
+                        onChange={(e) => setDisbursement(e.target.value || "")}
                         placeholder="Enter disbursement details"
                     />
                 </div>
@@ -207,7 +201,7 @@ const AddDisbursement = (props) => {
                         id="currencyCode"
                         className="form-input"
                         type="text"
-                        value={currencyCode}
+                        value={currencyCode || ""}
                         disabled
                     />
                 </div>
@@ -219,7 +213,7 @@ const AddDisbursement = (props) => {
                         id="conversionRate"
                         className="form-input"
                         type="number"
-                        value={conversionRate}
+                        value={conversionRate !== undefined && conversionRate !== null ? conversionRate : 0}
                         disabled
                     />
                 </div>
@@ -231,8 +225,8 @@ const AddDisbursement = (props) => {
                         id="inrAmount"
                         className="form-input"
                         type="number"
-                        value={inrAmount}
-                        onChange={(e) => setInrAmount(e.target.value)}
+                        value={inrAmount || "0"}
+                        onChange={(e) => setInrAmount(e.target.value || "0")}
                         placeholder="Enter amount in INR"
                     />
                 </div>
@@ -244,7 +238,7 @@ const AddDisbursement = (props) => {
                         id="conversionAmount"
                         className="form-input"
                         type="number"
-                        value={conversionAmount}
+                        value={conversionAmount !== undefined && conversionAmount !== null ? conversionAmount : 0}
                         disabled
                     />
                 </div>
