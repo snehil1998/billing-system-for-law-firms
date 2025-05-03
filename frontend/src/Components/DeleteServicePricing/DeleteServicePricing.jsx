@@ -7,7 +7,7 @@ import {getClientsData} from "../../redux/clients/ClientsSelectors";
 import {addMessage} from "../../redux/message/MessageActions";
 import { requestClients } from "../../redux/clients/ClientsActions";
 import "../common/AddForm.css";
-
+import { attorneysApi } from "../../services/api";
 const DeleteServicePricing = (props) => {
     const [selectedAttorney, setSelectedAttorney] = useState('');
     const [clientId, setClientId] = useState("");
@@ -21,25 +21,14 @@ const DeleteServicePricing = (props) => {
             }
             const servicePricingList = [{clientId: clientId, price: -1}]
             const selectedAttorneyArray = selectedAttorney.split(',');
-            let res = await fetch("/backend/attorneys=" + selectedAttorneyArray[0], {
-                method: "PUT",
-                headers: {
-                    'Accept': 'application/json, text/plain, */*',
-                    'Content-Type': 'application/json; charset=utf-8'
-                },
-                body: JSON.stringify({
-                    firstName: selectedAttorneyArray[1],
-                    lastName: selectedAttorneyArray[2],
-                    servicePricing: servicePricingList,
-                }),
-            });
-            if (res.status === 200 || res.status === 201) {
-                setSelectedAttorney('');
-                setClientId("");
-                props.addMessage("Service pricing was deleted successfully!");
-            } else {
-                props.addMessage("❗ Error occurred while deleting service pricing for attorney.");
-            }
+            await attorneysApi.update(selectedAttorneyArray[0], {
+                firstName: selectedAttorneyArray[1],
+                lastName: selectedAttorneyArray[2],
+                servicePricing: servicePricingList,
+            })
+            setSelectedAttorney('');
+            setClientId("");
+            props.addMessage("Service pricing was deleted successfully!");
             props.requestAttorneys('');
         } catch (err) {
             props.addMessage("❗ Error occurred while deleting service pricing for attorney.");

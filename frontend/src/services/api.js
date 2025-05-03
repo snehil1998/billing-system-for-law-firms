@@ -31,16 +31,6 @@ const apiService = {
         }
     },
 
-    async getById(endpoint, id) {
-        try {
-            const response = await fetch(`${endpoint}=${id}`);
-            return await handleResponse(response);
-        } catch (error) {
-            console.error(`Error fetching from ${endpoint}=${id}:`, error);
-            throw error;
-        }
-    },
-
     async post(endpoint, data) {
         try {
             const response = await fetch(endpoint, {
@@ -93,40 +83,40 @@ const apiService = {
 
 export const clientsApi = {
     getAll: () => apiService.get(API_ENDPOINTS.CLIENTS),
-    getById: (id) => apiService.getById(API_ENDPOINTS.CLIENTS, id),
+    getById: (id) => apiService.get(`${API_ENDPOINTS.CLIENTS}=${id}`),
     create: (data) => apiService.post(API_ENDPOINTS.CLIENTS, data),
-    update: (id, data) => apiService.put(`${API_ENDPOINTS.CLIENTS}/${id}`, data),
-    delete: (id) => apiService.delete(`${API_ENDPOINTS.CLIENTS}/${id}`),
+    update: (id, data) => apiService.put(`${API_ENDPOINTS.CLIENTS}=${id}`, data),
+    delete: (id) => apiService.delete(`${API_ENDPOINTS.CLIENTS}=${id}`),
 };
 
 export const casesApi = {
     getAll: () => apiService.get(API_ENDPOINTS.CASES),  
-    getById: (id) => apiService.getById(API_ENDPOINTS.CASES, id),
+    getById: (id) => apiService.get(`${API_ENDPOINTS.CASES}=${id}`),
     create: (data) => apiService.post(API_ENDPOINTS.CASES, data),
-    update: (id, data) => apiService.put(`${API_ENDPOINTS.CASES}/${id}`, data),
-    delete: (id) => apiService.delete(`${API_ENDPOINTS.CASES}/${id}`),
+    update: (id, data) => apiService.put(`${API_ENDPOINTS.CASES}=${id}`, data),
+    delete: (id) => apiService.delete(`${API_ENDPOINTS.CASES}=${id}`),
 };
 
 export const servicesApi = {
     getAll: () => apiService.get(API_ENDPOINTS.SERVICES),
-    getById: (id) => apiService.getById(API_ENDPOINTS.SERVICES, id),
+    getById: (id) => apiService.get(`${API_ENDPOINTS.SERVICES}=${id}`),
     create: (data) => apiService.post(API_ENDPOINTS.SERVICES, data),
-    update: (id, data) => apiService.put(`${API_ENDPOINTS.SERVICES}/${id}`, data),
-    delete: (id) => apiService.delete(`${API_ENDPOINTS.SERVICES}/${id}`),
+    update: (id, data) => apiService.put(`${API_ENDPOINTS.SERVICES}=${id}`, data),
+    delete: (id) => apiService.delete(`${API_ENDPOINTS.SERVICES}=${id}`),
 };
 
 export const disbursementsApi = {
     getAll: () => apiService.get(API_ENDPOINTS.DISBURSEMENTS),
-    getById: (id) => apiService.getById(API_ENDPOINTS.DISBURSEMENTS, id),
+    getById: (id) => apiService.get(`${API_ENDPOINTS.DISBURSEMENTS}=${id}`),
     create: (data) => apiService.post(API_ENDPOINTS.DISBURSEMENTS, data),
-    update: (id, data) => apiService.put(`${API_ENDPOINTS.DISBURSEMENTS}/${id}`, data),
-    delete: (id) => apiService.delete(`${API_ENDPOINTS.DISBURSEMENTS}/${id}`),
+    update: (id, data) => apiService.put(`${API_ENDPOINTS.DISBURSEMENTS}=${id}`, data),
+    delete: (id) => apiService.delete(`${API_ENDPOINTS.DISBURSEMENTS}=${id}`),
 };
 
 export const attorneysApi = {
     getAll: () => apiService.get(API_ENDPOINTS.ATTORNEYS),
-    getById: (id) => apiService.getById(API_ENDPOINTS.ATTORNEYS, id),
+    getById: (id) => apiService.get(`${API_ENDPOINTS.ATTORNEYS}=${id}`),
     create: (data) => apiService.post(API_ENDPOINTS.ATTORNEYS, data),
-    update: (id, data) => apiService.put(`${API_ENDPOINTS.ATTORNEYS}/${id}`, data),
-    delete: (id) => apiService.delete(`${API_ENDPOINTS.ATTORNEYS}/${id}`),
+    update: (id, data) => apiService.put(`${API_ENDPOINTS.ATTORNEYS}=${id}`, data),
+    delete: (id) => apiService.delete(`${API_ENDPOINTS.ATTORNEYS}=${id}`),
 }; 
