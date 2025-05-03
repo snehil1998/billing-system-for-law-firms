@@ -1,4 +1,4 @@
-import { API_ENDPOINTS, HTTP_STATUS } from '../constants/api';
+import { API_ENDPOINTS, HTTP_STATUS, EXCHANGE_RATE_API, EXCHANGE_RATE_API_LATEST, CURRENCY_API } from '../constants/api';
 
 class ApiError extends Error {
     constructor(message, status) {
@@ -119,4 +119,10 @@ export const attorneysApi = {
     create: (data) => apiService.post(API_ENDPOINTS.ATTORNEYS, data),
     update: (id, data) => apiService.put(`${API_ENDPOINTS.ATTORNEYS}=${id}`, data),
     delete: (id) => apiService.delete(`${API_ENDPOINTS.ATTORNEYS}=${id}`),
-}; 
+};
+
+export const currencyApi = {
+    getCurrencies: () => apiService.get(CURRENCY_API),
+    getRate: (date, currencyCode) => apiService.get(`${EXCHANGE_RATE_API}&date=${date}&base_currency=${currencyCode}`),
+    getLatestRate: (currencyCode) => apiService.get(`${EXCHANGE_RATE_API_LATEST}&base_currency=${currencyCode}`),
+};
