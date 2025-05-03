@@ -5,14 +5,26 @@ import { requestClients } from "../../redux/clients/ClientsActions";
 import { getClientsData } from "../../redux/clients/ClientsSelectors";
 import { clientsApi } from "../../services/api";
 import "../common/AddForm.css";
+import { CURRENCY_API } from "../../constants/api";
 
 const AddClient = (props) => {
   const [clientID, setClientID] = useState("");
   const [clientName, setClientName] = useState("");
   const [currencyCode, setCurrencyCode] = useState("");
-
+  const [currencies, setCurrencies] = useState({});
   useEffect(() => {
     props.requestClients("");
+    async function fetchData() {
+      await fetch(CURRENCY_API)
+          .then(response => response.json())
+          .then(json => {
+              setCurrencies(json['data']);
+          }).catch(error => {
+              props.addMessage("❗ Error occurred while fetching currency codes from currency api.");
+              console.log("error fetching currency codes from currency api: " + error);
+          })
+    }
+    fetchData();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -84,14 +96,19 @@ const AddClient = (props) => {
           <label htmlFor="currencyCode" className="form-label">
             Currency Code:
           </label>
-          <input
+          <select
             id="currencyCode"
             className="form-input"
-            type="text"
             value={currencyCode}
             onChange={(e) => setCurrencyCode(e.target.value)}
-            placeholder="Enter currency code"
-          />
+          >
+            <option value="">Select currency</option>
+            {Object.entries(currencies).map(([code, data]) => (
+              <option key={code} value={code}>
+                {code} - {data.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="form-buttons">
           <button type="submit" className="form-submit-btn">

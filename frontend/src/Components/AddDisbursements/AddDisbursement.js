@@ -9,6 +9,7 @@ import {requestDisbursements} from "../../redux/disbursements/DisbursementsActio
 import {addMessage} from "../../redux/message/MessageActions";
 import { requestCases } from "../../redux/cases/CasesActions";
 import "../common/AddForm.css";
+import { EXCHANGE_RATE_API, EXCHANGE_RATE_API_LATEST } from "../../constants/api";
 
 const AddDisbursement = (props) => {
     const today = dayjs();
@@ -88,11 +89,10 @@ const AddDisbursement = (props) => {
     useEffect(() => {
         async function fetchData() {
             if (currencyCode !== "" && currencyCode !== undefined && date !== "") {
-                const apiKey = "fca_live_vcE4usEJziAUlGk0J5DcgZQAKfjS0M8kAF0sYP4A";
-                let endpoint = `https://api.freecurrencyapi.com/v1/historical?apikey=${apiKey}&base_currency=${currencyCode}&date=${date}`;
+                let endpoint = `${EXCHANGE_RATE_API}&base_currency=${currencyCode}&date=${date}`;
                 const dateSplit = date.split('-');
                 if (parseInt(dateSplit[0]) === today.year() && parseInt(dateSplit[1]) === today.month()+1 && parseInt(dateSplit[2]) === today.date()) {
-                    endpoint = `https://api.freecurrencyapi.com/v1/latest?apikey=${apiKey}&base_currency=${currencyCode}`;
+                    endpoint = `${EXCHANGE_RATE_API_LATEST}&base_currency=${currencyCode}`;
                 }
                 await fetch(endpoint)
                     .then(response => response.json())
