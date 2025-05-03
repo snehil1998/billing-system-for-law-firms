@@ -5,12 +5,9 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import org.json.simple.JSONArray;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 @Builder
 @Getter

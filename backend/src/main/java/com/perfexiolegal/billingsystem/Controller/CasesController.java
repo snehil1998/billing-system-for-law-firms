@@ -1,14 +1,11 @@
 package com.perfexiolegal.billingsystem.Controller;
 
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
+import com.perfexiolegal.billingsystem.Model.ApiResponse;
 import com.perfexiolegal.billingsystem.Model.Cases;
 import com.perfexiolegal.billingsystem.Model.CasesWithoutId;
-import com.perfexiolegal.billingsystem.Model.Services;
-import com.perfexiolegal.billingsystem.Model.ServicesWithoutId;
 import com.perfexiolegal.billingsystem.Service.CasesService;
-import com.perfexiolegal.billingsystem.Service.ServicesService;
 import com.perfexiolegal.billingsystem.Transformer.CasesTransformer;
-import com.perfexiolegal.billingsystem.Transformer.ServicesTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +20,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 @org.springframework.stereotype.Controller
 @RequestMapping("/backend")
@@ -42,52 +36,83 @@ public class CasesController {
   CasesTransformer casesTransformer;
 
   @GetMapping(value = "/cases")
-  public ResponseEntity<List<Cases>> getAllCases() {
+  public ResponseEntity<ApiResponse> getAllCases() {
     try {
       logger.info("retrieving all cases from controller");
       Optional<List<Cases>> listOfCases = casesService.getAllCases();
       List<Cases> cases = listOfCases.get();
-      if (cases.size() == 0) {
-        return new ResponseEntity(HttpStatus.OK);
+      if (cases.isEmpty()) {
+        return new ResponseEntity<>(ApiResponse.builder()
+            .message("No cases found")
+            .success(true)
+            .data(cases)
+            .build(), HttpStatus.OK);
       }
-      return new ResponseEntity(listOfCases, HttpStatus.OK);
+      return new ResponseEntity<>(ApiResponse.builder()
+          .message("Cases retrieved successfully")
+          .success(true)
+          .data(cases)
+          .build(), HttpStatus.OK);
     } catch (ServiceException e) {
-      return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>(ApiResponse.builder()
+          .message("Internal server error")
+          .success(false)
+          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @GetMapping(value = "/cases={caseID}")
-  public ResponseEntity<Cases> getServicesForCase(@PathVariable("caseID") String caseID) {
+  public ResponseEntity<ApiResponse> getServicesForCase(@PathVariable("caseID") String caseID) {
     try {
       logger.info("retrieving case from controller with caseID: " + caseID);
       Optional<Cases> retrievedCase = casesService.getCaseById(caseID);
       if (retrievedCase.isEmpty()) {
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(ApiResponse.builder()
+            .message("No case found with ID: " + caseID)
+            .success(true)
+            .build(), HttpStatus.OK);
       }
-      return new ResponseEntity(retrievedCase.get(), HttpStatus.OK);
+      return new ResponseEntity<>(ApiResponse.builder()
+          .message("Case retrieved successfully")
+          .success(true)
+          .data(retrievedCase.get())
+          .build(), HttpStatus.OK);
     } catch (ServiceException e) {
-      return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>(ApiResponse.builder()
+          .message("Internal server error")
+          .success(false)
+          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @PostMapping(value = "/cases", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<String> createNewCase(@RequestBody Cases newCase) {
+  public ResponseEntity<ApiResponse> createNewCase(@RequestBody Cases newCase) {
     try {
       logger.info("Creating case with name: " + newCase.getCaseId());
       try {
         casesService.getCaseById(newCase.getCaseId()).isPresent();
-        return new ResponseEntity<>("Case with ID already exists.", HttpStatus.GONE);
+        return new ResponseEntity<>(ApiResponse.builder()
+            .message("Case with ID already exists.")
+            .success(false)
+            .build(), HttpStatus.GONE);
       } catch (Exception e) {
         casesService.postCases(newCase);
-        return new ResponseEntity<>("Case was created successfully.", HttpStatus.CREATED);
+        return new ResponseEntity<>(ApiResponse.builder()
+            .message("Case was created successfully.")
+            .success(true)
+            .data(newCase)
+            .build(), HttpStatus.CREATED);
       }
     } catch (ServiceException e) {
-      return new ResponseEntity<>("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>(ApiResponse.builder()
+          .message("Internal server error")
+          .success(false)
+          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @PutMapping(value = "/cases={caseID}")
-  public ResponseEntity<String> updateCase(@PathVariable("caseID") String caseID,
+  public ResponseEntity<ApiResponse> updateCase(@PathVariable("caseID") String caseID,
                                               @RequestBody CasesWithoutId caseJSONWithoutID) {
     try {
       logger.info("check existence of case with case ID: " + caseID);
@@ -96,27 +121,45 @@ public class CasesController {
         logger.info("update case with ID: " + caseID);
         Cases updatedCase = casesTransformer.update(caseJSONWithoutID, caseID);
         casesService.updateCases(updatedCase);
-        return new ResponseEntity<>("Case was updated successfully.", HttpStatus.OK);
+        return new ResponseEntity<>(ApiResponse.builder()
+            .message("Case was updated successfully.")
+            .success(true)
+            .data(updatedCase)
+            .build(), HttpStatus.OK);
       } else{
-        return new ResponseEntity<>("Cannot find case with id=" + caseID, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ApiResponse.builder()
+            .message("Cannot find case with id=" + caseID)
+            .success(false)
+            .build(), HttpStatus.NOT_FOUND);
       }
     } catch (ServiceException e) {
-      return new ResponseEntity<>("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>(ApiResponse.builder()
+          .message("Internal server error")
+          .success(false)
+          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @DeleteMapping(value = "/cases={caseID}")
-  public ResponseEntity<String> deleteService(@PathVariable("caseID") String caseID) {
+  public ResponseEntity<ApiResponse> deleteService(@PathVariable("caseID") String caseID) {
     try {
       logger.info("deleting case with ID: " + caseID);
       int result = casesService.deleteById(caseID);
       if (result == 0) {
-        return new ResponseEntity<>("Cannot find case with id= " + caseID, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ApiResponse.builder()
+            .message("Cannot find case with id= " + caseID)
+            .success(false)
+            .build(), HttpStatus.NOT_FOUND);
       }
-      return new ResponseEntity<>("Case was deleted successfully.", HttpStatus.OK);
+      return new ResponseEntity<>(ApiResponse.builder()
+          .message("Case was deleted successfully.")
+          .success(true)
+          .build(), HttpStatus.OK);
     } catch (ServiceException e) {
-      return new ResponseEntity<>("Cannot delete case.", HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>(ApiResponse.builder()
+          .message("Cannot delete case.")
+          .success(false)
+          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
 }

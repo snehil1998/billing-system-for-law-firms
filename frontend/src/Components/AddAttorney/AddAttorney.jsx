@@ -7,6 +7,7 @@ import {getClientsData} from "../../redux/clients/ClientsSelectors";
 import {addMessage} from "../../redux/message/MessageActions";
 import { requestClients } from "../../redux/clients/ClientsActions";
 import DynamicInputList from "../common/DynamicInputList";
+import { attorneysApi } from "../../services/api";
 
 const AddAttorney = (props) => {
     const [attorneyID, setAttorneyID] = useState("");
@@ -27,35 +28,26 @@ const AddAttorney = (props) => {
             if(attorneyID === "" || firstName === "" || lastName === "" || servicePricingList.length === 0) {
                 return props.addMessage('Please complete all fields to add an attorney.')
             }
-            let res = await fetch("/backend/attorneys", {
-                method: "POST",
-                headers: {
-                    'Accept': 'application/json, text/plain, */*',
-                    'Content-Type': 'application/json; charset=utf-8'
-                },
-                body: JSON.stringify({
-                    attorneyId: attorneyID,
-                    firstName: firstName,
-                    lastName: lastName,
-                    servicePricing: servicePricingList,
-                }),
-            });
-            if (res.status === 200 || res.status === 201) {
-                setAttorneyID("");
-                setFirstName("");
-                setLastName("");
-                setNumberOfServicePricing("0");
-                setClientIdList({});
-                setPriceList({});
-                props.addMessage('Attorney was created successfully!');
-            } else if(res.status === 410) {
+            await attorneysApi.create({
+                attorneyId: attorneyID,
+                firstName: firstName,
+                lastName: lastName,
+                servicePricing: servicePricingList,
+            })
+            setAttorneyID("");
+            setFirstName("");
+            setLastName("");
+            setNumberOfServicePricing("0");
+            setClientIdList({});
+            setPriceList({});
+            props.addMessage('Attorney was created successfully!');
+            props.requestAttorneys('');
+        } catch (err) {
+            if(err.status === 410) {
                 props.addMessage(`Please use a different attorney ID. ${attorneyID} already exists.`);
             } else {
                 props.addMessage("❗ Error occurred while adding data into attorneys.");
             }
-            props.requestAttorneys('');
-        } catch (err) {
-            props.addMessage("❗ Error occurred while adding data into attorneys.");
             console.log("Error posting data into attorneys: ", err);
         }
     };

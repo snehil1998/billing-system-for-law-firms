@@ -10,7 +10,7 @@ import {addMessage} from "../../redux/message/MessageActions";
 import { requestCases } from "../../redux/cases/CasesActions";
 import "../common/AddForm.css";
 import { EXCHANGE_RATE_API, EXCHANGE_RATE_API_LATEST } from "../../constants/api";
-
+import { disbursementsApi } from "../../services/api";
 const AddDisbursement = (props) => {
     const today = dayjs();
     const [caseID, setCaseID] = useState("");
@@ -29,40 +29,29 @@ const AddDisbursement = (props) => {
             if(caseID === '' || disbursement === '' || !date || inrAmount === '0') {
                 return props.addMessage('❗ Please complete all fields to add a disbursement.')
             }
-            let res = await fetch("/backend/disbursements", {
-                method: "POST",
-                headers: {
-                    'Accept': 'application/json, text/plain, */*',
-                    'Content-Type': 'application/json; charset=utf-8'
-                },
-                body: JSON.stringify({
-                    caseId: caseID,
-                    clientId: clientID,
-                    disbursement: disbursement,
-                    date: date,
-                    currencyCode: currencyCode,
-                    conversionRate: conversionRate,
-                    inrAmount: parseFloat(inrAmount),
-                    conversionAmount: conversionAmount,
-                }),
-            });
-            if (res.status === 200 || res.status === 201) {
-                setCaseID("");
-                setClientID("");
-                setDisbursement("");
-                setDate(today.format('YYYY-MM-DD'));
-                setCurrencyCode("");
-                setConversionRate(0);
-                setInrAmount("0");
-                setConversionAmount(0);
-                props.addMessage("Disbursement was created successfully!");
-            } else {
-                props.addMessage("❗ Error occurred while adding data into disbursements.");
-            }
+            await disbursementsApi.create({
+                caseId: caseID,
+                clientId: clientID,
+                disbursement: disbursement,
+                date: date,
+                currencyCode: currencyCode,
+                conversionRate: conversionRate,
+                inrAmount: parseFloat(inrAmount),
+                conversionAmount: conversionAmount,
+            })
+            setCaseID("");
+            setClientID("");
+            setDisbursement("");
+            setDate(today.format('YYYY-MM-DD'));
+            setCurrencyCode("");
+            setConversionRate(0);
+            setInrAmount("0");
+            setConversionAmount(0);
+            props.addMessage("Disbursement was created successfully!");
             props.requestDisbursements('');
         } catch (err) {
             props.addMessage("❗ Error occurred while adding data into disbursements.");
-            console.log("Error posting data into services: ", err);
+            console.log("Error occurred while adding data into disbursements: ", err);
         }
     };
 
@@ -106,7 +95,7 @@ const AddDisbursement = (props) => {
             }
         }
         fetchData();
-    }, [currencyCode, date, conversionRate, inrAmount, today])
+    }, [currencyCode, date, conversionRate])
 
     useEffect(() => {
         if (conversionRate !== undefined && conversionRate !== null) {
