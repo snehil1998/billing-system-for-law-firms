@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import {getClientsData} from "../../redux/clients/ClientsSelectors";
 import {addMessage} from "../../redux/message/MessageActions";
 import { requestClients } from "../../redux/clients/ClientsActions";
+import DynamicInputList from "../common/DynamicInputList";
 
 const AddAttorney = (props) => {
     const [attorneyID, setAttorneyID] = useState("");
@@ -83,8 +84,14 @@ const AddAttorney = (props) => {
             return { label: eachNumber, value: eachNumber }
         });
 
-    const handleChangeClients = (event, i) => {
-        setClientIdList({...clientIdList, [i]: event.target.value});
+    const clientIdArray = Array.from({length: parseInt(numberOfServicePricing)}, (_, i) => clientIdList[i] || "");
+    const priceArray = Array.from({length: parseInt(numberOfServicePricing)}, (_, i) => priceList[i] || "");
+
+    const handleClientChange = (idx, value) => {
+      setClientIdList({...clientIdList, [idx]: value});
+    };
+    const handlePriceChange = (idx, value) => {
+      setPriceList({...priceList, [idx]: value});
     };
 
     const handleNumberOfServicePricing = (event) => {
@@ -157,41 +164,18 @@ const AddAttorney = (props) => {
                         ))}
                     </select>
                 </div>
-                <div className="service-pricing-list">
-                    {[...Array(parseInt(numberOfServicePricing))].map((_, i) => (
-                        <div key={i} className="form-group service-pricing-item">
-                            <label className="form-label">Service Pricing {i + 1}:</label>
-                            <div className="service-pricing-inputs">
-                                <select
-                                    className="form-input"
-                                    value={clientIdList[i] || ""}
-                                    onChange={(event) => handleChangeClients(event, i)}
-                                >
-                                    <option value="">Select a client</option>
-                                    {clientsOptions
-                                        ?.sort((a, b) => {
-                                            let x = a.label.toLowerCase();
-                                            let y = b.label.toLowerCase();
-                                            return x < y ? -1 : x > y ? 1 : 0;
-                                        })
-                                        .map((option) => (
-                                            <option key={option.value} value={option.value}>
-                                                {option.label}
-                                            </option>
-                                        ))}
-                                </select>
-                                <input
-                                    className="form-input"
-                                    type="number"
-                                    value={priceList[i] || ""}
-                                    placeholder="Price"
-                                    onChange={(e) =>
-                                        setPriceList({...priceList, [i]: e.target.value})}
-                                />
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                <DynamicInputList
+                  count={parseInt(numberOfServicePricing)}
+                  labelPrefix="Service Pricing"
+                  dropdownOptions={clientsOptions}
+                  dropdownValues={clientIdArray}
+                  inputValues={priceArray}
+                  onDropdownChange={handleClientChange}
+                  onInputChange={handlePriceChange}
+                  dropdownPlaceholder="Select a client"
+                  inputPlaceholder="Price"
+                  inputType="number"
+                />
                 <div className="form-buttons">
                     <button type="submit" className="form-submit-btn">
                         Add Attorney
