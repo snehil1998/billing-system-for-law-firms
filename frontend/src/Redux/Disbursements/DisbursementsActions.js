@@ -1,20 +1,19 @@
   import DISBURSEMENTS from "./DisbursementsConstants";
   import {requestCases} from "../cases/CasesActions";
   import {requestClients} from "../clients/ClientsActions";
-
+  import { disbursementsApi } from "../../services/api";
 export const requestDisbursements = (clientID) => async (dispatch) => {
     dispatch({
         type: DISBURSEMENTS.LOAD,
     });
     try {
         if(clientID === ''){
-            await fetch("/backend/disbursements")
-                .then(response => response.json())
+            await disbursementsApi.getAll()
                 .then(json => {
                     dispatch({
                         type: DISBURSEMENTS.LOAD_SUCCESS,
-                        data: json,
-                        isError: false,
+                        data: json.data,
+                        isError: json.success,
                     })})
                 .finally( () => {
                     dispatch(requestClients(''));
@@ -23,13 +22,12 @@ export const requestDisbursements = (clientID) => async (dispatch) => {
                     dispatch(addToSearchDateDisbursements(null));
                 })
         } else{
-            await fetch("/backend/disbursements/client="+clientID)
-                .then(response => response.json())
+            await disbursementsApi.getById(clientID)
                 .then(json =>
                     dispatch({
                         type: DISBURSEMENTS.LOAD_SUCCESS,
-                        data: json,
-                        isError: false,
+                        data: json.data,
+                        isError: json.success,
                     }))
         }
 

@@ -2,20 +2,19 @@ import SERVICES from "./ServicesConstants";
 import {requestCases} from "../cases/CasesActions";
 import {requestClients} from "../clients/ClientsActions";
 import {requestAttorneys} from "../attorneys/AttorneysActions";
-
+import { servicesApi } from "../../services/api";
 export const requestServices = (clientID) => async (dispatch) => {
     dispatch({
         type: SERVICES.LOAD,
     });
     try {
         if(clientID === ''){
-            await fetch("/backend/services")
-                .then(response => response.json())
+            await servicesApi.getAll()
                 .then(json => {
                     dispatch({
                         type: SERVICES.LOAD_SUCCESS,
-                        data: json,
-                        isError: false,
+                        data: json.data,
+                        isError: json.success,
                     })})
                 .finally(() => {
                     dispatch(requestCases(''));
@@ -25,13 +24,12 @@ export const requestServices = (clientID) => async (dispatch) => {
                     dispatch(addToSearchDateServices(null));
                 })
         } else{
-            await fetch("/backend/services/client="+clientID)
-                .then(response => response.json())
+            await servicesApi.getById(clientID)
                 .then(json =>
                     dispatch({
                         type: SERVICES.LOAD_SUCCESS,
-                        data: json,
-                        isError: false,
+                        data: json.data,
+                        isError: json.success,
                     }))
         }
 

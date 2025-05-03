@@ -1,4 +1,4 @@
-import { API_ENDPOINTS, HTTP_STATUS } from '../constants/api';
+import { API_ENDPOINTS, HTTP_STATUS, EXCHANGE_RATE_API, EXCHANGE_RATE_API_LATEST, CURRENCY_API } from '../constants/api';
 
 class ApiError extends Error {
     constructor(message, status) {
@@ -83,35 +83,46 @@ const apiService = {
 
 export const clientsApi = {
     getAll: () => apiService.get(API_ENDPOINTS.CLIENTS),
+    getById: (id) => apiService.get(`${API_ENDPOINTS.CLIENTS}=${id}`),
     create: (data) => apiService.post(API_ENDPOINTS.CLIENTS, data),
-    update: (id, data) => apiService.put(`${API_ENDPOINTS.CLIENTS}/${id}`, data),
-    delete: (id) => apiService.delete(`${API_ENDPOINTS.CLIENTS}/${id}`),
+    update: (id, data) => apiService.put(`${API_ENDPOINTS.CLIENTS}=${id}`, data),
+    delete: (id) => apiService.delete(`${API_ENDPOINTS.CLIENTS}=${id}`),
 };
 
 export const casesApi = {
-    getAll: () => apiService.get(API_ENDPOINTS.CASES),
+    getAll: () => apiService.get(API_ENDPOINTS.CASES),  
+    getById: (id) => apiService.get(`${API_ENDPOINTS.CASES}=${id}`),
     create: (data) => apiService.post(API_ENDPOINTS.CASES, data),
-    update: (id, data) => apiService.put(`${API_ENDPOINTS.CASES}/${id}`, data),
-    delete: (id) => apiService.delete(`${API_ENDPOINTS.CASES}/${id}`),
+    update: (id, data) => apiService.put(`${API_ENDPOINTS.CASES}=${id}`, data),
+    delete: (id) => apiService.delete(`${API_ENDPOINTS.CASES}=${id}`),
 };
 
 export const servicesApi = {
     getAll: () => apiService.get(API_ENDPOINTS.SERVICES),
+    getById: (id) => apiService.get(`${API_ENDPOINTS.SERVICES}=${id}`),
     create: (data) => apiService.post(API_ENDPOINTS.SERVICES, data),
-    update: (id, data) => apiService.put(`${API_ENDPOINTS.SERVICES}/${id}`, data),
-    delete: (id) => apiService.delete(`${API_ENDPOINTS.SERVICES}/${id}`),
+    update: (id, data) => apiService.put(`${API_ENDPOINTS.SERVICES}=${id}`, data),
+    delete: (id) => apiService.delete(`${API_ENDPOINTS.SERVICES}=${id}`),
 };
 
 export const disbursementsApi = {
     getAll: () => apiService.get(API_ENDPOINTS.DISBURSEMENTS),
+    getById: (id) => apiService.get(`${API_ENDPOINTS.DISBURSEMENTS}=${id}`),
     create: (data) => apiService.post(API_ENDPOINTS.DISBURSEMENTS, data),
-    update: (id, data) => apiService.put(`${API_ENDPOINTS.DISBURSEMENTS}/${id}`, data),
-    delete: (id) => apiService.delete(`${API_ENDPOINTS.DISBURSEMENTS}/${id}`),
+    update: (id, data) => apiService.put(`${API_ENDPOINTS.DISBURSEMENTS}=${id}`, data),
+    delete: (id) => apiService.delete(`${API_ENDPOINTS.DISBURSEMENTS}=${id}`),
 };
 
 export const attorneysApi = {
     getAll: () => apiService.get(API_ENDPOINTS.ATTORNEYS),
+    getById: (id) => apiService.get(`${API_ENDPOINTS.ATTORNEYS}=${id}`),
     create: (data) => apiService.post(API_ENDPOINTS.ATTORNEYS, data),
-    update: (id, data) => apiService.put(`${API_ENDPOINTS.ATTORNEYS}/${id}`, data),
-    delete: (id) => apiService.delete(`${API_ENDPOINTS.ATTORNEYS}/${id}`),
-}; 
+    update: (id, data) => apiService.put(`${API_ENDPOINTS.ATTORNEYS}=${id}`, data),
+    delete: (id) => apiService.delete(`${API_ENDPOINTS.ATTORNEYS}=${id}`),
+};
+
+export const currencyApi = {
+    getCurrencies: () => apiService.get(CURRENCY_API),
+    getRate: (date, currencyCode) => apiService.get(`${EXCHANGE_RATE_API}&date=${date}&base_currency=${currencyCode}`),
+    getLatestRate: (currencyCode) => apiService.get(`${EXCHANGE_RATE_API_LATEST}&base_currency=${currencyCode}`),
+};

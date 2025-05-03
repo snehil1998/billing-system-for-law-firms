@@ -5,7 +5,7 @@ import { requestClients } from "../../redux/clients/ClientsActions";
 import { getClientsData } from "../../redux/clients/ClientsSelectors";
 import { clientsApi } from "../../services/api";
 import "../common/AddForm.css";
-import { CURRENCY_API } from "../../constants/api";
+import { currencyApi } from "../../services/api";
 
 const AddClient = (props) => {
   const [clientID, setClientID] = useState("");
@@ -15,14 +15,13 @@ const AddClient = (props) => {
   useEffect(() => {
     props.requestClients("");
     async function fetchData() {
-      await fetch(CURRENCY_API)
-          .then(response => response.json())
-          .then(json => {
-              setCurrencies(json['data']);
-          }).catch(error => {
-              props.addMessage("❗ Error occurred while fetching currency codes from currency api.");
-              console.log("error fetching currency codes from currency api: " + error);
-          })
+      try {
+        const json = await currencyApi.getCurrencies();
+        setCurrencies(json['data']);
+      } catch (error) {
+        props.addMessage("❗ Error occurred while fetching currency codes from currency api.");
+        console.log("error fetching currency codes from currency api: " + error);
+      }
     }
     fetchData();
   }, []);

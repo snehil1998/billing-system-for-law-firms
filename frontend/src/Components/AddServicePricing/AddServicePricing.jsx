@@ -7,7 +7,7 @@ import {getClientsData} from "../../redux/clients/ClientsSelectors";
 import {addMessage} from "../../redux/message/MessageActions";
 import { requestClients } from "../../redux/clients/ClientsActions";
 import "../common/AddForm.css";
-
+import { attorneysApi } from "../../services/api";
 const AddServicePricing = (props) => {
     const [selectedAttorney, setSelectedAttorney] = useState("");
     const [clientId, setClientId] = useState("");
@@ -22,32 +22,23 @@ const AddServicePricing = (props) => {
             }
             const servicePricingList = [{clientId: clientId, price: parseInt(price)}]
             const selectedAttorneyArray = selectedAttorney.split(',');
-            let res = await fetch("/backend/attorneys=" + selectedAttorneyArray[0], {
-                method: "PUT",
-                headers: {
-                    'Accept': 'application/json, text/plain, */*',
-                    'Content-Type': 'application/json; charset=utf-8'
-                },
-                body: JSON.stringify({
-                    firstName: selectedAttorneyArray[1],
-                    lastName: selectedAttorneyArray[2],
-                    servicePricing: servicePricingList,
-                }),
-            });
-            if (res.status === 200 || res.status === 201) {
-                setSelectedAttorney("");
-                setClientId("");
-                setPrice("");
-                props.addMessage("Service pricing was added successfully!");
-            } else if (res.status === 410) {
+            await attorneysApi.update(selectedAttorneyArray[0], {
+                firstName: selectedAttorneyArray[1],
+                lastName: selectedAttorneyArray[2],
+                servicePricing: servicePricingList,
+            })
+            setSelectedAttorney("");
+            setClientId("");
+            setPrice("");
+            props.addMessage("Service pricing was added successfully!");
+            props.requestAttorneys('');
+        } catch (err) {
+            if (err.status === 410) {
                 props.addMessage("Client already exists in service pricing for the attorney.");
             } else {
                 props.addMessage("❗ Error occurred while adding service pricing for attorney.");
             }
-            props.requestAttorneys('');
-        } catch (err) {
             console.log("Error adding service pricing for attorney: ", err);
-            props.addMessage("❗ Error occurred while adding service pricing for attorney.");
         }
     };
 

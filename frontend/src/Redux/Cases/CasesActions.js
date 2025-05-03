@@ -1,31 +1,29 @@
 import CASES from "./CasesConstants";
 import {requestClients} from "../clients/ClientsActions";
-
+import { casesApi } from "../../services/api";
 export const requestCases = (casesID) => async (dispatch) => {
     dispatch({
         type: CASES.LOAD,
     });
     try {
         if(casesID === ''){
-            await fetch("/backend/cases")
-                .then(response => response.json())
+            await casesApi.getAll()
                 .then(json => {
                     dispatch({
                         type: CASES.LOAD_SUCCESS,
-                        data: json,
-                        isError: false,
+                        data: json.data,
+                        isError: json.success,
                     })})
                 .finally(() => {
                     dispatch(requestClients(''));
                 })
         } else{
-            await fetch("/backend/cases="+casesID)
-                .then(response => response.json())
+            await casesApi.getById(casesID)
                 .then(json =>
                     dispatch({
                         type: CASES.LOAD_SUCCESS,
-                        data: json,
-                        isError: false,
+                        data: json.data,
+                        isError: json.success,
                     }))
         }
 
