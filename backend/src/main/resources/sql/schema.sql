@@ -4,7 +4,7 @@
 -- All services
 CREATE TABLE services
 (
-    Service_Id UUID PRIMARY KEY,
+    Service_Id VARCHAR(40) PRIMARY KEY,
     Case_Id  VARCHAR(40) NOT NULL,
     Client_Id   VARCHAR(40) NOT NULL,
     Service   VARCHAR(10000) NOT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE cases
 -- All disbursements
 CREATE TABLE disbursements
 (
-    Disbursement_Id   UUID PRIMARY KEY,
+    Disbursement_Id   VARCHAR(40) PRIMARY KEY,
     Case_Id     VARCHAR(40) NOT NULL,
     Client_Id   VARCHAR(40) NOT NULL,
     Disbursement VARCHAR(10000) NOT NULL,

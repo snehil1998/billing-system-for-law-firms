@@ -46,7 +46,7 @@ public class DisbursementsService {
     }
   }
 
-  public Optional<Disbursements> getDisbursementsById(UUID disbursementId) throws ServiceException {
+  public Optional<Disbursements> getDisbursementsById(String disbursementId) throws ServiceException {
     try {
       return disbursementsRepository.getDisbursementsById(disbursementId);
     } catch (RepositoryException e) {
@@ -95,7 +95,7 @@ public class DisbursementsService {
     }
   }
 
-  public int deleteDisbursementById(UUID disbursementId) throws ServiceException {
+  public int deleteDisbursementById(String disbursementId) throws ServiceException {
     try {
       Disbursements disbursement = getDisbursementsById(disbursementId).get();
 

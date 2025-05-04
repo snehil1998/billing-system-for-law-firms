@@ -27,7 +27,7 @@ public class DisbursementsRepository {
       logger.info("Retrieving data for all disbursements");
       List<Disbursements> disbursementList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
-            UUID disbursementId = (UUID) resultSet.getObject("disbursement_id");
+            String disbursementId = resultSet.getString("disbursement_id");
             String caseId = resultSet.getString("case_id");
             String clientId = resultSet.getString("client_id");
             String disbursement = resultSet.getString("disbursement");
@@ -46,7 +46,7 @@ public class DisbursementsRepository {
     }
   }
 
-  public Optional<Disbursements> getDisbursementsById(UUID disbursementId) throws RepositoryException {
+  public Optional<Disbursements> getDisbursementsById(String disbursementId) throws RepositoryException {
     try {
       String sql = "SELECT * FROM ebdb.public.disbursements where disbursement_id = '" + disbursementId + "'";
       logger.info("Retrieving data for disbursement with disbursement ID: " + disbursementId);
@@ -76,7 +76,7 @@ public class DisbursementsRepository {
       logger.info("Retrieving data for disbursements with client ID: " + clientID);
       List<Disbursements> disbursementList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
-            UUID disbursementId = (UUID) resultSet.getObject("disbursement_id");
+            String disbursementId = resultSet.getString("disbursement_id");
             String caseId = resultSet.getString("case_id");
             String clientId = resultSet.getString("client_id");
             String disbursement = resultSet.getString("disbursement");
@@ -101,7 +101,7 @@ public class DisbursementsRepository {
       logger.info("Retrieving data for disbursements with case ID: " + caseID);
       List<Disbursements> disbursementList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
-            UUID disbursementId = (UUID) resultSet.getObject("disbursement_id");
+            String disbursementId = resultSet.getString("disbursement_id");
             String caseId = resultSet.getString("case_id");
             String clientId = resultSet.getString("client_id");
             String disbursement = resultSet.getString("disbursement");
@@ -146,7 +146,7 @@ public class DisbursementsRepository {
     }
   }
 
-  public int deleteDisbursementById(UUID disbursementId) throws RepositoryException {
+  public int deleteDisbursementById(String disbursementId) throws RepositoryException {
     try {
       logger.info("Deleting disbursement with ID: " + disbursementId);
       return jdbcTemplate.update("delete from ebdb.public.disbursements where disbursement_id=?", disbursementId);

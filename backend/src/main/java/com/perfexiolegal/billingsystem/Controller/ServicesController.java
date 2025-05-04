@@ -90,7 +90,7 @@ public class ServicesController {
   }
 
   @GetMapping(value = "/services={serviceID}")
-  public ResponseEntity<ApiResponse> getServicesFromId(@PathVariable("serviceID") UUID serviceID) {
+  public ResponseEntity<ApiResponse> getServicesFromId(@PathVariable("serviceID") String serviceID) {
     try {
       logger.info("retrieving service from controller with serviceID: " + serviceID);
       Optional<Services> retrievedService = servicesService.getServiceFromId(serviceID);
@@ -159,7 +159,7 @@ public class ServicesController {
   }
 
   @PutMapping(value = "/services={serviceID}")
-  public ResponseEntity<ApiResponse> updateService(@PathVariable("serviceID") UUID serviceID,
+  public ResponseEntity<ApiResponse> updateService(@PathVariable("serviceID") String serviceID,
                                               @RequestBody ServicesWithoutId serviceJSONWithoutID) {
     try {
       logger.info("check existence of service with service ID: " + serviceID);
@@ -188,7 +188,7 @@ public class ServicesController {
   }
 
   @DeleteMapping(value = "/services={serviceID}")
-  public ResponseEntity<ApiResponse> deleteService(@PathVariable("serviceID") UUID serviceID) {
+  public ResponseEntity<ApiResponse> deleteService(@PathVariable("serviceID") String serviceID) {
     try {
       logger.info("deleting service with ID: " + serviceID);
       int result = servicesService.deleteById(serviceID);

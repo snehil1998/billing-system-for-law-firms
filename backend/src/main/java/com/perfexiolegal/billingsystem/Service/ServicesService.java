@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @org.springframework.stereotype.Service
 public class ServicesService {
@@ -60,7 +59,7 @@ public class ServicesService {
     }
   }
 
-  public Optional<Services> getServiceFromId(UUID serviceID) throws ServiceException {
+  public Optional<Services> getServiceFromId(String serviceID) throws ServiceException {
     try {
       return servicesRepository.getServiceFromId(serviceID);
     } catch (RepositoryException e) {
@@ -93,7 +92,7 @@ public class ServicesService {
     }
   }
 
-  public int deleteById(UUID serviceID) throws ServiceException {
+  public int deleteById(String serviceID) throws ServiceException {
     try {
       Services service = getServiceFromId(serviceID).get();
 

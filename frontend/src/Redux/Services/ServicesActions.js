@@ -24,7 +24,7 @@ export const requestServices = (clientID) => async (dispatch) => {
                     dispatch(addToSearchDateServices(null));
                 })
         } else{
-            await servicesApi.getById(clientID)
+            await servicesApi.getByClientId(clientID)
                 .then(json =>
                     dispatch({
                         type: SERVICES.LOAD_SUCCESS,

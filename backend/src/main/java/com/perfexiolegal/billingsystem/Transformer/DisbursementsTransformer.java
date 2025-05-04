@@ -4,12 +4,10 @@ import com.perfexiolegal.billingsystem.Model.Disbursements;
 import com.perfexiolegal.billingsystem.Model.DisbursementsWithoutId;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 @Component
 public class DisbursementsTransformer {
 
-  public Disbursements update(DisbursementsWithoutId updatedDisbursement, UUID disbursementID) {
+  public Disbursements update(DisbursementsWithoutId updatedDisbursement, String disbursementID) {
     return new Disbursements(
         disbursementID,
         updatedDisbursement.getCaseId(),
@@ -25,7 +23,7 @@ public class DisbursementsTransformer {
 
   public Disbursements postTransformer(DisbursementsWithoutId updatedDisbursement) {
     return new Disbursements(
-        UUID.randomUUID(),
+        updatedDisbursement.getDisbursementId(),
         updatedDisbursement.getCaseId(),
         updatedDisbursement.getClientId(),
         updatedDisbursement.getDisbursement(),

@@ -10,6 +10,11 @@ import {
     MaterialReactTable,
     useMaterialReactTable,
   } from 'material-react-table';
+import { Box, Button, IconButton, Tooltip } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { disbursementsApi } from "../../services/api";
+import { handleExportRows } from "../../components/common/CsvExporter";
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 const DisplayServices = (props) => {
     const dispatch = useDispatch();
@@ -78,10 +83,60 @@ const DisplayServices = (props) => {
         setTableData(data);
      }, [data])
 
+     const openDeleteConfirmModal = async (row) => {
+        if (window.confirm(`Are you sure you want to delete disbursement: ${row.original.disbursement}?`)) {
+            await disbursementsApi.delete(row.original.disbursementid);
+            props.requestDisbursements('');
+        }
+    };
+
     const table = useMaterialReactTable({
         columns: columns,
-        data: tableData
-      });
+        data: tableData,
+        enableRowActions: true,
+        renderRowActions: ({ row, _ }) => (
+            row.depth === 0 ? (
+              <Box sx={{ display: 'flex', gap: '1rem' }}>
+                <Tooltip title="Delete">
+                  <IconButton onClick={() => openDeleteConfirmModal(row)}>
+                    <DeleteIcon sx={{ color: "#8B0000" }} />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            ) : null
+        ),
+        renderTopToolbarCustomActions: ({ table }) => (
+            <Box
+              sx={{
+                display: 'flex',
+                gap: '16px',
+                padding: '8px',
+                flexWrap: 'wrap',
+              }}
+            >
+              <Button
+                disabled={table.getRowModel().rows.length === 0}
+                onClick={() => {
+                    const visibleColumns = table.getVisibleLeafColumns();
+                    const rows = table.getRowModel().rows;
+                    handleExportRows(rows, visibleColumns);
+                }}
+                startIcon={<FileDownloadIcon sx={{ color: '#fff' }} />}
+                sx={{
+                  backgroundColor: '#8B0000',
+                  color: '#fff',
+                  '&:hover': {
+                    backgroundColor: '#8B0000',
+                  },
+                  textTransform: 'uppercase',
+                  fontWeight: 600,
+                }}
+              >
+                Export to CSV
+              </Button>
+            </Box>
+        ),
+    });
 
     return (
         <div className={"display-disbursements-table-container"}>
@@ -107,4 +162,10 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps, null)(DisplayServices);
+const mapDispatchToProps = (dispatch) => ({
+    requestDisbursements: (disbursementID) => {
+      dispatch(requestDisbursements(disbursementID));
+    }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(DisplayServices);
