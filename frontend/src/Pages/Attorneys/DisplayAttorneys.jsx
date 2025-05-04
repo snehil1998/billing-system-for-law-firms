@@ -9,6 +9,11 @@ import {
     MaterialReactTable,
     useMaterialReactTable,
   } from 'material-react-table';
+import { Box, Button, IconButton, Tooltip } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { attorneysApi } from "../../services/api";
+import { handleExportRows } from "../../components/common/CsvExporter";
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 const DisplayAttorneys = (props) => {
     const dispatch = useDispatch();
@@ -94,6 +99,13 @@ const DisplayAttorneys = (props) => {
         setTableData(data);
      }, [data])
 
+    const openDeleteConfirmModal = async (row) => {
+        if (window.confirm(`Are you sure you want to delete attorney: ${row.original.firstname} ${row.original.lastname}?`)) {
+            await attorneysApi.delete(row.original.attorneyid);
+            props.requestAttorneys('');
+        }
+    };
+
     const table = useMaterialReactTable({
         columns,
         data: tableData,
@@ -102,7 +114,50 @@ const DisplayAttorneys = (props) => {
         getSubRows: (row) => row.subRows,
         initialState: { expanded: false },
         paginateExpandedRows: false,
-      });
+        enableRowActions: true,
+        renderRowActions: ({ row, _ }) => (
+            row.depth === 0 ? (
+              <Box sx={{ display: 'flex', gap: '1rem' }}>
+                <Tooltip title="Delete">
+                  <IconButton onClick={() => openDeleteConfirmModal(row)}>
+                    <DeleteIcon sx={{ color: "#8B0000" }} />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            ) : null
+        ),
+        renderTopToolbarCustomActions: ({ table }) => (
+            <Box
+              sx={{
+                display: 'flex',
+                gap: '16px',
+                padding: '8px',
+                flexWrap: 'wrap',
+              }}
+            >
+              <Button
+                disabled={table.getPrePaginationRowModel().rows.length === 0}
+                onClick={() => {
+                    const visibleColumns = table.getVisibleLeafColumns();
+                    const rows = table.getRowModel().rows;
+                    handleExportRows(rows, visibleColumns);
+                }}
+                startIcon={<FileDownloadIcon sx={{ color: '#fff' }} />}
+                sx={{
+                  backgroundColor: '#8B0000',
+                  color: '#fff',
+                  '&:hover': {
+                    backgroundColor: '#8B0000',
+                  },
+                  textTransform: 'uppercase',
+                  fontWeight: 600,
+                }}
+              >
+                Export to CSV
+              </Button>
+            </Box>
+        ),
+    });
 
     return (
         <div className={"display-attorneys-table-container"}>
@@ -125,4 +180,10 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps, null)(DisplayAttorneys);
+const mapDispatchToProps = (dispatch) => ({
+    requestAttorneys: (attorneyID) => {
+      dispatch(requestAttorneys(attorneyID));
+    }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(DisplayAttorneys);

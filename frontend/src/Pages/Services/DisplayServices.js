@@ -11,6 +11,11 @@ import {
     MaterialReactTable,
     useMaterialReactTable,
   } from 'material-react-table';
+import { Box, Button, IconButton, Tooltip } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { servicesApi } from "../../services/api";
+import { handleExportRows } from "../../components/common/CsvExporter";
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 const DisplayServices = (props) => {
     const dispatch = useDispatch();
@@ -105,8 +110,8 @@ const DisplayServices = (props) => {
         data.push(
             {
                 serviceid: service.serviceId,
-                casename: filterCases[0]?.caseName,
-                clientname: filterClients[0]?.clientName,
+                casename: filterCases[0]?.caseName ?? 'N/A',
+                clientname: filterClients[0]?.clientName ?? 'N/A',
                 service: service.service,
                 date: service.date,
                 currencycode: filterClients[0]?.currencyCode,
@@ -140,6 +145,13 @@ const DisplayServices = (props) => {
         setTableData(data);
      }, [data])
 
+    const openDeleteConfirmModal = async (row) => {
+        if (window.confirm(`Are you sure you want to delete service: ${row.original.service}?`)) {
+            await servicesApi.delete(row.original.serviceid);
+            props.requestServices('');
+        }
+    };
+
     const table = useMaterialReactTable({
         columns,
         data: tableData,
@@ -149,7 +161,50 @@ const DisplayServices = (props) => {
         getSubRows: (row) => row.subRows,
         initialState: { expanded: false }, 
         paginateExpandedRows: false,
-      });
+        enableRowActions: true,
+        renderRowActions: ({ row, _ }) => (
+            row.depth === 0 ? (
+              <Box sx={{ display: 'flex', gap: '1rem' }}>
+                <Tooltip title="Delete">
+                  <IconButton onClick={() => openDeleteConfirmModal(row)}>
+                    <DeleteIcon sx={{ color: "#8B0000" }} />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            ) : null
+        ),
+        renderTopToolbarCustomActions: ({ table }) => (
+            <Box
+              sx={{
+                display: 'flex',
+                gap: '16px',
+                padding: '8px',
+                flexWrap: 'wrap',
+              }}
+            >
+              <Button
+                disabled={table.getRowModel().rows.length === 0}
+                onClick={() => {
+                    const visibleColumns = table.getVisibleLeafColumns();
+                    const rows = table.getRowModel().rows;
+                    handleExportRows(rows, visibleColumns);
+                }}
+                startIcon={<FileDownloadIcon sx={{ color: '#fff' }} />}
+                sx={{
+                  backgroundColor: '#8B0000',
+                  color: '#fff',
+                  '&:hover': {
+                    backgroundColor: '#8B0000',
+                  },
+                  textTransform: 'uppercase',
+                  fontWeight: 600,
+                }}
+              >
+                Export to CSV
+              </Button>
+            </Box>
+        ),
+    });
 
     return (
         <div className={"display-services-table-container"}>
@@ -177,4 +232,10 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps, null)(DisplayServices);
+const mapDispatchToProps = (dispatch) => ({
+    requestServices: (serviceID) => {
+      dispatch(requestServices(serviceID));
+    }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(DisplayServices);
