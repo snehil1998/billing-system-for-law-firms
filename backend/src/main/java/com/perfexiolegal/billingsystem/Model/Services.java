@@ -16,7 +16,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 @ToString
 public class Services {
-  private UUID serviceId;
+  private String serviceId;
   private String caseId;
   private String clientId;
   private String service;

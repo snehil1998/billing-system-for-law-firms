@@ -33,7 +33,7 @@ public class ServicesRepository {
       logger.info("Retrieving data for all bills");
       List<Services> servicesList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
-            UUID serviceId = (UUID) resultSet.getObject("service_id");
+            String serviceId = resultSet.getString("service_id");
             String caseId = resultSet.getString("case_id");
             String clientId = resultSet.getString("client_id");
             String service = resultSet.getString("service");
@@ -64,7 +64,7 @@ public class ServicesRepository {
       logger.info("Retrieving data for bill with case ID: " + caseID);
       List<Services> servicesForCaseList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
-            UUID serviceId = (UUID) resultSet.getObject("service_id");
+            String serviceId = resultSet.getString("service_id");
             String caseId = resultSet.getString("case_id");
             String clientId = resultSet.getString("client_id");
             String service = resultSet.getString("service");
@@ -97,7 +97,7 @@ public class ServicesRepository {
       logger.info("Retrieving data for bill with client ID: " + clientID);
       List<Services> servicesForClientList = jdbcTemplate.query(sql,
           (resultSet, i) -> {
-            UUID serviceId = (UUID) resultSet.getObject("service_id");
+            String serviceId = resultSet.getString("service_id");
             String caseId = resultSet.getString("case_id");
             String clientId = resultSet.getString("client_id");
             String service = resultSet.getString("service");
@@ -124,13 +124,13 @@ public class ServicesRepository {
     }
   }
 
-  public Optional<Services> getServiceFromId(UUID serviceID) throws RepositoryException {
+  public Optional<Services> getServiceFromId(String serviceID) throws RepositoryException {
     try {
       String sql = "SELECT * FROM ebdb.public.services where service_id = '" + serviceID + "'";
       logger.info("Retrieving data for bill with service ID: " + serviceID);
       Services serviceFromId = jdbcTemplate.queryForObject(sql,
           (resultSet, i) -> {
-            UUID serviceId = (UUID) resultSet.getObject("service_id");
+            String serviceId = resultSet.getString("service_id");
             String caseId = resultSet.getString("case_id");
             String clientId = resultSet.getString("client_id");
             String service = resultSet.getString("service");
@@ -189,7 +189,7 @@ public class ServicesRepository {
     }
   }
 
-  public int deleteById(UUID serviceID) throws RepositoryException {
+  public int deleteById(String serviceID) throws RepositoryException {
     try {
       logger.info("Deleting service with ID: " + serviceID);
       return jdbcTemplate.update("delete from ebdb.public.services where service_id=?", serviceID);

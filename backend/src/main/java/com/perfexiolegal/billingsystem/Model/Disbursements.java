@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.util.Date;
-import java.util.UUID;
 
 @Builder
 @Getter
@@ -15,7 +14,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 @ToString
 public class Disbursements {
-  private UUID disbursementId;
+  private String disbursementId;
   private String caseId;
   private String clientId;
   private String disbursement;

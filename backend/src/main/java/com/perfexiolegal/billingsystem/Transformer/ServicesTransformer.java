@@ -50,7 +50,7 @@ public class ServicesTransformer {
     });
 
     return new Services(
-        UUID.randomUUID(),
+        service.getServiceId(),
         service.getCaseId(),
         service.getClientId(),
         service.getService(),
@@ -60,7 +60,7 @@ public class ServicesTransformer {
     );
   }
 
-  public Services update(ServicesWithoutId service, UUID serviceID) {
+  public Services update(ServicesWithoutId service, String serviceID) {
     return new Services(
         serviceID,
         service.getCaseId(),

@@ -22,7 +22,7 @@ export const requestDisbursements = (clientID) => async (dispatch) => {
                     dispatch(addToSearchDateDisbursements(null));
                 })
         } else{
-            await disbursementsApi.getById(clientID)
+            await disbursementsApi.getByClientId(clientID)
                 .then(json =>
                     dispatch({
                         type: DISBURSEMENTS.LOAD_SUCCESS,

@@ -22,6 +22,7 @@ const AddDisbursement = (props) => {
     const [conversionRate, setConversionRate] = useState(0);
     const [inrAmount, setInrAmount] = useState("0");
     const [conversionAmount, setConversionAmount] = useState(0);
+    const [disbursementID, setDisbursementID] = useState("");
 
     let handleSubmit = async (e) => {
         e.preventDefault();
@@ -31,6 +32,7 @@ const AddDisbursement = (props) => {
                 return props.addMessage('❗ Please complete all fields to add a disbursement.')
             }
             await disbursementsApi.create({
+                disbursementId: disbursementID,
                 caseId: caseID,
                 clientId: clientID,
                 disbursement: disbursement,
@@ -40,6 +42,7 @@ const AddDisbursement = (props) => {
                 inrAmount: parseFloat(inrAmount),
                 conversionAmount: conversionAmount,
             })
+            setDisbursementID("");
             setCaseID("");
             setClientID("");
             setDisbursement("");
@@ -122,6 +125,19 @@ const AddDisbursement = (props) => {
     return (
         <div className="add-form-container">
             <form onSubmit={handleSubmit} onReset={handleClear} className="add-form">
+                <div className="form-group">
+                    <label htmlFor="disbursementId" className="form-label">
+                        Disbursement ID:
+                    </label>
+                    <input
+                        id="disbursementId"
+                        className="form-input"
+                        type="text"
+                        value={disbursementID || ""}
+                        onChange={e => setDisbursementID(e.target.value)}
+                        placeholder="Enter disbursement ID"
+                    />
+                </div>
                 <div className="form-group">
                     <label htmlFor="caseId" className="form-label">
                         Case:

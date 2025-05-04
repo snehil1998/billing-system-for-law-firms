@@ -99,7 +99,7 @@ export const casesApi = {
 
 export const servicesApi = {
     getAll: () => apiService.get(API_ENDPOINTS.SERVICES),
-    getById: (id) => apiService.get(`${API_ENDPOINTS.SERVICES}=${id}`),
+    getByClientId: (clientId) => apiService.get(`${API_ENDPOINTS.SERVICES}/client=${clientId}`),
     create: (data) => apiService.post(API_ENDPOINTS.SERVICES, data),
     update: (id, data) => apiService.put(`${API_ENDPOINTS.SERVICES}=${id}`, data),
     delete: (id) => apiService.delete(`${API_ENDPOINTS.SERVICES}=${id}`),
@@ -107,7 +107,7 @@ export const servicesApi = {
 
 export const disbursementsApi = {
     getAll: () => apiService.get(API_ENDPOINTS.DISBURSEMENTS),
-    getById: (id) => apiService.get(`${API_ENDPOINTS.DISBURSEMENTS}=${id}`),
+    getByClientId: (clientId) => apiService.get(`${API_ENDPOINTS.DISBURSEMENTS}/client=${clientId}`),
     create: (data) => apiService.post(API_ENDPOINTS.DISBURSEMENTS, data),
     update: (id, data) => apiService.put(`${API_ENDPOINTS.DISBURSEMENTS}=${id}`, data),
     delete: (id) => apiService.delete(`${API_ENDPOINTS.DISBURSEMENTS}=${id}`),

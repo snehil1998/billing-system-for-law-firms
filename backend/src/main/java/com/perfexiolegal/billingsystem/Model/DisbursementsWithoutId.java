@@ -14,6 +14,7 @@ import java.util.Date;
 @EqualsAndHashCode
 @ToString
 public class DisbursementsWithoutId {
+  private String disbursementId;
   private String caseId;
   private String clientId;
   private String disbursement;

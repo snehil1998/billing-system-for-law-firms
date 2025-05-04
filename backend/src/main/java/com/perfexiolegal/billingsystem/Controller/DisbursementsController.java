@@ -63,7 +63,7 @@ public class DisbursementsController {
   }
 
   @GetMapping(value = "/disbursements={disbursementID}")
-  public ResponseEntity<ApiResponse> getDisbursementForId(@PathVariable("disbursementID") UUID disbursementID) {
+  public ResponseEntity<ApiResponse> getDisbursementForId(@PathVariable("disbursementID") String disbursementID) {
     try {
       logger.info("retrieving disbursement from controller with disbursementID: " + disbursementID);
       Optional<Disbursements> retrievedDisbursement = disbursementsService.getDisbursementsById(disbursementID);
@@ -158,7 +158,7 @@ public class DisbursementsController {
   }
 
   @PutMapping(value = "/disbursements={disbursementID}")
-  public ResponseEntity<ApiResponse> updateService(@PathVariable("disbursementID") UUID disbursementID,
+  public ResponseEntity<ApiResponse> updateService(@PathVariable("disbursementID") String disbursementID,
                                               @RequestBody DisbursementsWithoutId disbursementJSONWithoutID) {
     try {
       logger.info("check existence of disbursement with disbursement ID: " + disbursementID);
@@ -187,7 +187,7 @@ public class DisbursementsController {
   }
 
   @DeleteMapping(value = "/disbursements={disbursementID}")
-  public ResponseEntity<ApiResponse> deleteService(@PathVariable("disbursementID") UUID disbursementID) {
+  public ResponseEntity<ApiResponse> deleteService(@PathVariable("disbursementID") String disbursementID) {
     try {
       logger.info("deleting disbursement with ID: " + disbursementID);
       int result = disbursementsService.deleteDisbursementById(disbursementID);

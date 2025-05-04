@@ -15,6 +15,7 @@ import java.util.List;
 @EqualsAndHashCode
 @ToString
 public class ServicesWithoutIdAndAmount {
+  private String serviceId;
   private String caseId;
   private String clientId;
   private String service;
