@@ -68,20 +68,4 @@ public class AttorneysTransformer {
 
         return attorney;
     }
-
-    /**
-     * Creates a new attorney with the provided data and a UUID.
-     * @param attorney The attorney data
-     * @param attorneyID The UUID to assign to the attorney
-     * @return The new attorney with the assigned UUID
-     */
-    public Attorneys createWithId(Attorneys attorney, String attorneyID) {
-        logger.debug("Creating new attorney with ID: {}", attorneyID);
-        return Attorneys.builder()
-                .attorneyId(attorneyID)
-                .firstName(attorney.getFirstName())
-                .lastName(attorney.getLastName())
-                .servicePricing(attorney.getServicePricing())
-                .build();
-    }
 }

@@ -2,8 +2,11 @@ package com.perfexiolegal.billingsystem.Service;
 
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
+import com.perfexiolegal.billingsystem.Model.ServiceDetails;
 import com.perfexiolegal.billingsystem.Model.Services;
 import com.perfexiolegal.billingsystem.Repository.ServicesRepository;
+import com.perfexiolegal.billingsystem.Transformer.ServicesTransformer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,9 @@ public class ServicesService {
 
   @Autowired
   ClientsService clientsService;
+
+  @Autowired
+  ServicesTransformer servicesTransformer;
 
   final Logger logger = LoggerFactory.getLogger(ServicesRepository.class);
 
@@ -57,8 +63,9 @@ public class ServicesService {
     }
   }
 
-  public Services postServices(Services service) throws ServiceException {
+  public Services postServices(ServiceDetails serviceDetails) throws ServiceException {
     try {
+      Services service = servicesTransformer.populateAmount(serviceDetails);
       casesService.updateAmounts(service.getCaseId(), 0, service.getAmount());
       clientsService.updateAmounts(service.getClientId(), 0, service.getAmount());
       return servicesRepository.postServices(service);
@@ -67,9 +74,11 @@ public class ServicesService {
     }
   }
 
-  public Services updateServices(Services service) throws ServiceException {
+  public Services updateServices(ServiceDetails serviceDetails) throws ServiceException {
     try {
       logger.info("updating services through service");
+      validateServiceExists(serviceDetails.getServiceId());
+      Services service = servicesTransformer.populateAmount(serviceDetails);
       return servicesRepository.updateServices(service);
     } catch (RepositoryException e) {
       throw new ServiceException("unable to update service", e);
@@ -92,6 +101,13 @@ public class ServicesService {
       return servicesRepository.deleteByCase(caseID);
     } catch (RepositoryException e) {
       throw new ServiceException("unable to delete all services", e);
+    }
+  }
+
+  private void validateServiceExists(String serviceID) throws ServiceException {
+    Optional<Services> service = getServiceFromId(serviceID);
+    if (service.isEmpty()) {
+        throw new ServiceException("Service not found with ID: " + serviceID);
     }
   }
 }

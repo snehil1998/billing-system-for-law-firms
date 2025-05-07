@@ -7,20 +7,18 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.util.Date;
+import java.util.List;
 
 @Builder
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class DisbursementsWithoutId {
-  private String disbursementId;
+public class ServiceDetails {
+  private String serviceId;
   private String caseId;
   private String clientId;
-  private String disbursement;
+  private String service;
   private Date date;
-  private String currencyCode;
-  private double conversionRate;
-  private double inrAmount;
-  private double conversionAmount;
+  private List<AttorneysInService> attorneys;
 }
