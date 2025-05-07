@@ -12,155 +12,211 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@org.springframework.stereotype.Controller
+/**
+ * Controller class for handling client-related HTTP requests.
+ * Provides endpoints for managing client data.
+ */
+@RestController
 @RequestMapping("/backend")
 public class ClientsController {
 
-  final Logger logger = LoggerFactory.getLogger(ClientsController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ClientsController.class);
 
-  @Autowired
-  ClientsService clientsService;
+    @Autowired
+    private ClientsService clientsService;
 
-  @Autowired
-  ClientsTransformer clientsTransformer;
+    @Autowired
+    private ClientsTransformer clientsTransformer;
 
-  @GetMapping(value = "/clients")
-  public ResponseEntity<ApiResponse> getAllClients() {
-    try {
-      logger.info("retrieving all clients from controller");
-      Optional<List<Clients>> listOfClients = clientsService.getAllClients();
-      List<Clients> clients = listOfClients.get();
-      if (clients.isEmpty()) {
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("No clients found")
-            .success(true)
-            .data(clients)
-            .build(), HttpStatus.OK);
-      }
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Clients retrieved successfully")
-          .success(true)
-          .data(clients)
-          .build(), HttpStatus.OK);
-    } catch (ServiceException e) {
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Internal server error")
-          .success(false)
-          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+    /**
+     * Retrieves all clients.
+     * @return ResponseEntity containing a list of all clients
+     */
+    @GetMapping(value = "/clients", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse> getAllClients() {
+        try {
+            logger.debug("Retrieving all clients");
+            Optional<List<Clients>> clients = clientsService.getAllClients();
+            
+            if (clients.isEmpty() || clients.get().isEmpty()) {
+                return ResponseEntity.ok(ApiResponse.builder()
+                        .message("No clients found")
+                        .success(true)
+                        .data(clients.orElse(List.of()))
+                        .build());
+            }
+
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .message("Clients retrieved successfully")
+                    .success(true)
+                    .data(clients.get())
+                    .build());
+        } catch (ServiceException e) {
+            logger.error("Error retrieving clients: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.builder()
+                            .message("Failed to retrieve clients: " + e.getMessage())
+                            .success(false)
+                            .build());
+        }
     }
-  }
 
-  @GetMapping(value = "/clients={clientID}")
-  public ResponseEntity<ApiResponse> getServicesForCase(@PathVariable("clientID") String clientID) {
-    try {
-      logger.info("retrieving client from controller with clientID: " + clientID);
-      Optional<Clients> retrievedClients = clientsService.getClientById(clientID);
-      if (retrievedClients.isEmpty()) {
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("No client found with ID: " + clientID)
-            .success(true)
-            .build(), HttpStatus.OK);
-      }
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Client retrieved successfully")
-          .success(true)
-          .data(retrievedClients.get())
-          .build(), HttpStatus.OK);
-    } catch (ServiceException e) {
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Internal server error")
-          .success(false)
-          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+    /**
+     * Retrieves a specific client by ID.
+     * @param clientID The ID of the client to retrieve
+     * @return ResponseEntity containing the requested client
+     */
+    @GetMapping(value = "/clients/{clientID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse> getClientById(@PathVariable("clientID") String clientID) {
+        try {
+            logger.debug("Retrieving client with ID: {}", clientID);
+            Optional<Clients> client = clientsService.getClientById(clientID);
+            
+            if (client.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.builder()
+                                .message("Client not found with ID: " + clientID)
+                                .success(false)
+                                .build());
+            }
+
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .message("Client retrieved successfully")
+                    .success(true)
+                    .data(client.get())
+                    .build());
+        } catch (ServiceException e) {
+            logger.error("Error retrieving client with ID {}: {}", clientID, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.builder()
+                            .message("Failed to retrieve client: " + e.getMessage())
+                            .success(false)
+                            .build());
+        }
     }
-  }
 
-  @PostMapping(value = "/clients", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<ApiResponse> createNewCase(@RequestBody Clients client) {
-    try {
-      logger.info("Creating client with clientID: " + client.getClientId());
-      try {
-        clientsService.getClientById(client.getClientId()).isPresent();
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("Client with ID already exists.")
-            .success(false)
-            .build(), HttpStatus.GONE);
-      } catch (Exception e) {
-        clientsService.postClients(client);
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("Client was created successfully.")
-            .success(true)
-            .data(client)
-            .build(), HttpStatus.CREATED);
-      }
-    } catch (ServiceException e) {
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Internal server error")
-          .success(false)
-          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+    /**
+     * Creates a new client.
+     * @param client The client data to create
+     * @return ResponseEntity containing the created client
+     */
+    @PostMapping(value = "/clients", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse> createClient(@RequestBody Clients client) {
+        try {
+            logger.debug("Creating new client with ID: {}", client.getClientId());
+            Clients createdClient = clientsService.postClients(client);
+            
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(ApiResponse.builder()
+                            .message("Client created successfully")
+                            .success(true)
+                            .data(createdClient)
+                            .build());
+        } catch (ServiceException e) {
+            logger.error("Error creating client: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.builder()
+                            .message("Failed to create client: " + e.getMessage())
+                            .success(false)
+                            .build());
+        }
     }
-  }
 
-  @PutMapping(value = "/clients={clientID}")
-  public ResponseEntity<ApiResponse> updateCase(@PathVariable("clientID") String clientID,
-                                              @RequestBody ClientsWithoutId clientJSONWithoutID) {
-    try {
-      logger.info("check existence of client with client ID: " + clientID);
-      Optional<Clients> findClient = clientsService.getClientById(clientID);
-      if (findClient.isPresent()) {
-        logger.info("update client with ID: " + clientID);
-        Clients updatedClient = clientsTransformer.update(clientJSONWithoutID, clientID);
-        clientsService.updateClient(updatedClient);
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("Client was updated successfully.")
-            .success(true)
-            .data(updatedClient)
-            .build(), HttpStatus.OK);
-      } else{
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("Cannot find client with id=" + clientID)
-            .success(false)
-            .build(), HttpStatus.NOT_FOUND);
-      }
-    } catch (ServiceException e) {
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Internal server error")
-          .success(false)
-          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+    /**
+     * Updates an existing client.
+     * @param clientID The ID of the client to update
+     * @param client The updated client data
+     * @return ResponseEntity containing the updated client
+     */
+    @PutMapping(value = "/clients/{clientID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse> updateClient(
+            @PathVariable("clientID") String clientID,
+            @RequestBody Clients client) {
+        try {
+            logger.debug("Updating client with ID: {}", clientID);
+            Clients updatedClient = clientsService.updateClient(client);
+            
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .message("Client updated successfully")
+                    .success(true)
+                    .data(updatedClient)
+                    .build());
+        } catch (ServiceException e) {
+            logger.error("Error updating client with ID {}: {}", clientID, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.builder()
+                            .message("Failed to update client: " + e.getMessage())
+                            .success(false)
+                            .build());
+        }
     }
-  }
 
-  @DeleteMapping(value = "/clients={clientID}")
-  public ResponseEntity<ApiResponse> deleteService(@PathVariable("clientID") String clientID) {
-    try {
-      logger.info("deleting client with ID: " + clientID);
-      int result = clientsService.deleteById(clientID);
-      if (result == 0) {
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("Cannot find client with id= " + clientID)
-            .success(false)
-            .build(), HttpStatus.NOT_FOUND);
-      }
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Client was deleted successfully.")
-          .success(true)
-          .build(), HttpStatus.OK);
-    } catch (ServiceException e) {
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Cannot delete client.")
-          .success(false)
-          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+    /**
+     * Deletes a client.
+     * @param clientID The ID of the client to delete
+     * @return ResponseEntity indicating the result of the deletion
+     */
+    @DeleteMapping(value = "/clients={clientID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse> deleteClient(@PathVariable("clientID") String clientID) {
+        try {
+            logger.debug("Deleting client with ID: {}", clientID);
+            int result = clientsService.deleteById(clientID);
+            
+            if (result == 0) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.builder()
+                                .message("Client not found with ID: " + clientID)
+                                .success(false)
+                                .build());
+            }
+
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .message("Client deleted successfully")
+                    .success(true)
+                    .build());
+        } catch (ServiceException e) {
+            logger.error("Error deleting client with ID {}: {}", clientID, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.builder()
+                            .message("Failed to delete client: " + e.getMessage())
+                            .success(false)
+                            .build());
+        }
     }
-  }
 
+    /**
+     * Updates the amounts for a client.
+     * @param clientID The ID of the client to update
+     * @param disbursementsAmount The amount to add to disbursements
+     * @param servicesAmount The amount to add to services
+     * @return ResponseEntity containing the updated client
+     */
+    @PutMapping(value = "/clients/{clientID}/amounts", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse> updateAmounts(
+            @PathVariable("clientID") String clientID,
+            @RequestParam double disbursementsAmount,
+            @RequestParam double servicesAmount) {
+        try {
+            logger.debug("Updating amounts for client with ID: {}", clientID);
+            Clients updatedClient = clientsService.updateAmounts(clientID, disbursementsAmount, servicesAmount);
+            
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .message("Client amounts updated successfully")
+                    .success(true)
+                    .data(updatedClient)
+                    .build());
+        } catch (ServiceException e) {
+            logger.error("Error updating amounts for client with ID {}: {}", clientID, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.builder()
+                            .message("Failed to update client amounts: " + e.getMessage())
+                            .success(false)
+                            .build());
+        }
+    }
 }
