@@ -17,12 +17,9 @@ import org.springframework.stereotype.Component;
 public class AttorneysTransformer {
 
     private static final Logger logger = LoggerFactory.getLogger(AttorneysTransformer.class);
-    private final AttorneysService attorneysService;
 
     @Autowired
-    public AttorneysTransformer(AttorneysService attorneysService) {
-        this.attorneysService = attorneysService;
-    }
+    private AttorneysService attorneysService;
 
     /**
      * Updates an attorney's information with new service pricing data.

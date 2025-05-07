@@ -139,10 +139,6 @@ public class ClientsService {
             throw new ServiceException("Client ID cannot be empty");
         }
 
-        if (disbursementsAmount < 0 || servicesAmount < 0) {
-            throw new ServiceException("Amounts cannot be negative");
-        }
-
         Optional<Clients> existingClient = getClientById(clientID);
         if (existingClient.isEmpty()) {
             throw new ServiceException("Client not found with ID: " + clientID);

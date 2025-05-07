@@ -140,10 +140,6 @@ public class CasesService {
             throw new ServiceException("Case ID cannot be empty");
         }
 
-        if (disbursementsAmount < 0 || servicesAmount < 0) {
-            throw new ServiceException("Amounts cannot be negative");
-        }
-
         Optional<Cases> existingCase = getCaseById(caseID);
         if (existingCase.isEmpty()) {
             throw new ServiceException("Case not found with ID: " + caseID);

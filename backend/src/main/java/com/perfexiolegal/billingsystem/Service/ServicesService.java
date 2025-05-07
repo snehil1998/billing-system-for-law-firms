@@ -2,12 +2,8 @@ package com.perfexiolegal.billingsystem.Service;
 
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
-import com.perfexiolegal.billingsystem.Model.Cases;
-import com.perfexiolegal.billingsystem.Model.Clients;
 import com.perfexiolegal.billingsystem.Model.Services;
 import com.perfexiolegal.billingsystem.Repository.ServicesRepository;
-import com.perfexiolegal.billingsystem.Transformer.CasesTransformer;
-import com.perfexiolegal.billingsystem.Transformer.ClientsTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +21,7 @@ public class ServicesService {
   CasesService casesService;
 
   @Autowired
-  CasesTransformer casesTransformer;
-
-  @Autowired
   ClientsService clientsService;
-
-  @Autowired
-  ClientsTransformer clientsTransformer;
 
   final Logger logger = LoggerFactory.getLogger(ServicesRepository.class);
 
@@ -69,14 +59,8 @@ public class ServicesService {
 
   public Services postServices(Services service) throws ServiceException {
     try {
-      Cases caseForService = casesService.getCaseById(service.getCaseId()).get();
-      Cases updatedCase = casesTransformer.updateAmount(caseForService, 0, service.getAmount());
-      casesService.updateCase(updatedCase);
-
-      Clients clientForService = clientsService.getClientById(service.getClientId()).get();
-      Clients updatedClient = clientsTransformer.updateAmount(clientForService, 0, service.getAmount());
-      clientsService.updateClient(updatedClient);
-
+      casesService.updateAmounts(service.getCaseId(), 0, service.getAmount());
+      clientsService.updateAmounts(service.getClientId(), 0, service.getAmount());
       return servicesRepository.postServices(service);
     } catch (RepositoryException e) {
       throw new ServiceException("unable to post service", e);
@@ -95,15 +79,8 @@ public class ServicesService {
   public int deleteById(String serviceID) throws ServiceException {
     try {
       Services service = getServiceFromId(serviceID).get();
-
-      Cases caseForService = casesService.getCaseById(service.getCaseId()).get();
-      Cases updatedCase = casesTransformer.updateAmount(caseForService, 0, -service.getAmount());
-      casesService.updateCase(updatedCase);
-
-      Clients clientForService = clientsService.getClientById(service.getClientId()).get();
-      Clients updatedClient = clientsTransformer.updateAmount(clientForService, 0, -service.getAmount());
-      clientsService.updateClient(updatedClient);
-      
+      casesService.updateAmounts(service.getCaseId(), 0, -service.getAmount());
+      clientsService.updateAmounts(service.getClientId(), 0, -service.getAmount());
       return servicesRepository.deleteById(serviceID);
     } catch (RepositoryException e) {
       throw new ServiceException("unable to delete service", e);
