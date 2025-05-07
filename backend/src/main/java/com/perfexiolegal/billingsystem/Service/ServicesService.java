@@ -71,7 +71,7 @@ public class ServicesService {
     try {
       Cases caseForService = casesService.getCaseById(service.getCaseId()).get();
       Cases updatedCase = casesTransformer.updateAmount(caseForService, 0, service.getAmount());
-      casesService.updateCases(updatedCase);
+      casesService.updateCase(updatedCase);
 
       Clients clientForService = clientsService.getClientById(service.getClientId()).get();
       Clients updatedClient = clientsTransformer.updateAmount(clientForService, 0, service.getAmount());
@@ -98,7 +98,7 @@ public class ServicesService {
 
       Cases caseForService = casesService.getCaseById(service.getCaseId()).get();
       Cases updatedCase = casesTransformer.updateAmount(caseForService, 0, -service.getAmount());
-      casesService.updateCases(updatedCase);
+      casesService.updateCase(updatedCase);
 
       Clients clientForService = clientsService.getClientById(service.getClientId()).get();
       Clients updatedClient = clientsTransformer.updateAmount(clientForService, 0, -service.getAmount());

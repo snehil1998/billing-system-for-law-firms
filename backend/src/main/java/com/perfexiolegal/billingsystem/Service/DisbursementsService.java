@@ -74,7 +74,7 @@ public class DisbursementsService {
     try {
       Cases caseForService = casesService.getCaseById(disbursement.getCaseId()).get();
       Cases updatedCase = casesTransformer.updateAmount(caseForService, disbursement.getConversionAmount(), 0);
-      casesService.updateCases(updatedCase);
+      casesService.updateCase(updatedCase);
 
       Clients clientForService = clientsService.getClientById(disbursement.getClientId()).get();
       Clients updatedClient = clientsTransformer.updateAmount(clientForService, disbursement.getConversionAmount(), 0);
@@ -101,7 +101,7 @@ public class DisbursementsService {
 
       Cases caseForService = casesService.getCaseById(disbursement.getCaseId()).get();
       Cases updatedCase = casesTransformer.updateAmount(caseForService, -disbursement.getConversionAmount(), 0);
-      casesService.updateCases(updatedCase);
+      casesService.updateCase(updatedCase);
 
       Clients clientForService = clientsService.getClientById(disbursement.getClientId()).get();
       Clients updatedClient = clientsTransformer.updateAmount(clientForService, -disbursement.getConversionAmount(), 0);

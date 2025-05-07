@@ -3,7 +3,6 @@ package com.perfexiolegal.billingsystem.Controller;
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.ApiResponse;
 import com.perfexiolegal.billingsystem.Model.Clients;
-import com.perfexiolegal.billingsystem.Model.ClientsWithoutId;
 import com.perfexiolegal.billingsystem.Service.ClientsService;
 import com.perfexiolegal.billingsystem.Transformer.ClientsTransformer;
 import org.slf4j.Logger;

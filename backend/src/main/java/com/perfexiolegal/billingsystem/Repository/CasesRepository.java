@@ -7,92 +7,109 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-@org.springframework.stereotype.Repository
+/**
+ * Repository class for handling case-related database operations.
+ */
+@Repository
 public class CasesRepository {
 
-  final Logger logger = LoggerFactory.getLogger(CasesRepository.class);
+    private static final Logger logger = LoggerFactory.getLogger(CasesRepository.class);
+    private static final String TABLE_NAME = "ebdb.public.cases";
 
-  @Autowired
-  JdbcTemplate jdbcTemplate;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
-  public Optional<List<Cases>> getAllCases() throws RepositoryException {
-    try {
-      String sql = "SELECT * FROM ebdb.public.cases";
-      logger.info("Retrieving data for all cases");
-      List<Cases> casesList = jdbcTemplate.query(sql,
-          (resultSet, i) -> {
-            String caseId = resultSet.getString("case_id");
-            String caseName = resultSet.getString("case_name");
-            String clientId = resultSet.getString("client_id");
-            String currencyCode = resultSet.getString("currency_code");
-            float disbursementsAmount = resultSet.getFloat("disbursements_amount");
-            float servicesAmount = resultSet.getFloat("services_amount");
-            float amount = resultSet.getFloat("amount");
-            return Cases.builder().caseId(caseId).caseName(caseName).clientId(clientId).currencyCode(currencyCode)
-                .disbursementsAmount(disbursementsAmount).servicesAmount(servicesAmount).amount(amount).build();
-          });
-      return Optional.of(casesList);
-    } catch (DataAccessException e) {
-      throw new RepositoryException("Error in accessing the case in the repository", e);
+    private final RowMapper<Cases> casesRowMapper = (resultSet, i) -> Cases.builder()
+            .caseId(resultSet.getString("case_id"))
+            .caseName(resultSet.getString("case_name"))
+            .clientId(resultSet.getString("client_id"))
+            .currencyCode(resultSet.getString("currency_code"))
+            .disbursementsAmount(resultSet.getFloat("disbursements_amount"))
+            .servicesAmount(resultSet.getFloat("services_amount"))
+            .amount(resultSet.getFloat("amount"))
+            .build();
+
+    public Optional<List<Cases>> getAllCases() throws RepositoryException {
+        try {
+            String sql = "SELECT * FROM " + TABLE_NAME;
+            logger.debug("Retrieving all cases");
+            List<Cases> casesList = jdbcTemplate.query(sql, casesRowMapper);
+            return Optional.of(casesList);
+        } catch (DataAccessException e) {
+            logger.error("Error retrieving all cases: {}", e.getMessage());
+            throw new RepositoryException("Failed to retrieve cases from database", e);
+        }
     }
-  }
 
-  public Optional<Cases> getCaseById(String caseID) throws RepositoryException {
-    try {
-      String sql = "SELECT * FROM ebdb.public.cases where case_id = '" + caseID + "'";
-      logger.info("Retrieving data for case with case ID: " + caseID);
-      Cases caseList = jdbcTemplate.queryForObject(sql,
-          (resultSet, i) -> {
-            String caseId = resultSet.getString("case_id");
-            String caseName = resultSet.getString("case_name");
-            String clientId = resultSet.getString("client_id");
-            String currencyCode = resultSet.getString("currency_code");
-            float disbursementsAmount = resultSet.getFloat("disbursements_amount");
-            float servicesAmount = resultSet.getFloat("services_amount");
-            float amount = resultSet.getFloat("amount");
-            return Cases.builder().caseId(caseId).caseName(caseName).clientId(clientId).currencyCode(currencyCode)
-                .disbursementsAmount(disbursementsAmount).servicesAmount(servicesAmount).amount(amount).build();
-          });
-      return Optional.of(caseList);
-    } catch (DataAccessException e) {
-      throw new RepositoryException("Error in accessing the case in the repository", e);
+    public Optional<Cases> getCaseById(String caseID) throws RepositoryException {
+        try {
+            String sql = "SELECT * FROM " + TABLE_NAME + " WHERE case_id = ?";
+            logger.debug("Retrieving case with ID: {}", caseID);
+            List<Cases> cases = jdbcTemplate.query(sql, casesRowMapper, caseID);
+            return cases.isEmpty() ? Optional.empty() : Optional.of(cases.get(0));
+        } catch (DataAccessException e) {
+            logger.error("Error retrieving case with ID {}: {}", caseID, e.getMessage());
+            throw new RepositoryException("Failed to retrieve case from database", e);
+        }
     }
-  }
 
-  public Cases postCases(Cases postCase) throws RepositoryException {
-    try {
-      logger.info("Creating case: " + postCase.getCaseId());
-      jdbcTemplate.update("insert into ebdb.public.cases (case_id, case_name, client_id, currency_code, disbursements_amount, services_amount, amount) values (?,?,?,?,?,?,?)",
-          postCase.getCaseId(), postCase.getCaseName(), postCase.getClientId(), postCase.getCurrencyCode(), postCase.getDisbursementsAmount(), postCase.getServicesAmount(), postCase.getAmount());
-      return postCase;
-    } catch (DataAccessException e){
-      throw new RepositoryException("failed to insert case", e);
+    public Cases postCases(Cases postCase) throws RepositoryException {
+        try {
+            String sql = "INSERT INTO " + TABLE_NAME + 
+                    " (case_id, case_name, client_id, currency_code, disbursements_amount, services_amount, amount) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+            logger.debug("Creating case with ID: {}", postCase.getCaseId());
+            jdbcTemplate.update(sql,
+                    postCase.getCaseId(),
+                    postCase.getCaseName(),
+                    postCase.getClientId(),
+                    postCase.getCurrencyCode(),
+                    postCase.getDisbursementsAmount(),
+                    postCase.getServicesAmount(),
+                    postCase.getAmount());
+            return postCase;
+        } catch (DataAccessException e) {
+            logger.error("Error creating case: {}", e.getMessage());
+            throw new RepositoryException("Failed to create case in database", e);
+        }
     }
-  }
 
-  public Cases updateCases(Cases updatedCase) throws RepositoryException {
-    try {
-      logger.info("Updating case: " + updatedCase.getCaseId());
-      jdbcTemplate.update("update ebdb.public.cases set case_name=?, client_id=?, currency_code=?, disbursements_amount=?, services_amount=?, amount=? " +
-              "where case_id=?", updatedCase.getCaseName(), updatedCase.getClientId(), updatedCase.getCurrencyCode(), updatedCase.getDisbursementsAmount(),
-          updatedCase.getServicesAmount(), updatedCase.getAmount(), updatedCase.getCaseId());
-      return updatedCase;
-    } catch (DataAccessException e) {
-      throw new RepositoryException("failed to query for case", e);
+    public Cases updateCases(Cases updatedCase) throws RepositoryException {
+        try {
+            String sql = "UPDATE " + TABLE_NAME + 
+                    " SET case_name = ?, client_id = ?, currency_code = ?, " +
+                    "disbursements_amount = ?, services_amount = ?, amount = ? " +
+                    "WHERE case_id = ?";
+            logger.debug("Updating case with ID: {}", updatedCase.getCaseId());
+            jdbcTemplate.update(sql,
+                    updatedCase.getCaseName(),
+                    updatedCase.getClientId(),
+                    updatedCase.getCurrencyCode(),
+                    updatedCase.getDisbursementsAmount(),
+                    updatedCase.getServicesAmount(),
+                    updatedCase.getAmount(),
+                    updatedCase.getCaseId());
+            return updatedCase;
+        } catch (DataAccessException e) {
+            logger.error("Error updating case: {}", e.getMessage());
+            throw new RepositoryException("Failed to update case in database", e);
+        }
     }
-  }
 
-  public int deleteById(String caseID) throws RepositoryException {
-    try {
-      logger.info("Deleting case with ID: " + caseID);
-      return jdbcTemplate.update("delete from ebdb.public.cases where case_id=?", caseID);
-    } catch (DataAccessException e) {
-      throw new RepositoryException("Failed to delete case", e);
+    public int deleteById(String caseID) throws RepositoryException {
+        try {
+            String sql = "DELETE FROM " + TABLE_NAME + " WHERE case_id = ?";
+            logger.debug("Deleting case with ID: {}", caseID);
+            return jdbcTemplate.update(sql, caseID);
+        } catch (DataAccessException e) {
+            logger.error("Error deleting case: {}", e.getMessage());
+            throw new RepositoryException("Failed to delete case from database", e);
+        }
     }
-  }
-
 }
