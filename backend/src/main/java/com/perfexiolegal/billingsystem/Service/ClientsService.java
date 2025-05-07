@@ -4,6 +4,8 @@ import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.Clients;
 import com.perfexiolegal.billingsystem.Repository.ClientsRepository;
+import com.perfexiolegal.billingsystem.Transformer.ClientsTransformer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,8 @@ public class ClientsService {
 
     @Autowired
     private ClientsRepository clientsRepository;
+    @Autowired
+    private ClientsTransformer clientsTransformer;
 
     /**
      * Retrieves all clients from the system.
@@ -144,20 +148,7 @@ public class ClientsService {
             throw new ServiceException("Client not found with ID: " + clientID);
         }
 
-        Clients client = existingClient.get();
-        double newDisbursementsAmount = client.getDisbursementsAmount() + disbursementsAmount;
-        double newServicesAmount = client.getServicesAmount() + servicesAmount;
-        double newTotalAmount = newDisbursementsAmount + newServicesAmount;
-
-        Clients updatedClient = Clients.builder()
-                .clientId(client.getClientId())
-                .clientName(client.getClientName())
-                .currencyCode(client.getCurrencyCode())
-                .disbursementsAmount(newDisbursementsAmount)
-                .servicesAmount(newServicesAmount)
-                .amount(newTotalAmount)
-                .build();
-
+        Clients updatedClient = clientsTransformer.updateAmount(existingClient.get(), disbursementsAmount, servicesAmount);
         return updateClient(updatedClient);
     }
 

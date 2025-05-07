@@ -4,6 +4,8 @@ import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.Cases;
 import com.perfexiolegal.billingsystem.Repository.CasesRepository;
+import com.perfexiolegal.billingsystem.Transformer.CasesTransformer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class CasesService {
 
     @Autowired
     private CasesRepository casesRepository;
+
+    @Autowired
+    private CasesTransformer casesTransformer;
 
     /**
      * Retrieves all cases from the system.
@@ -144,21 +149,7 @@ public class CasesService {
             throw new ServiceException("Case not found with ID: " + caseID);
         }
 
-        Cases case_ = existingCase.get();
-        double newDisbursementsAmount = case_.getDisbursementsAmount() + disbursementsAmount;
-        double newServicesAmount = case_.getServicesAmount() + servicesAmount;
-        double newTotalAmount = newDisbursementsAmount + newServicesAmount;
-
-        Cases updatedCase = Cases.builder()
-                .caseId(case_.getCaseId())
-                .caseName(case_.getCaseName())
-                .clientId(case_.getClientId())
-                .currencyCode(case_.getCurrencyCode())
-                .disbursementsAmount(newDisbursementsAmount)
-                .servicesAmount(newServicesAmount)
-                .amount(newTotalAmount)
-                .build();
-
+        Cases updatedCase = casesTransformer.updateAmount(existingCase.get(), disbursementsAmount, servicesAmount);
         return updateCase(updatedCase);
     }
 
