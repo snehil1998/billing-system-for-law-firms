@@ -176,10 +176,6 @@ public class ClientsService {
             throw new ServiceException("Invalid currency code: " + client.getCurrencyCode());
         }
 
-        if (client.getDisbursementsAmount() < 0 || client.getServicesAmount() < 0 || client.getAmount() < 0) {
-            throw new ServiceException("Amounts cannot be negative");
-        }
-
         // Validate that total amount matches sum of disbursements and services
         double expectedTotal = client.getDisbursementsAmount() + client.getServicesAmount();
         if (Math.abs(client.getAmount() - expectedTotal) > 0.001) {

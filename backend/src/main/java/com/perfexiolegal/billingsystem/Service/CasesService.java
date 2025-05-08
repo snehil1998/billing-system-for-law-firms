@@ -181,10 +181,6 @@ public class CasesService {
             throw new ServiceException("Invalid currency code: " + case_.getCurrencyCode());
         }
 
-        if (case_.getDisbursementsAmount() < 0 || case_.getServicesAmount() < 0 || case_.getAmount() < 0) {
-            throw new ServiceException("Amounts cannot be negative");
-        }
-
         // Validate that total amount matches sum of disbursements and services
         double expectedTotal = case_.getDisbursementsAmount() + case_.getServicesAmount();
         if (Math.abs(case_.getAmount() - expectedTotal) > 0.001) {
