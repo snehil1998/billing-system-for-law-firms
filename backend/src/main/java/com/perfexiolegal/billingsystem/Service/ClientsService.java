@@ -16,10 +16,6 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Service class for handling client-related business logic.
- * Acts as an intermediary between the controller and repository layers.
- */
 @Service
 public class ClientsService {
 
@@ -30,11 +26,6 @@ public class ClientsService {
     @Autowired
     private ClientsTransformer clientsTransformer;
 
-    /**
-     * Retrieves all clients from the system.
-     * @return Optional containing a list of all clients, or empty if none found
-     * @throws ServiceException if there is an error retrieving the clients
-     */
     public Optional<List<Clients>> getAllClients() throws ServiceException {
         try {
             logger.debug("Retrieving all clients");
@@ -45,12 +36,6 @@ public class ClientsService {
         }
     }
 
-    /**
-     * Retrieves a specific client by their ID.
-     * @param clientID The ID of the client to retrieve
-     * @return Optional containing the client if found, empty otherwise
-     * @throws ServiceException if there is an error retrieving the client
-     */
     public Optional<Clients> getClientById(String clientID) throws ServiceException {
         if (!StringUtils.hasText(clientID)) {
             throw new ServiceException("Client ID cannot be empty");
@@ -65,12 +50,6 @@ public class ClientsService {
         }
     }
 
-    /**
-     * Creates a new client in the system.
-     * @param client The client to create
-     * @return The created client
-     * @throws ServiceException if there is an error creating the client or if validation fails
-     */
     public Clients postClients(Clients client) throws ServiceException {
         validateClient(client);
         validateClientDoesNotExist(client.getClientId());
@@ -84,12 +63,6 @@ public class ClientsService {
         }
     }
 
-    /**
-     * Updates an existing client in the system.
-     * @param client The client data to update
-     * @return The updated client
-     * @throws ServiceException if there is an error updating the client or if validation fails
-     */
     public Clients updateClient(Clients client) throws ServiceException {
         validateClient(client);
         validateClientExists(client.getClientId());
@@ -103,12 +76,6 @@ public class ClientsService {
         }
     }
 
-    /**
-     * Deletes a client from the system.
-     * @param clientID The ID of the client to delete
-     * @return The number of rows affected (1 if successful, 0 if not found)
-     * @throws ServiceException if there is an error deleting the client
-     */
     public int deleteById(String clientID) throws ServiceException {
         if (!StringUtils.hasText(clientID)) {
             throw new ServiceException("Client ID cannot be empty");
@@ -125,14 +92,6 @@ public class ClientsService {
         }
     }
 
-    /**
-     * Updates the amounts for a client.
-     * @param clientID The ID of the client to update
-     * @param disbursementsAmount The amount to add to disbursements
-     * @param servicesAmount The amount to add to services
-     * @return The updated client
-     * @throws ServiceException if there is an error updating the amounts
-     */
     public Clients updateAmounts(String clientID, double disbursementsAmount, double servicesAmount) 
             throws ServiceException {
         if (!StringUtils.hasText(clientID)) {
@@ -148,11 +107,6 @@ public class ClientsService {
         return updateClient(updatedClient);
     }
 
-    /**
-     * Validates a client object.
-     * @param client The client to validate
-     * @throws ServiceException if validation fails
-     */
     private void validateClient(Clients client) throws ServiceException {
         if (client == null) {
             throw new ServiceException("Client cannot be null");
@@ -183,11 +137,6 @@ public class ClientsService {
         }
     }
 
-    /**
-     * Validates that a client exists.
-     * @param clientID The ID of the client to validate
-     * @throws ServiceException if the client does not exist
-     */
     private void validateClientExists(String clientID) throws ServiceException {
         Optional<Clients> client = getClientById(clientID);
         if (client.isEmpty()) {
@@ -195,11 +144,6 @@ public class ClientsService {
         }
     }
 
-    /**
-     * Validates that a client does not exist.
-     * @param clientID The ID of the client to validate
-     * @throws ServiceException if the client already exists
-     */
     private void validateClientDoesNotExist(String clientID) throws ServiceException {
         Optional<Clients> client = getClientById(clientID);
         if (client.isPresent()) {

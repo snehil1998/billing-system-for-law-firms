@@ -13,9 +13,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Repository class for handling case-related database operations.
- */
 @Repository
 public class CasesRepository {
 

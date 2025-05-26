@@ -20,10 +20,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Repository class for handling service-related database operations.
- * Provides methods for CRUD operations on services.
- */
 @Repository
 public class ServicesRepository {
 
@@ -59,11 +55,6 @@ public class ServicesRepository {
                 .build();
     };
 
-    /**
-     * Retrieves all services from the database.
-     * @return Optional containing a list of all services, or empty if none found
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public Optional<List<Services>> getAllServices() throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME;
@@ -76,12 +67,6 @@ public class ServicesRepository {
         }
     }
 
-    /**
-     * Retrieves all services for a specific case.
-     * @param caseID The ID of the case
-     * @return Optional containing a list of services for the case, or empty if none found
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public Optional<List<Services>> getServicesForCase(String caseID) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE case_id = ?";
@@ -94,12 +79,6 @@ public class ServicesRepository {
         }
     }
 
-    /**
-     * Retrieves all services for a specific client.
-     * @param clientID The ID of the client
-     * @return Optional containing a list of services for the client, or empty if none found
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public Optional<List<Services>> getServicesForClient(String clientID) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE client_id = ?";
@@ -112,12 +91,6 @@ public class ServicesRepository {
         }
     }
 
-    /**
-     * Retrieves a specific service by ID.
-     * @param serviceID The ID of the service to retrieve
-     * @return Optional containing the service if found, empty otherwise
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public Optional<Services> getServiceFromId(String serviceID) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE service_id = ?";
@@ -130,12 +103,6 @@ public class ServicesRepository {
         }
     }
 
-    /**
-     * Creates a new service in the database.
-     * @param service The service to create
-     * @return The created service
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public Services postServices(Services service) throws RepositoryException {
         try {
             String sql = "INSERT INTO " + TABLE_NAME + 
@@ -162,12 +129,6 @@ public class ServicesRepository {
         }
     }
 
-    /**
-     * Updates an existing service in the database.
-     * @param service The service data to update
-     * @return The updated service
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public Services updateServices(Services service) throws RepositoryException {
         try {
             String sql = "UPDATE " + TABLE_NAME + 
@@ -195,12 +156,6 @@ public class ServicesRepository {
         }
     }
 
-    /**
-     * Deletes a service from the database.
-     * @param serviceID The ID of the service to delete
-     * @return The number of rows affected (1 if successful, 0 if not found)
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public int deleteById(String serviceID) throws RepositoryException {
         try {
             String sql = "DELETE FROM " + TABLE_NAME + " WHERE service_id = ?";
@@ -212,12 +167,6 @@ public class ServicesRepository {
         }
     }
 
-    /**
-     * Deletes all services for a specific case.
-     * @param caseID The ID of the case
-     * @return The number of rows affected
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public int deleteByCase(String caseID) throws RepositoryException {
         try {
             String sql = "DELETE FROM " + TABLE_NAME + " WHERE case_id = ?";

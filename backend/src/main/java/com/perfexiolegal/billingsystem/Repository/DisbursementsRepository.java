@@ -14,10 +14,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Repository class for handling disbursement-related database operations.
- * Provides methods for CRUD operations on disbursements.
- */
 @Repository
 public class DisbursementsRepository {
 
@@ -50,11 +46,6 @@ public class DisbursementsRepository {
                 .build();
     };
 
-    /**
-     * Retrieves all disbursements from the database.
-     * @return Optional containing a list of all disbursements, or empty if none found
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public Optional<List<Disbursements>> getAllDisbursements() throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME;
@@ -67,12 +58,6 @@ public class DisbursementsRepository {
         }
     }
 
-    /**
-     * Retrieves a specific disbursement by ID.
-     * @param disbursementId The ID of the disbursement to retrieve
-     * @return Optional containing the disbursement if found, empty otherwise
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public Optional<Disbursements> getDisbursementsById(String disbursementId) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE disbursement_id = ?";
@@ -85,12 +70,6 @@ public class DisbursementsRepository {
         }
     }
 
-    /**
-     * Retrieves all disbursements for a specific client.
-     * @param clientID The ID of the client
-     * @return Optional containing a list of disbursements for the client, or empty if none found
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public Optional<List<Disbursements>> getDisbursementsByClientId(String clientID) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE client_id = ?";
@@ -103,12 +82,6 @@ public class DisbursementsRepository {
         }
     }
 
-    /**
-     * Retrieves all disbursements for a specific case.
-     * @param caseID The ID of the case
-     * @return Optional containing a list of disbursements for the case, or empty if none found
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public Optional<List<Disbursements>> getDisbursementsByCaseId(String caseID) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE case_id = ?";
@@ -121,11 +94,6 @@ public class DisbursementsRepository {
         }
     }
 
-    /**
-     * Creates a new disbursement in the database.
-     * @param disbursement The disbursement to create
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public void postDisbursements(Disbursements disbursement) throws RepositoryException {
         try {
             String sql = "INSERT INTO " + TABLE_NAME + 
@@ -150,11 +118,6 @@ public class DisbursementsRepository {
         }
     }
 
-    /**
-     * Updates an existing disbursement in the database.
-     * @param disbursement The disbursement data to update
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public void updateDisbursements(Disbursements disbursement) throws RepositoryException {
         try {
             String sql = "UPDATE " + TABLE_NAME + 
@@ -179,12 +142,6 @@ public class DisbursementsRepository {
         }
     }
 
-    /**
-     * Deletes a disbursement from the database.
-     * @param disbursementId The ID of the disbursement to delete
-     * @return The number of rows affected (1 if successful, 0 if not found)
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public int deleteDisbursementById(String disbursementId) throws RepositoryException {
         try {
             String sql = "DELETE FROM " + TABLE_NAME + " WHERE disbursement_id = ?";

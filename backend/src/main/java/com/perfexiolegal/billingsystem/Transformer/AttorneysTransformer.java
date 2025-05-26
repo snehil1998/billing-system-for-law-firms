@@ -9,10 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-/**
- * Transformer class for handling attorney data transformations.
- * Manages the conversion and manipulation of attorney data between different formats.
- */
 @Component
 public class AttorneysTransformer {
 
@@ -21,13 +17,6 @@ public class AttorneysTransformer {
     @Autowired
     private AttorneysService attorneysService;
 
-    /**
-     * Updates an attorney's information with new service pricing data.
-     * @param updatedData The updated attorney data
-     * @param attorneyID The ID of the attorney to update
-     * @return The updated attorney with merged service pricing
-     * @throws ServiceException if there's an error retrieving the attorney
-     */
     public Attorneys update(Attorneys updatedData, String attorneyID) throws ServiceException {
         logger.debug("Updating attorney with ID: {}", attorneyID);
         Attorneys existingAttorney = attorneysService.getAttorneyById(attorneyID)
@@ -51,12 +40,6 @@ public class AttorneysTransformer {
         return updatedAttorney;
     }
 
-    /**
-     * Deletes a service price for a specific client from an attorney's service pricing list.
-     * @param attorney The attorney whose service pricing needs to be updated
-     * @param clientID The ID of the client whose service price should be removed
-     * @return The updated attorney with the service price removed
-     */
     public Attorneys deleteServicePrice(Attorneys attorney, String clientID) {
         logger.debug("Deleting service price for client ID: {} from attorney ID: {}", 
                 clientID, attorney.getAttorneyId());

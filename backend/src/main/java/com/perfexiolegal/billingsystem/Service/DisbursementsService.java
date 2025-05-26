@@ -14,10 +14,6 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Service class for handling disbursement-related business logic.
- * Provides methods for managing disbursements and their associated data.
- */
 @Service
 public class DisbursementsService {
 
@@ -32,11 +28,6 @@ public class DisbursementsService {
     @Autowired
     private ClientsService clientsService;
 
-    /**
-     * Retrieves all disbursements.
-     * @return Optional containing a list of all disbursements, or empty if none found
-     * @throws ServiceException if there is an error retrieving the disbursements
-     */
     public Optional<List<Disbursements>> getAllDisbursements() throws ServiceException {
         try {
             logger.debug("Retrieving all disbursements");
@@ -47,12 +38,6 @@ public class DisbursementsService {
         }
     }
 
-    /**
-     * Retrieves a specific disbursement by ID.
-     * @param disbursementId The ID of the disbursement to retrieve
-     * @return Optional containing the disbursement if found, empty otherwise
-     * @throws ServiceException if there is an error retrieving the disbursement
-     */
     public Optional<Disbursements> getDisbursementsById(String disbursementId) throws ServiceException {
         try {
             validateDisbursementId(disbursementId);
@@ -64,12 +49,6 @@ public class DisbursementsService {
         }
     }
 
-    /**
-     * Retrieves all disbursements for a specific client.
-     * @param clientId The ID of the client
-     * @return Optional containing a list of disbursements for the client, or empty if none found
-     * @throws ServiceException if there is an error retrieving the disbursements
-     */
     public Optional<List<Disbursements>> getDisbursementsByClientId(String clientId) throws ServiceException {
         try {
             validateClientId(clientId);
@@ -81,12 +60,6 @@ public class DisbursementsService {
         }
     }
 
-    /**
-     * Retrieves all disbursements for a specific case.
-     * @param caseId The ID of the case
-     * @return Optional containing a list of disbursements for the case, or empty if none found
-     * @throws ServiceException if there is an error retrieving the disbursements
-     */
     public Optional<List<Disbursements>> getDisbursementsByCaseId(String caseId) throws ServiceException {
         try {
             validateCaseId(caseId);
@@ -98,11 +71,6 @@ public class DisbursementsService {
         }
     }
 
-    /**
-     * Creates a new disbursement.
-     * @param disbursement The disbursement to create
-     * @throws ServiceException if there is an error creating the disbursement
-     */
     public void postDisbursements(Disbursements disbursement) throws ServiceException {
         try {
             validateDisbursement(disbursement);
@@ -117,11 +85,6 @@ public class DisbursementsService {
         }
     }
 
-    /**
-     * Updates an existing disbursement.
-     * @param disbursement The disbursement data to update
-     * @throws ServiceException if there is an error updating the disbursement
-     */
     public void updateDisbursements(Disbursements disbursement) throws ServiceException {
         try {
             validateDisbursement(disbursement);
@@ -134,12 +97,6 @@ public class DisbursementsService {
         }
     }
 
-    /**
-     * Deletes a disbursement.
-     * @param disbursementId The ID of the disbursement to delete
-     * @return The number of rows affected (1 if successful, 0 if not found)
-     * @throws ServiceException if there is an error deleting the disbursement
-     */
     public int deleteDisbursementById(String disbursementId) throws ServiceException {
         try {
             validateDisbursementId(disbursementId);

@@ -16,10 +16,6 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Service class for handling case-related business logic.
- * Acts as an intermediary between the controller and repository layers.
- */
 @Service
 public class CasesService {
 
@@ -31,11 +27,6 @@ public class CasesService {
     @Autowired
     private CasesTransformer casesTransformer;
 
-    /**
-     * Retrieves all cases from the system.
-     * @return Optional containing a list of all cases, or empty if none found
-     * @throws ServiceException if there is an error retrieving the cases
-     */
     public Optional<List<Cases>> getAllCases() throws ServiceException {
         try {
             logger.debug("Retrieving all cases");
@@ -46,12 +37,6 @@ public class CasesService {
         }
     }
 
-    /**
-     * Retrieves a specific case by ID.
-     * @param caseID The ID of the case to retrieve
-     * @return Optional containing the case if found, empty otherwise
-     * @throws ServiceException if there is an error retrieving the case
-     */
     public Optional<Cases> getCaseById(String caseID) throws ServiceException {
         if (!StringUtils.hasText(caseID)) {
             throw new ServiceException("Case ID cannot be empty");
@@ -66,12 +51,6 @@ public class CasesService {
         }
     }
 
-    /**
-     * Creates a new case in the system.
-     * @param case_ The case to create
-     * @return The created case
-     * @throws ServiceException if there is an error creating the case or if validation fails
-     */
     public Cases postCases(Cases case_) throws ServiceException {
         validateCase(case_);
         validateCaseDoesNotExist(case_.getCaseId());
@@ -85,12 +64,6 @@ public class CasesService {
         }
     }
 
-    /**
-     * Updates an existing case in the system.
-     * @param case_ The case data to update
-     * @return The updated case
-     * @throws ServiceException if there is an error updating the case or if validation fails
-     */
     public Cases updateCase(Cases case_) throws ServiceException {
         validateCase(case_);
         validateCaseExists(case_.getCaseId());
@@ -104,12 +77,6 @@ public class CasesService {
         }
     }
 
-    /**
-     * Deletes a case from the system.
-     * @param caseID The ID of the case to delete
-     * @return The number of rows affected (1 if successful, 0 if not found)
-     * @throws ServiceException if there is an error deleting the case
-     */
     public int deleteById(String caseID) throws ServiceException {
         if (!StringUtils.hasText(caseID)) {
             throw new ServiceException("Case ID cannot be empty");
@@ -126,14 +93,6 @@ public class CasesService {
         }
     }
 
-    /**
-     * Updates the amounts for a case.
-     * @param caseID The ID of the case to update
-     * @param disbursementsAmount The amount to add to disbursements
-     * @param servicesAmount The amount to add to services
-     * @return The updated case
-     * @throws ServiceException if there is an error updating the amounts
-     */
     public Cases updateAmounts(String caseID, double disbursementsAmount, double servicesAmount) 
             throws ServiceException {
         if (!StringUtils.hasText(caseID)) {
@@ -149,11 +108,6 @@ public class CasesService {
         return updateCase(updatedCase);
     }
 
-    /**
-     * Validates a case object.
-     * @param case_ The case to validate
-     * @throws ServiceException if validation fails
-     */
     private void validateCase(Cases case_) throws ServiceException {
         if (case_ == null) {
             throw new ServiceException("Case cannot be null");
@@ -188,11 +142,6 @@ public class CasesService {
         }
     }
 
-    /**
-     * Validates that a case exists.
-     * @param caseID The ID of the case to validate
-     * @throws ServiceException if the case does not exist
-     */
     private void validateCaseExists(String caseID) throws ServiceException {
         Optional<Cases> case_ = getCaseById(caseID);
         if (case_.isEmpty()) {
@@ -200,11 +149,6 @@ public class CasesService {
         }
     }
 
-    /**
-     * Validates that a case does not exist.
-     * @param caseID The ID of the case to validate
-     * @throws ServiceException if the case already exists
-     */
     private void validateCaseDoesNotExist(String caseID) throws ServiceException {
         Optional<Cases> case_ = getCaseById(caseID);
         if (case_.isPresent()) {

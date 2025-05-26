@@ -13,10 +13,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Repository class for handling client data persistence operations.
- * Manages all database interactions for the clients table.
- */
 @Repository
 public class ClientsRepository {
 
@@ -35,11 +31,6 @@ public class ClientsRepository {
             .amount(resultSet.getDouble("amount"))
             .build();
 
-    /**
-     * Retrieves all clients from the database.
-     * @return Optional containing a list of all clients, or empty if none found
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public Optional<List<Clients>> getAllClients() throws RepositoryException {
         try {
             logger.debug("Retrieving all clients from database");
@@ -52,12 +43,6 @@ public class ClientsRepository {
         }
     }
 
-    /**
-     * Retrieves a specific client by their ID.
-     * @param clientID The ID of the client to retrieve
-     * @return Optional containing the client if found, empty otherwise
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public Optional<Clients> getClientsById(String clientID) throws RepositoryException {
         try {
             logger.debug("Retrieving client with ID: {}", clientID);
@@ -70,12 +55,6 @@ public class ClientsRepository {
         }
     }
 
-    /**
-     * Creates a new client in the database.
-     * @param client The client to create
-     * @return The created client
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public Clients postClients(Clients client) throws RepositoryException {
         try {
             logger.debug("Creating new client with ID: {}", client.getClientId());
@@ -101,12 +80,6 @@ public class ClientsRepository {
         }
     }
 
-    /**
-     * Updates an existing client in the database.
-     * @param client The client data to update
-     * @return The updated client
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public Clients updateClients(Clients client) throws RepositoryException {
         try {
             logger.debug("Updating client with ID: {}", client.getClientId());
@@ -132,12 +105,6 @@ public class ClientsRepository {
         }
     }
 
-    /**
-     * Deletes a client from the database.
-     * @param clientID The ID of the client to delete
-     * @return The number of rows affected (1 if successful, 0 if not found)
-     * @throws RepositoryException if there is an error accessing the database
-     */
     public int deleteById(String clientID) throws RepositoryException {
         try {
             logger.debug("Deleting client with ID: {}", clientID);

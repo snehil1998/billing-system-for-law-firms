@@ -11,10 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Represents an attorney in the system.
- * This class serves as both the domain model and DTO.
- */
 @Builder
 @Getter
 @AllArgsConstructor
@@ -26,10 +22,6 @@ public class Attorneys {
     private String lastName;
     private List<ServicePricing> servicePricing;
 
-    /**
-     * Creates a new attorney without an ID (for creation requests).
-     * @return A new attorney instance with null ID
-     */
     @JsonIgnore
     public Attorneys withoutId() {
         return Attorneys.builder()
@@ -39,11 +31,6 @@ public class Attorneys {
                 .build();
     }
 
-    /**
-     * Adds a new service pricing entry.
-     * @param newPricing The service pricing to add
-     * @return true if added successfully, false if client already exists
-     */
     public boolean addServicePricing(ServicePricing newPricing) {
         if (servicePricing == null) {
             servicePricing = new ArrayList<>();
@@ -59,11 +46,6 @@ public class Attorneys {
         return false;
     }
 
-    /**
-     * Removes a service pricing entry for a specific client.
-     * @param clientId The client ID to remove pricing for
-     * @return true if removed, false if client not found
-     */
     public boolean removeServicePricing(String clientId) {
         if (servicePricing == null) {
             return false;
@@ -74,11 +56,6 @@ public class Attorneys {
         return initialSize != servicePricing.size();
     }
 
-    /**
-     * Gets service pricing for a specific client.
-     * @param clientId The client ID to get pricing for
-     * @return Optional containing the service pricing if found
-     */
     public Optional<ServicePricing> getServicePricingForClient(String clientId) {
         if (servicePricing == null) {
             return Optional.empty();
@@ -89,12 +66,6 @@ public class Attorneys {
                 .findFirst();
     }
 
-    /**
-     * Updates service pricing for a specific client.
-     * @param clientId The client ID to update pricing for
-     * @param newPricing The new pricing information
-     * @return true if updated, false if client not found
-     */
     public boolean updateServicePricing(String clientId, ServicePricing newPricing) {
         if (servicePricing == null) {
             return false;
