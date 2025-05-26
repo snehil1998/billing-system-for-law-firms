@@ -2,7 +2,6 @@ package com.perfexiolegal.billingsystem.Controller;
 
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.ApiResponse;
-import com.perfexiolegal.billingsystem.Model.Services;
 import com.perfexiolegal.billingsystem.Model.ServiceDetails;
 import com.perfexiolegal.billingsystem.Service.ServicesService;
 import org.slf4j.Logger;
@@ -37,8 +36,8 @@ public class ServicesController {
     public ResponseEntity<ApiResponse> getAllServices() {
         try {
             logger.debug("Retrieving all services");
-            Optional<List<Services>> listOfServices = servicesService.getAllServices();
-            List<Services> services = listOfServices.get();
+            Optional<List<ServiceDetails>> listOfServices = servicesService.getAllServices();
+            List<ServiceDetails> services = listOfServices.get();
             
             if (services.isEmpty()) {
                 return ResponseEntity.ok(ApiResponse.builder()
@@ -72,8 +71,8 @@ public class ServicesController {
     public ResponseEntity<ApiResponse> getServicesForCase(@PathVariable("caseID") String caseID) {
         try {
             logger.debug("Retrieving services for case with ID: {}", caseID);
-            Optional<List<Services>> listOfServices = servicesService.getServicesForCase(caseID);
-            List<Services> services = listOfServices.get();
+            Optional<List<ServiceDetails>> listOfServices = servicesService.getServicesForCase(caseID);
+            List<ServiceDetails> services = listOfServices.get();
             
             if (services.isEmpty()) {
                 return ResponseEntity.ok(ApiResponse.builder()
@@ -107,7 +106,7 @@ public class ServicesController {
     public ResponseEntity<ApiResponse> getServicesFromId(@PathVariable("serviceID") String serviceID) {
         try {
             logger.debug("Retrieving service with ID: {}", serviceID);
-            Optional<Services> retrievedService = servicesService.getServiceFromId(serviceID);
+            Optional<ServiceDetails> retrievedService = servicesService.getServiceFromId(serviceID);
             
             if (retrievedService.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -141,8 +140,8 @@ public class ServicesController {
     public ResponseEntity<ApiResponse> getServicesForClient(@PathVariable("clientID") String clientID) {
         try {
             logger.debug("Retrieving services for client with ID: {}", clientID);
-            Optional<List<Services>> listOfServices = servicesService.getServicesForClient(clientID);
-            List<Services> services = listOfServices.get();
+            Optional<List<ServiceDetails>> listOfServices = servicesService.getServicesForClient(clientID);
+            List<ServiceDetails> services = listOfServices.get();
             
             if (services.isEmpty()) {
                 return ResponseEntity.ok(ApiResponse.builder()

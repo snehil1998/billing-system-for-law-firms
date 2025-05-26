@@ -2,7 +2,7 @@ package com.perfexiolegal.billingsystem.Controller;
 
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.ApiResponse;
-import com.perfexiolegal.billingsystem.Model.Cases;
+import com.perfexiolegal.billingsystem.Model.CaseDetails;
 import com.perfexiolegal.billingsystem.Service.CasesService;
 import com.perfexiolegal.billingsystem.Transformer.CasesTransformer;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class CasesController {
     public ResponseEntity<ApiResponse> getAllCases() {
         try {
             logger.debug("Retrieving all cases");
-            Optional<List<Cases>> cases = casesService.getAllCases();
+            Optional<List<CaseDetails>> cases = casesService.getAllCases();
             
             if (cases.isEmpty() || cases.get().isEmpty()) {
                 return ResponseEntity.ok(ApiResponse.builder()
@@ -74,7 +74,7 @@ public class CasesController {
     public ResponseEntity<ApiResponse> getCaseById(@PathVariable("caseID") String caseID) {
         try {
             logger.debug("Retrieving case with ID: {}", caseID);
-            Optional<Cases> case_ = casesService.getCaseById(caseID);
+            Optional<CaseDetails> case_ = casesService.getCaseById(caseID);
             
             if (case_.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -105,10 +105,10 @@ public class CasesController {
      * @return ResponseEntity containing the created case
      */
     @PostMapping(value = "/cases", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> createCase(@RequestBody Cases case_) {
+    public ResponseEntity<ApiResponse> createCase(@RequestBody CaseDetails case_) {
         try {
             logger.debug("Creating new case with ID: {}", case_.getCaseId());
-            Cases createdCase = casesService.postCases(case_);
+            CaseDetails createdCase = casesService.postCases(case_);
             
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.builder()
@@ -135,10 +135,10 @@ public class CasesController {
     @PutMapping(value = "/cases={caseID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> updateCase(
             @PathVariable("caseID") String caseID,
-            @RequestBody Cases case_) {
+            @RequestBody CaseDetails case_) {
         try {
             logger.debug("Updating case with ID: {}", caseID);
-            Cases updatedCase = casesService.updateCase(case_);
+            CaseDetails updatedCase = casesService.updateCase(case_);
             
             return ResponseEntity.ok(ApiResponse.builder()
                     .message("Case updated successfully")
@@ -202,7 +202,7 @@ public class CasesController {
             @RequestParam double servicesAmount) {
         try {
             logger.debug("Updating amounts for case with ID: {}", caseID);
-            Cases updatedCase = casesService.updateAmounts(caseID, disbursementsAmount, servicesAmount);
+            CaseDetails updatedCase = casesService.updateAmounts(caseID, disbursementsAmount, servicesAmount);
             
             return ResponseEntity.ok(ApiResponse.builder()
                     .message("Case amounts updated successfully")

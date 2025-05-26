@@ -2,7 +2,7 @@ package com.perfexiolegal.billingsystem.Service;
 
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
-import com.perfexiolegal.billingsystem.Model.Clients;
+import com.perfexiolegal.billingsystem.Model.ClientDetails;
 import com.perfexiolegal.billingsystem.Repository.ClientsRepository;
 import com.perfexiolegal.billingsystem.Transformer.ClientsTransformer;
 
@@ -26,7 +26,7 @@ public class ClientsService {
     @Autowired
     private ClientsTransformer clientsTransformer;
 
-    public Optional<List<Clients>> getAllClients() throws ServiceException {
+    public Optional<List<ClientDetails>> getAllClients() throws ServiceException {
         try {
             logger.debug("Retrieving all clients");
             return clientsRepository.getAllClients();
@@ -36,7 +36,7 @@ public class ClientsService {
         }
     }
 
-    public Optional<Clients> getClientById(String clientID) throws ServiceException {
+    public Optional<ClientDetails> getClientById(String clientID) throws ServiceException {
         if (!StringUtils.hasText(clientID)) {
             throw new ServiceException("Client ID cannot be empty");
         }
@@ -50,7 +50,7 @@ public class ClientsService {
         }
     }
 
-    public Clients postClients(Clients client) throws ServiceException {
+    public ClientDetails postClients(ClientDetails client) throws ServiceException {
         validateClient(client);
         validateClientDoesNotExist(client.getClientId());
 
@@ -63,7 +63,7 @@ public class ClientsService {
         }
     }
 
-    public Clients updateClient(Clients client) throws ServiceException {
+    public ClientDetails updateClient(ClientDetails client) throws ServiceException {
         validateClient(client);
         validateClientExists(client.getClientId());
 
@@ -92,22 +92,22 @@ public class ClientsService {
         }
     }
 
-    public Clients updateAmounts(String clientID, double disbursementsAmount, double servicesAmount) 
+    public ClientDetails updateAmounts(String clientID, double disbursementsAmount, double servicesAmount) 
             throws ServiceException {
         if (!StringUtils.hasText(clientID)) {
             throw new ServiceException("Client ID cannot be empty");
         }
 
-        Optional<Clients> existingClient = getClientById(clientID);
+        Optional<ClientDetails> existingClient = getClientById(clientID);
         if (existingClient.isEmpty()) {
             throw new ServiceException("Client not found with ID: " + clientID);
         }
 
-        Clients updatedClient = clientsTransformer.updateAmount(existingClient.get(), disbursementsAmount, servicesAmount);
+        ClientDetails updatedClient = clientsTransformer.updateAmount(existingClient.get(), disbursementsAmount, servicesAmount);
         return updateClient(updatedClient);
     }
 
-    private void validateClient(Clients client) throws ServiceException {
+    private void validateClient(ClientDetails client) throws ServiceException {
         if (client == null) {
             throw new ServiceException("Client cannot be null");
         }
@@ -138,14 +138,14 @@ public class ClientsService {
     }
 
     private void validateClientExists(String clientID) throws ServiceException {
-        Optional<Clients> client = getClientById(clientID);
+        Optional<ClientDetails> client = getClientById(clientID);
         if (client.isEmpty()) {
             throw new ServiceException("Client not found with ID: " + clientID);
         }
     }
 
     private void validateClientDoesNotExist(String clientID) throws ServiceException {
-        Optional<Clients> client = getClientById(clientID);
+        Optional<ClientDetails> client = getClientById(clientID);
         if (client.isPresent()) {
             throw new ServiceException("Client already exists with ID: " + clientID);
         }

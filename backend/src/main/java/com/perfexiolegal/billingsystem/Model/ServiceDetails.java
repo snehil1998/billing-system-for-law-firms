@@ -20,5 +20,6 @@ public class ServiceDetails {
   private String clientId;
   private String service;
   private Date date;
-  private List<AttorneysInService> attorneys;
+  private List<AttorneyMinutes> attorneys;
+  private double amount;
 }

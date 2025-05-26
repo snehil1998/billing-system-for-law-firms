@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
-import com.perfexiolegal.billingsystem.Model.Attorneys;
+import com.perfexiolegal.billingsystem.Model.AttorneyDetails;
 import com.perfexiolegal.billingsystem.Model.ServicePricing;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
@@ -30,18 +30,18 @@ public class AttorneysRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public Optional<List<Attorneys>> getAllAttorneys() throws RepositoryException {
+    public Optional<List<AttorneyDetails>> getAllAttorneys() throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME;
             logger.info("Retrieving data for all attorneys");
 
-            List<Attorneys> attorneysList = jdbcTemplate.query(sql, (resultSet, i) -> {
+            List<AttorneyDetails> attorneysList = jdbcTemplate.query(sql, (resultSet, i) -> {
                 String attorneyId = resultSet.getString("attorney_id");
                 String firstName = resultSet.getString("first_name");
                 String lastName = resultSet.getString("last_name");
                 List<ServicePricing> servicePricing = parseServicePricing(resultSet.getString("service_pricing"));
 
-                return Attorneys.builder()
+                return AttorneyDetails.builder()
                         .attorneyId(attorneyId)
                         .firstName(firstName)
                         .lastName(lastName)
@@ -55,18 +55,18 @@ public class AttorneysRepository {
         }
     }
 
-    public Optional<Attorneys> getAttorneyById(String attorneyID) throws RepositoryException {
+    public Optional<AttorneyDetails> getAttorneyById(String attorneyID) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE attorney_id = ?";
             logger.info("Retrieving data for attorney with ID: {}", attorneyID);
 
-            List<Attorneys> results = jdbcTemplate.query(sql, (resultSet, i) -> {
+            List<AttorneyDetails> results = jdbcTemplate.query(sql, (resultSet, i) -> {
                 String attorneyId = resultSet.getString("attorney_id");
                 String firstName = resultSet.getString("first_name");
                 String lastName = resultSet.getString("last_name");
                 List<ServicePricing> servicePricing = parseServicePricing(resultSet.getString("service_pricing"));
 
-                return Attorneys.builder()
+                return AttorneyDetails.builder()
                         .attorneyId(attorneyId)
                         .firstName(firstName)
                         .lastName(lastName)
@@ -81,7 +81,7 @@ public class AttorneysRepository {
         }
     }
 
-    public Attorneys postAttorneys(Attorneys attorney) throws RepositoryException {
+    public AttorneyDetails postAttorneys(AttorneyDetails attorney) throws RepositoryException {
         try {
             logger.info("Creating attorney: {}", attorney.getAttorneyId());
             
@@ -101,7 +101,7 @@ public class AttorneysRepository {
         }
     }
 
-    public Attorneys updateAttorneys(Attorneys attorney) throws RepositoryException {
+    public AttorneyDetails updateAttorneys(AttorneyDetails attorney) throws RepositoryException {
         try {
             logger.info("Updating attorney: {}", attorney.getAttorneyId());
             

@@ -1,9 +1,8 @@
 package com.perfexiolegal.billingsystem.Transformer;
 
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
-import com.perfexiolegal.billingsystem.Model.Attorneys;
+import com.perfexiolegal.billingsystem.Model.AttorneyDetails;
 import com.perfexiolegal.billingsystem.Model.ServicePricing;
-import com.perfexiolegal.billingsystem.Model.Services;
 import com.perfexiolegal.billingsystem.Model.ServiceDetails;
 import com.perfexiolegal.billingsystem.Service.AttorneysService;
 import org.slf4j.Logger;
@@ -19,11 +18,11 @@ public class ServicesTransformer {
 
   final Logger logger = LoggerFactory.getLogger(ServicesTransformer.class);
 
-  public Services populateAmount(ServiceDetails service)
+  public ServiceDetails populateAmount(ServiceDetails service)
       throws ServiceException {
     double[] amount = {0};
     service.getAttorneys().stream().forEach(attorneys -> {
-      Attorneys attorney = null;
+      AttorneyDetails attorney = null;
       try {
         attorney = attorneysService.getAttorneyById(attorneys.getId()).get();
       } catch (ServiceException e) {
@@ -46,7 +45,7 @@ public class ServicesTransformer {
 
     });
 
-    return new Services(
+    return new ServiceDetails(
         service.getServiceId(),
         service.getCaseId(),
         service.getClientId(),

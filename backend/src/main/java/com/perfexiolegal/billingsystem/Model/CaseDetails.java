@@ -11,9 +11,10 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class Clients {
+public class CaseDetails {
+  private String caseId;
+  private String caseName;
   private String clientId;
-  private String clientName;
   private String currencyCode;
   private double disbursementsAmount;
   private double servicesAmount;

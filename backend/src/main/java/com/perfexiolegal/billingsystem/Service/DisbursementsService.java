@@ -2,7 +2,7 @@ package com.perfexiolegal.billingsystem.Service;
 
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
-import com.perfexiolegal.billingsystem.Model.Disbursements;
+import com.perfexiolegal.billingsystem.Model.DisbursementDetails;
 import com.perfexiolegal.billingsystem.Repository.DisbursementsRepository;
 import com.perfexiolegal.billingsystem.Repository.ServicesRepository;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ public class DisbursementsService {
     @Autowired
     private ClientsService clientsService;
 
-    public Optional<List<Disbursements>> getAllDisbursements() throws ServiceException {
+    public Optional<List<DisbursementDetails>> getAllDisbursements() throws ServiceException {
         try {
             logger.debug("Retrieving all disbursements");
             return disbursementsRepository.getAllDisbursements();
@@ -38,7 +38,7 @@ public class DisbursementsService {
         }
     }
 
-    public Optional<Disbursements> getDisbursementsById(String disbursementId) throws ServiceException {
+    public Optional<DisbursementDetails> getDisbursementsById(String disbursementId) throws ServiceException {
         try {
             validateDisbursementId(disbursementId);
             logger.debug("Retrieving disbursement with ID: {}", disbursementId);
@@ -49,7 +49,7 @@ public class DisbursementsService {
         }
     }
 
-    public Optional<List<Disbursements>> getDisbursementsByClientId(String clientId) throws ServiceException {
+    public Optional<List<DisbursementDetails>> getDisbursementsByClientId(String clientId) throws ServiceException {
         try {
             validateClientId(clientId);
             logger.debug("Retrieving disbursements for client with ID: {}", clientId);
@@ -60,7 +60,7 @@ public class DisbursementsService {
         }
     }
 
-    public Optional<List<Disbursements>> getDisbursementsByCaseId(String caseId) throws ServiceException {
+    public Optional<List<DisbursementDetails>> getDisbursementsByCaseId(String caseId) throws ServiceException {
         try {
             validateCaseId(caseId);
             logger.debug("Retrieving disbursements for case with ID: {}", caseId);
@@ -71,7 +71,7 @@ public class DisbursementsService {
         }
     }
 
-    public void postDisbursements(Disbursements disbursement) throws ServiceException {
+    public void postDisbursements(DisbursementDetails disbursement) throws ServiceException {
         try {
             validateDisbursement(disbursement);
             logger.debug("Creating disbursement with ID: {}", disbursement.getDisbursementId());
@@ -85,7 +85,7 @@ public class DisbursementsService {
         }
     }
 
-    public void updateDisbursements(Disbursements disbursement) throws ServiceException {
+    public void updateDisbursements(DisbursementDetails disbursement) throws ServiceException {
         try {
             validateDisbursement(disbursement);
             validateDisbursementExists(disbursement.getDisbursementId());
@@ -103,7 +103,7 @@ public class DisbursementsService {
             validateDisbursementExists(disbursementId);
             logger.debug("Deleting disbursement with ID: {}", disbursementId);
             
-            Disbursements disbursement = getDisbursementsById(disbursementId)
+            DisbursementDetails disbursement = getDisbursementsById(disbursementId)
                     .orElseThrow(() -> new ServiceException("Disbursement not found with ID: " + disbursementId));
             
             casesService.updateAmounts(disbursement.getCaseId(), -disbursement.getConversionAmount(), 0);
@@ -116,7 +116,7 @@ public class DisbursementsService {
     }
 
     private void validateDisbursementExists(String disbursementId) throws ServiceException {
-      Optional<Disbursements> disbursement = getDisbursementsById(disbursementId);
+      Optional<DisbursementDetails> disbursement = getDisbursementsById(disbursementId);
       if (disbursement.isEmpty()) {
           throw new ServiceException("Disbursement not found with ID: " + disbursementId);
       }
@@ -140,7 +140,7 @@ public class DisbursementsService {
         }
     }
 
-    private void validateDisbursement(Disbursements disbursement) throws ServiceException {
+    private void validateDisbursement(DisbursementDetails disbursement) throws ServiceException {
         if (disbursement == null) {
             throw new ServiceException("Disbursement cannot be null");
         }

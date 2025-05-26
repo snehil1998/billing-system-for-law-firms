@@ -2,7 +2,7 @@ package com.perfexiolegal.billingsystem.Service;
 
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
-import com.perfexiolegal.billingsystem.Model.Attorneys;
+import com.perfexiolegal.billingsystem.Model.AttorneyDetails;
 import com.perfexiolegal.billingsystem.Repository.AttorneysRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public class AttorneysService {
         this.attorneysRepository = attorneysRepository;
     }
 
-    public Optional<List<Attorneys>> getAllAttorneys() throws ServiceException {
+    public Optional<List<AttorneyDetails>> getAllAttorneys() throws ServiceException {
         try {
             logger.debug("Retrieving all attorneys");
             return attorneysRepository.getAllAttorneys();
@@ -33,7 +33,7 @@ public class AttorneysService {
         }
     }
 
-    public Optional<Attorneys> getAttorneyById(String attorneyID) throws ServiceException {
+    public Optional<AttorneyDetails> getAttorneyById(String attorneyID) throws ServiceException {
         try {
             logger.debug("Retrieving attorney with ID: {}", attorneyID);
             return attorneysRepository.getAttorneyById(attorneyID);
@@ -43,7 +43,7 @@ public class AttorneysService {
         }
     }
 
-    public Attorneys postAttorneys(Attorneys attorney) throws ServiceException {
+    public AttorneyDetails postAttorneys(AttorneyDetails attorney) throws ServiceException {
         try {
             logger.debug("Creating new attorney with ID: {}", attorney.getAttorneyId());
             return attorneysRepository.postAttorneys(attorney);
@@ -53,7 +53,7 @@ public class AttorneysService {
         }
     }
 
-    public Attorneys updateAttorney(Attorneys attorney) throws ServiceException {
+    public AttorneyDetails updateAttorney(AttorneyDetails attorney) throws ServiceException {
         try {
             logger.debug("Updating attorney with ID: {}", attorney.getAttorneyId());
             return attorneysRepository.updateAttorneys(attorney);

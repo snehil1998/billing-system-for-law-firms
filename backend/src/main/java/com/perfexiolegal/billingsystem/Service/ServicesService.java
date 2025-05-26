@@ -3,7 +3,6 @@ package com.perfexiolegal.billingsystem.Service;
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.ServiceDetails;
-import com.perfexiolegal.billingsystem.Model.Services;
 import com.perfexiolegal.billingsystem.Repository.ServicesRepository;
 import com.perfexiolegal.billingsystem.Transformer.ServicesTransformer;
 
@@ -31,7 +30,7 @@ public class ServicesService {
 
   final Logger logger = LoggerFactory.getLogger(ServicesRepository.class);
 
-  public Optional<List<Services>> getAllServices() throws ServiceException {
+  public Optional<List<ServiceDetails>> getAllServices() throws ServiceException {
     try {
       return servicesRepository.getAllServices();
     } catch (RepositoryException e) {
@@ -39,7 +38,7 @@ public class ServicesService {
     }
   }
 
-  public Optional<List<Services>> getServicesForCase(String caseID) throws ServiceException {
+  public Optional<List<ServiceDetails>> getServicesForCase(String caseID) throws ServiceException {
     try {
       return servicesRepository.getServicesForCase(caseID);
     } catch (RepositoryException e) {
@@ -47,7 +46,7 @@ public class ServicesService {
     }
   }
 
-  public Optional<List<Services>> getServicesForClient(String clientID) throws ServiceException {
+  public Optional<List<ServiceDetails>> getServicesForClient(String clientID) throws ServiceException {
     try {
       return servicesRepository.getServicesForClient(clientID);
     } catch (RepositoryException e) {
@@ -55,7 +54,7 @@ public class ServicesService {
     }
   }
 
-  public Optional<Services> getServiceFromId(String serviceID) throws ServiceException {
+  public Optional<ServiceDetails> getServiceFromId(String serviceID) throws ServiceException {
     try {
       return servicesRepository.getServiceFromId(serviceID);
     } catch (RepositoryException e) {
@@ -63,9 +62,9 @@ public class ServicesService {
     }
   }
 
-  public Services postServices(ServiceDetails serviceDetails) throws ServiceException {
+  public ServiceDetails postServices(ServiceDetails serviceDetails) throws ServiceException {
     try {
-      Services service = servicesTransformer.populateAmount(serviceDetails);
+      ServiceDetails service = servicesTransformer.populateAmount(serviceDetails);
       casesService.updateAmounts(service.getCaseId(), 0, service.getAmount());
       clientsService.updateAmounts(service.getClientId(), 0, service.getAmount());
       return servicesRepository.postServices(service);
@@ -74,11 +73,11 @@ public class ServicesService {
     }
   }
 
-  public Services updateServices(ServiceDetails serviceDetails) throws ServiceException {
+  public ServiceDetails updateServices(ServiceDetails serviceDetails) throws ServiceException {
     try {
       logger.info("updating services through service");
       validateServiceExists(serviceDetails.getServiceId());
-      Services service = servicesTransformer.populateAmount(serviceDetails);
+      ServiceDetails service = servicesTransformer.populateAmount(serviceDetails);
       return servicesRepository.updateServices(service);
     } catch (RepositoryException e) {
       throw new ServiceException("unable to update service", e);
@@ -87,7 +86,7 @@ public class ServicesService {
 
   public int deleteById(String serviceID) throws ServiceException {
     try {
-      Services service = getServiceFromId(serviceID).get();
+      ServiceDetails service = getServiceFromId(serviceID).get();
       casesService.updateAmounts(service.getCaseId(), 0, -service.getAmount());
       clientsService.updateAmounts(service.getClientId(), 0, -service.getAmount());
       return servicesRepository.deleteById(serviceID);
@@ -105,7 +104,7 @@ public class ServicesService {
   }
 
   private void validateServiceExists(String serviceID) throws ServiceException {
-    Optional<Services> service = getServiceFromId(serviceID);
+    Optional<ServiceDetails> service = getServiceFromId(serviceID);
     if (service.isEmpty()) {
         throw new ServiceException("Service not found with ID: " + serviceID);
     }

@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class Disbursements {
+public class DisbursementDetails {
   private String disbursementId;
   private String caseId;
   private String clientId;

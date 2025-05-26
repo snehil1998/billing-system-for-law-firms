@@ -16,15 +16,15 @@ import java.util.Optional;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class Attorneys {
+public class AttorneyDetails {
     private String attorneyId;
     private String firstName;
     private String lastName;
     private List<ServicePricing> servicePricing;
 
     @JsonIgnore
-    public Attorneys withoutId() {
-        return Attorneys.builder()
+    public AttorneyDetails withoutId() {
+        return AttorneyDetails.builder()
                 .firstName(this.firstName)
                 .lastName(this.lastName)
                 .servicePricing(new ArrayList<>(this.servicePricing))

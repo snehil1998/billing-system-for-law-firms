@@ -3,8 +3,8 @@ package com.perfexiolegal.billingsystem.Repository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
-import com.perfexiolegal.billingsystem.Model.AttorneysInService;
-import com.perfexiolegal.billingsystem.Model.Services;
+import com.perfexiolegal.billingsystem.Model.AttorneyMinutes;
+import com.perfexiolegal.billingsystem.Model.ServiceDetails;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,21 +30,21 @@ public class ServicesRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private final RowMapper<Services> servicesRowMapper = (resultSet, i) -> {
+    private final RowMapper<ServiceDetails> servicesRowMapper = (resultSet, i) -> {
         String serviceId = resultSet.getString("service_id");
         String caseId = resultSet.getString("case_id");
         String clientId = resultSet.getString("client_id");
         String service = resultSet.getString("service");
         Date date = (Date) resultSet.getObject("date");
-        List<AttorneysInService> attorneys = null;
+        List<AttorneyMinutes> attorneys = null;
         try {
-            JavaType type = objectMapper.getTypeFactory().constructParametricType(List.class, AttorneysInService.class);
+            JavaType type = objectMapper.getTypeFactory().constructParametricType(List.class, AttorneyMinutes.class);
             attorneys = objectMapper.readValue(resultSet.getString("attorneys"), type);
         } catch (JsonProcessingException e) {
             logger.error("Failed to convert attorneys JSON to object: {}", e.getMessage());
         }
         float amount = resultSet.getFloat("amount");
-        return Services.builder()
+        return ServiceDetails.builder()
                 .serviceId(serviceId)
                 .caseId(caseId)
                 .clientId(clientId)
@@ -55,11 +55,11 @@ public class ServicesRepository {
                 .build();
     };
 
-    public Optional<List<Services>> getAllServices() throws RepositoryException {
+    public Optional<List<ServiceDetails>> getAllServices() throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME;
             logger.debug("Retrieving all services");
-            List<Services> servicesList = jdbcTemplate.query(sql, servicesRowMapper);
+            List<ServiceDetails> servicesList = jdbcTemplate.query(sql, servicesRowMapper);
             return Optional.of(servicesList);
         } catch (DataAccessException e) {
             logger.error("Error retrieving all services: {}", e.getMessage());
@@ -67,11 +67,11 @@ public class ServicesRepository {
         }
     }
 
-    public Optional<List<Services>> getServicesForCase(String caseID) throws RepositoryException {
+    public Optional<List<ServiceDetails>> getServicesForCase(String caseID) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE case_id = ?";
             logger.debug("Retrieving services for case with ID: {}", caseID);
-            List<Services> servicesForCaseList = jdbcTemplate.query(sql, servicesRowMapper, caseID);
+            List<ServiceDetails> servicesForCaseList = jdbcTemplate.query(sql, servicesRowMapper, caseID);
             return Optional.of(servicesForCaseList);
         } catch (DataAccessException e) {
             logger.error("Error retrieving services for case {}: {}", caseID, e.getMessage());
@@ -79,11 +79,11 @@ public class ServicesRepository {
         }
     }
 
-    public Optional<List<Services>> getServicesForClient(String clientID) throws RepositoryException {
+    public Optional<List<ServiceDetails>> getServicesForClient(String clientID) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE client_id = ?";
             logger.debug("Retrieving services for client with ID: {}", clientID);
-            List<Services> servicesForClientList = jdbcTemplate.query(sql, servicesRowMapper, clientID);
+            List<ServiceDetails> servicesForClientList = jdbcTemplate.query(sql, servicesRowMapper, clientID);
             return Optional.of(servicesForClientList);
         } catch (DataAccessException e) {
             logger.error("Error retrieving services for client {}: {}", clientID, e.getMessage());
@@ -91,11 +91,11 @@ public class ServicesRepository {
         }
     }
 
-    public Optional<Services> getServiceFromId(String serviceID) throws RepositoryException {
+    public Optional<ServiceDetails> getServiceFromId(String serviceID) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE service_id = ?";
             logger.debug("Retrieving service with ID: {}", serviceID);
-            List<Services> services = jdbcTemplate.query(sql, servicesRowMapper, serviceID);
+            List<ServiceDetails> services = jdbcTemplate.query(sql, servicesRowMapper, serviceID);
             return services.isEmpty() ? Optional.empty() : Optional.of(services.get(0));
         } catch (DataAccessException e) {
             logger.error("Error retrieving service with ID {}: {}", serviceID, e.getMessage());
@@ -103,7 +103,7 @@ public class ServicesRepository {
         }
     }
 
-    public Services postServices(Services service) throws RepositoryException {
+    public ServiceDetails postServices(ServiceDetails service) throws RepositoryException {
         try {
             String sql = "INSERT INTO " + TABLE_NAME + 
                     " (service_id, case_id, client_id, service, date, attorneys, amount) " +
@@ -129,7 +129,7 @@ public class ServicesRepository {
         }
     }
 
-    public Services updateServices(Services service) throws RepositoryException {
+    public ServiceDetails updateServices(ServiceDetails service) throws RepositoryException {
         try {
             String sql = "UPDATE " + TABLE_NAME + 
                     " SET case_id = ?, client_id = ?, service = ?, " +

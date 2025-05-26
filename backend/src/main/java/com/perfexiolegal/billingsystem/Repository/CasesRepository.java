@@ -1,7 +1,7 @@
 package com.perfexiolegal.billingsystem.Repository;
 
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
-import com.perfexiolegal.billingsystem.Model.Cases;
+import com.perfexiolegal.billingsystem.Model.CaseDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class CasesRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private final RowMapper<Cases> casesRowMapper = (resultSet, i) -> Cases.builder()
+    private final RowMapper<CaseDetails> casesRowMapper = (resultSet, i) -> CaseDetails.builder()
             .caseId(resultSet.getString("case_id"))
             .caseName(resultSet.getString("case_name"))
             .clientId(resultSet.getString("client_id"))
@@ -32,11 +32,11 @@ public class CasesRepository {
             .amount(resultSet.getFloat("amount"))
             .build();
 
-    public Optional<List<Cases>> getAllCases() throws RepositoryException {
+    public Optional<List<CaseDetails>> getAllCases() throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME;
             logger.debug("Retrieving all cases");
-            List<Cases> casesList = jdbcTemplate.query(sql, casesRowMapper);
+            List<CaseDetails> casesList = jdbcTemplate.query(sql, casesRowMapper);
             return Optional.of(casesList);
         } catch (DataAccessException e) {
             logger.error("Error retrieving all cases: {}", e.getMessage());
@@ -44,11 +44,11 @@ public class CasesRepository {
         }
     }
 
-    public Optional<Cases> getCaseById(String caseID) throws RepositoryException {
+    public Optional<CaseDetails> getCaseById(String caseID) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE case_id = ?";
             logger.debug("Retrieving case with ID: {}", caseID);
-            List<Cases> cases = jdbcTemplate.query(sql, casesRowMapper, caseID);
+            List<CaseDetails> cases = jdbcTemplate.query(sql, casesRowMapper, caseID);
             return cases.isEmpty() ? Optional.empty() : Optional.of(cases.get(0));
         } catch (DataAccessException e) {
             logger.error("Error retrieving case with ID {}: {}", caseID, e.getMessage());
@@ -56,7 +56,7 @@ public class CasesRepository {
         }
     }
 
-    public Cases postCases(Cases postCase) throws RepositoryException {
+    public CaseDetails postCases(CaseDetails postCase) throws RepositoryException {
         try {
             String sql = "INSERT INTO " + TABLE_NAME + 
                     " (case_id, case_name, client_id, currency_code, disbursements_amount, services_amount, amount) " +
@@ -77,7 +77,7 @@ public class CasesRepository {
         }
     }
 
-    public Cases updateCases(Cases updatedCase) throws RepositoryException {
+    public CaseDetails updateCases(CaseDetails updatedCase) throws RepositoryException {
         try {
             String sql = "UPDATE " + TABLE_NAME + 
                     " SET case_name = ?, client_id = ?, currency_code = ?, " +

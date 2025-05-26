@@ -1,6 +1,6 @@
 package com.perfexiolegal.billingsystem.Transformer;
 
-import com.perfexiolegal.billingsystem.Model.Cases;
+import com.perfexiolegal.billingsystem.Model.CaseDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -10,9 +10,9 @@ public class CasesTransformer {
 
     private static final Logger logger = LoggerFactory.getLogger(CasesTransformer.class);
 
-    public Cases updateAmount(Cases updatedCase, double disbursementsAmount, double servicesAmount) {
+    public CaseDetails updateAmount(CaseDetails updatedCase, double disbursementsAmount, double servicesAmount) {
         logger.debug("Updating amounts for case with ID: {}", updatedCase.getCaseId());
-        return Cases.builder()
+        return CaseDetails.builder()
                 .caseId(updatedCase.getCaseId())
                 .caseName(updatedCase.getCaseName())
                 .clientId(updatedCase.getClientId())

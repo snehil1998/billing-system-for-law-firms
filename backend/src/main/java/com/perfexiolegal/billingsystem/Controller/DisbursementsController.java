@@ -2,7 +2,7 @@ package com.perfexiolegal.billingsystem.Controller;
 
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.ApiResponse;
-import com.perfexiolegal.billingsystem.Model.Disbursements;
+import com.perfexiolegal.billingsystem.Model.DisbursementDetails;
 import com.perfexiolegal.billingsystem.Service.DisbursementsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +36,8 @@ public class DisbursementsController {
     public ResponseEntity<ApiResponse> getAllDisbursements() {
         try {
             logger.debug("Retrieving all disbursements");
-            Optional<List<Disbursements>> listOfDisbursements = disbursementsService.getAllDisbursements();
-            List<Disbursements> disbursements = listOfDisbursements.get();
+            Optional<List<DisbursementDetails>> listOfDisbursements = disbursementsService.getAllDisbursements();
+            List<DisbursementDetails> disbursements = listOfDisbursements.get();
             
             if (disbursements.isEmpty()) {
                 return ResponseEntity.ok(ApiResponse.builder()
@@ -71,7 +71,7 @@ public class DisbursementsController {
     public ResponseEntity<ApiResponse> getDisbursementForId(@PathVariable("disbursementID") String disbursementID) {
         try {
             logger.debug("Retrieving disbursement with ID: {}", disbursementID);
-            Optional<Disbursements> retrievedDisbursement = disbursementsService.getDisbursementsById(disbursementID);
+            Optional<DisbursementDetails> retrievedDisbursement = disbursementsService.getDisbursementsById(disbursementID);
             
             if (retrievedDisbursement.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -105,8 +105,8 @@ public class DisbursementsController {
     public ResponseEntity<ApiResponse> getDisbursementsForCase(@PathVariable("caseID") String caseID) {
         try {
             logger.debug("Retrieving disbursements for case with ID: {}", caseID);
-            Optional<List<Disbursements>> listOfDisbursements = disbursementsService.getDisbursementsByCaseId(caseID);
-            List<Disbursements> disbursements = listOfDisbursements.get();
+            Optional<List<DisbursementDetails>> listOfDisbursements = disbursementsService.getDisbursementsByCaseId(caseID);
+            List<DisbursementDetails> disbursements = listOfDisbursements.get();
             
             if (disbursements.isEmpty()) {
                 return ResponseEntity.ok(ApiResponse.builder()
@@ -140,8 +140,8 @@ public class DisbursementsController {
     public ResponseEntity<ApiResponse> getDisbursementsForClient(@PathVariable("clientID") String clientID) {
         try {
             logger.debug("Retrieving disbursements for client with ID: {}", clientID);
-            Optional<List<Disbursements>> listOfDisbursements = disbursementsService.getDisbursementsByClientId(clientID);
-            List<Disbursements> disbursements = listOfDisbursements.get();
+            Optional<List<DisbursementDetails>> listOfDisbursements = disbursementsService.getDisbursementsByClientId(clientID);
+            List<DisbursementDetails> disbursements = listOfDisbursements.get();
             
             if (disbursements.isEmpty()) {
                 return ResponseEntity.ok(ApiResponse.builder()
@@ -172,7 +172,7 @@ public class DisbursementsController {
      * @return ResponseEntity containing the created disbursement
      */
     @PostMapping(value = "/disbursements", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> createNewDisbursement(@RequestBody Disbursements disbursement) {
+    public ResponseEntity<ApiResponse> createNewDisbursement(@RequestBody DisbursementDetails disbursement) {
         try {
             logger.debug("Creating disbursement with name: {}", disbursement.getDisbursement());
             disbursementsService.postDisbursements(disbursement);
@@ -202,7 +202,7 @@ public class DisbursementsController {
     @PutMapping(value = "/disbursements={disbursementID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> updateDisbursement(
             @PathVariable("disbursementID") String disbursementID,
-            @RequestBody Disbursements disbursement) {
+            @RequestBody DisbursementDetails disbursement) {
         try {
             logger.debug("Updating disbursement with ID: {}", disbursementID);
             disbursementsService.updateDisbursements(disbursement);

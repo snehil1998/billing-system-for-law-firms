@@ -2,7 +2,7 @@ package com.perfexiolegal.billingsystem.Controller;
 
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.ApiResponse;
-import com.perfexiolegal.billingsystem.Model.Clients;
+import com.perfexiolegal.billingsystem.Model.ClientDetails;
 import com.perfexiolegal.billingsystem.Service.ClientsService;
 import com.perfexiolegal.billingsystem.Transformer.ClientsTransformer;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class ClientsController {
     public ResponseEntity<ApiResponse> getAllClients() {
         try {
             logger.debug("Retrieving all clients");
-            Optional<List<Clients>> clients = clientsService.getAllClients();
+            Optional<List<ClientDetails>> clients = clientsService.getAllClients();
             
             if (clients.isEmpty() || clients.get().isEmpty()) {
                 return ResponseEntity.ok(ApiResponse.builder()
@@ -74,7 +74,7 @@ public class ClientsController {
     public ResponseEntity<ApiResponse> getClientById(@PathVariable("clientID") String clientID) {
         try {
             logger.debug("Retrieving client with ID: {}", clientID);
-            Optional<Clients> client = clientsService.getClientById(clientID);
+            Optional<ClientDetails> client = clientsService.getClientById(clientID);
             
             if (client.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -105,10 +105,10 @@ public class ClientsController {
      * @return ResponseEntity containing the created client
      */
     @PostMapping(value = "/clients", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> createClient(@RequestBody Clients client) {
+    public ResponseEntity<ApiResponse> createClient(@RequestBody ClientDetails client) {
         try {
             logger.debug("Creating new client with ID: {}", client.getClientId());
-            Clients createdClient = clientsService.postClients(client);
+            ClientDetails createdClient = clientsService.postClients(client);
             
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.builder()
@@ -135,10 +135,10 @@ public class ClientsController {
     @PutMapping(value = "/clients/{clientID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> updateClient(
             @PathVariable("clientID") String clientID,
-            @RequestBody Clients client) {
+            @RequestBody ClientDetails client) {
         try {
             logger.debug("Updating client with ID: {}", clientID);
-            Clients updatedClient = clientsService.updateClient(client);
+            ClientDetails updatedClient = clientsService.updateClient(client);
             
             return ResponseEntity.ok(ApiResponse.builder()
                     .message("Client updated successfully")
@@ -202,7 +202,7 @@ public class ClientsController {
             @RequestParam double servicesAmount) {
         try {
             logger.debug("Updating amounts for client with ID: {}", clientID);
-            Clients updatedClient = clientsService.updateAmounts(clientID, disbursementsAmount, servicesAmount);
+            ClientDetails updatedClient = clientsService.updateAmounts(clientID, disbursementsAmount, servicesAmount);
             
             return ResponseEntity.ok(ApiResponse.builder()
                     .message("Client amounts updated successfully")

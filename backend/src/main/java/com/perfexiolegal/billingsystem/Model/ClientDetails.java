@@ -6,21 +6,16 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
 @Builder
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class Services {
-  private String serviceId;
-  private String caseId;
+public class ClientDetails {
   private String clientId;
-  private String service;
-  private Date date;
-  private List<AttorneysInService> attorneys;
+  private String clientName;
+  private String currencyCode;
+  private double disbursementsAmount;
+  private double servicesAmount;
   private double amount;
 }

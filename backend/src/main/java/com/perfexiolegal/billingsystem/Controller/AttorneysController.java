@@ -2,7 +2,7 @@ package com.perfexiolegal.billingsystem.Controller;
 
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.ApiResponse;
-import com.perfexiolegal.billingsystem.Model.Attorneys;
+import com.perfexiolegal.billingsystem.Model.AttorneyDetails;
 import com.perfexiolegal.billingsystem.Service.AttorneysService;
 import com.perfexiolegal.billingsystem.Transformer.AttorneysTransformer;
 import org.slf4j.Logger;
@@ -42,8 +42,8 @@ public class AttorneysController {
     public ResponseEntity<ApiResponse> getAllAttorneys() {
         try {
             logger.info("Retrieving all attorneys");
-            Optional<List<Attorneys>> listOfAttorneys = attorneysService.getAllAttorneys();
-            List<Attorneys> attorneys = listOfAttorneys.orElse(List.of());
+            Optional<List<AttorneyDetails>> listOfAttorneys = attorneysService.getAllAttorneys();
+            List<AttorneyDetails> attorneys = listOfAttorneys.orElse(List.of());
 
             return ResponseEntity.ok(ApiResponse.builder()
                     .message(attorneys.isEmpty() ? "No attorneys found" : "Attorneys retrieved successfully")
@@ -69,7 +69,7 @@ public class AttorneysController {
     public ResponseEntity<ApiResponse> getAttorneysForCase(@PathVariable("attorneyID") String attorneyID) {
         try {
             logger.info("Retrieving attorney with ID: {}", attorneyID);
-            Optional<Attorneys> retrievedAttorneys = attorneysService.getAttorneyById(attorneyID);
+            Optional<AttorneyDetails> retrievedAttorneys = attorneysService.getAttorneyById(attorneyID);
 
             if (retrievedAttorneys.isEmpty()) {
                 return ResponseEntity.ok(ApiResponse.builder()
@@ -102,10 +102,10 @@ public class AttorneysController {
     @PutMapping(value = "/attorneys={attorneyID}")
     public ResponseEntity<ApiResponse> updateAttorney(
             @PathVariable("attorneyID") String attorneyID,
-            @RequestBody Attorneys updatedData) {
+            @RequestBody AttorneyDetails updatedData) {
         try {
             logger.info("Updating attorney with ID: {}", attorneyID);
-            Optional<Attorneys> existingAttorney = attorneysService.getAttorneyById(attorneyID);
+            Optional<AttorneyDetails> existingAttorney = attorneysService.getAttorneyById(attorneyID);
 
             if (existingAttorney.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -115,7 +115,7 @@ public class AttorneysController {
                                 .build());
             }
 
-            Attorneys updatedAttorney;
+            AttorneyDetails updatedAttorney;
             if (updatedData.getServicePricing().get(0).getPrice() < 0) {
                 updatedAttorney = attorneysTransformer.deleteServicePrice(
                         existingAttorney.get(),
@@ -154,7 +154,7 @@ public class AttorneysController {
      * @return ResponseEntity containing the created attorney
      */
     @PostMapping(value = "/attorneys", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> createNewAttorney(@RequestBody Attorneys attorney) {
+    public ResponseEntity<ApiResponse> createNewAttorney(@RequestBody AttorneyDetails attorney) {
         try {
             logger.info("Creating attorney with ID: {}", attorney.getAttorneyId());
             
@@ -166,7 +166,7 @@ public class AttorneysController {
                                 .build());
             }
 
-            Attorneys createdAttorney = attorneysService.postAttorneys(attorney);
+            AttorneyDetails createdAttorney = attorneysService.postAttorneys(attorney);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.builder()
                             .message("Attorney was created successfully")

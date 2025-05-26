@@ -1,7 +1,7 @@
 package com.perfexiolegal.billingsystem.Transformer;
 
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
-import com.perfexiolegal.billingsystem.Model.Attorneys;
+import com.perfexiolegal.billingsystem.Model.AttorneyDetails;
 import com.perfexiolegal.billingsystem.Model.ServicePricing;
 import com.perfexiolegal.billingsystem.Service.AttorneysService;
 import org.slf4j.Logger;
@@ -17,13 +17,13 @@ public class AttorneysTransformer {
     @Autowired
     private AttorneysService attorneysService;
 
-    public Attorneys update(Attorneys updatedData, String attorneyID) throws ServiceException {
+    public AttorneyDetails update(AttorneyDetails updatedData, String attorneyID) throws ServiceException {
         logger.debug("Updating attorney with ID: {}", attorneyID);
-        Attorneys existingAttorney = attorneysService.getAttorneyById(attorneyID)
+        AttorneyDetails existingAttorney = attorneysService.getAttorneyById(attorneyID)
                 .orElseThrow(() -> new ServiceException("Attorney not found"));
 
         // Update basic information
-        Attorneys updatedAttorney = Attorneys.builder()
+        AttorneyDetails updatedAttorney = AttorneyDetails.builder()
                 .attorneyId(attorneyID)
                 .firstName(updatedData.getFirstName())
                 .lastName(updatedData.getLastName())
@@ -40,7 +40,7 @@ public class AttorneysTransformer {
         return updatedAttorney;
     }
 
-    public Attorneys deleteServicePrice(Attorneys attorney, String clientID) {
+    public AttorneyDetails deleteServicePrice(AttorneyDetails attorney, String clientID) {
         logger.debug("Deleting service price for client ID: {} from attorney ID: {}", 
                 clientID, attorney.getAttorneyId());
 

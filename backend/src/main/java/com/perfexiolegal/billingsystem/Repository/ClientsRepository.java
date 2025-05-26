@@ -1,7 +1,7 @@
 package com.perfexiolegal.billingsystem.Repository;
 
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
-import com.perfexiolegal.billingsystem.Model.Clients;
+import com.perfexiolegal.billingsystem.Model.ClientDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class ClientsRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private final RowMapper<Clients> clientRowMapper = (resultSet, i) -> Clients.builder()
+    private final RowMapper<ClientDetails> clientRowMapper = (resultSet, i) -> ClientDetails.builder()
             .clientId(resultSet.getString("client_id"))
             .clientName(resultSet.getString("client_name"))
             .currencyCode(resultSet.getString("currency_code"))
@@ -31,11 +31,11 @@ public class ClientsRepository {
             .amount(resultSet.getDouble("amount"))
             .build();
 
-    public Optional<List<Clients>> getAllClients() throws RepositoryException {
+    public Optional<List<ClientDetails>> getAllClients() throws RepositoryException {
         try {
             logger.debug("Retrieving all clients from database");
             String sql = String.format("SELECT * FROM %s", TABLE_NAME);
-            List<Clients> clientsList = jdbcTemplate.query(sql, clientRowMapper);
+            List<ClientDetails> clientsList = jdbcTemplate.query(sql, clientRowMapper);
             return Optional.of(clientsList);
         } catch (DataAccessException e) {
             logger.error("Error retrieving all clients: {}", e.getMessage());
@@ -43,11 +43,11 @@ public class ClientsRepository {
         }
     }
 
-    public Optional<Clients> getClientsById(String clientID) throws RepositoryException {
+    public Optional<ClientDetails> getClientsById(String clientID) throws RepositoryException {
         try {
             logger.debug("Retrieving client with ID: {}", clientID);
             String sql = String.format("SELECT * FROM %s WHERE client_id = ?", TABLE_NAME);
-            List<Clients> results = jdbcTemplate.query(sql, clientRowMapper, clientID);
+            List<ClientDetails> results = jdbcTemplate.query(sql, clientRowMapper, clientID);
             return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
         } catch (DataAccessException e) {
             logger.error("Error retrieving client with ID {}: {}", clientID, e.getMessage());
@@ -55,7 +55,7 @@ public class ClientsRepository {
         }
     }
 
-    public Clients postClients(Clients client) throws RepositoryException {
+    public ClientDetails postClients(ClientDetails client) throws RepositoryException {
         try {
             logger.debug("Creating new client with ID: {}", client.getClientId());
             String sql = String.format(
@@ -80,7 +80,7 @@ public class ClientsRepository {
         }
     }
 
-    public Clients updateClients(Clients client) throws RepositoryException {
+    public ClientDetails updateClients(ClientDetails client) throws RepositoryException {
         try {
             logger.debug("Updating client with ID: {}", client.getClientId());
             String sql = String.format(
