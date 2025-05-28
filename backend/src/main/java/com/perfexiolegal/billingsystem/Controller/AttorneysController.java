@@ -3,13 +3,12 @@ package com.perfexiolegal.billingsystem.Controller;
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.ApiResponse;
 import com.perfexiolegal.billingsystem.Model.AttorneyDetails;
-import com.perfexiolegal.billingsystem.Service.AttorneysService;
+import com.perfexiolegal.billingsystem.Service.IAttorneysService;
 import com.perfexiolegal.billingsystem.Transformer.AttorneysTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,28 +20,25 @@ import java.util.Optional;
  * Provides endpoints for CRUD operations on attorneys.
  */
 @RestController
-@RequestMapping("/backend")
+@RequestMapping("/api/attorneys")
 public class AttorneysController {
 
     private static final Logger logger = LoggerFactory.getLogger(AttorneysController.class);
-    private final AttorneysService attorneysService;
-    private final AttorneysTransformer attorneysTransformer;
 
     @Autowired
-    public AttorneysController(AttorneysService attorneysService, AttorneysTransformer attorneysTransformer) {
-        this.attorneysService = attorneysService;
-        this.attorneysTransformer = attorneysTransformer;
-    }
+    private IAttorneysService attorneysService;
+    @Autowired
+    private AttorneysTransformer attorneysTransformer;
 
     /**
      * Retrieves all attorneys from the system.
      * @return ResponseEntity containing the list of attorneys or an empty list
      */
-    @GetMapping(value = "/attorneys")
+    @GetMapping
     public ResponseEntity<ApiResponse> getAllAttorneys() {
         try {
             logger.info("Retrieving all attorneys");
-            Optional<List<AttorneyDetails>> listOfAttorneys = attorneysService.getAllAttorneys();
+            Optional<List<AttorneyDetails>> listOfAttorneys = attorneysService.getAll();
             List<AttorneyDetails> attorneys = listOfAttorneys.orElse(List.of());
 
             return ResponseEntity.ok(ApiResponse.builder()
@@ -65,11 +61,11 @@ public class AttorneysController {
      * @param attorneyID The ID of the attorney to retrieve
      * @return ResponseEntity containing the attorney if found
      */
-    @GetMapping(value = "/attorneys={attorneyID}")
-    public ResponseEntity<ApiResponse> getAttorneysForCase(@PathVariable("attorneyID") String attorneyID) {
+    @GetMapping(value = "/id={attorneyID}")
+    public ResponseEntity<ApiResponse> getById(@PathVariable("attorneyID") String attorneyID) {
         try {
             logger.info("Retrieving attorney with ID: {}", attorneyID);
-            Optional<AttorneyDetails> retrievedAttorneys = attorneysService.getAttorneyById(attorneyID);
+            Optional<AttorneyDetails> retrievedAttorneys = attorneysService.getById(attorneyID);
 
             if (retrievedAttorneys.isEmpty()) {
                 return ResponseEntity.ok(ApiResponse.builder()
@@ -99,13 +95,13 @@ public class AttorneysController {
      * @param updatedData The updated attorney data
      * @return ResponseEntity containing the updated attorney
      */
-    @PutMapping(value = "/attorneys={attorneyID}")
+    @PutMapping(value = "/id={attorneyID}")
     public ResponseEntity<ApiResponse> updateAttorney(
             @PathVariable("attorneyID") String attorneyID,
             @RequestBody AttorneyDetails updatedData) {
         try {
             logger.info("Updating attorney with ID: {}", attorneyID);
-            Optional<AttorneyDetails> existingAttorney = attorneysService.getAttorneyById(attorneyID);
+            Optional<AttorneyDetails> existingAttorney = attorneysService.getById(attorneyID);
 
             if (existingAttorney.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -132,7 +128,7 @@ public class AttorneysController {
                 }
             }
 
-            attorneysService.updateAttorney(updatedAttorney);
+            attorneysService.update(updatedAttorney);
             return ResponseEntity.ok(ApiResponse.builder()
                     .message("Attorney was updated successfully")
                     .success(true)
@@ -153,12 +149,12 @@ public class AttorneysController {
      * @param attorney The attorney data to create
      * @return ResponseEntity containing the created attorney
      */
-    @PostMapping(value = "/attorneys", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> createNewAttorney(@RequestBody AttorneyDetails attorney) {
+    @PostMapping
+    public ResponseEntity<ApiResponse> create(@RequestBody AttorneyDetails attorney) {
         try {
             logger.info("Creating attorney with ID: {}", attorney.getAttorneyId());
             
-            if (attorneysService.getAttorneyById(attorney.getAttorneyId()).isPresent()) {
+            if (attorneysService.getById(attorney.getAttorneyId()).isPresent()) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
                         .body(ApiResponse.builder()
                                 .message("Attorney with ID already exists")
@@ -166,12 +162,12 @@ public class AttorneysController {
                                 .build());
             }
 
-            AttorneyDetails createdAttorney = attorneysService.postAttorneys(attorney);
+             attorneysService.create(attorney);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.builder()
                             .message("Attorney was created successfully")
                             .success(true)
-                            .data(createdAttorney)
+                            .data(attorney)
                             .build());
         } catch (ServiceException e) {
             logger.error("Failed to create attorney with ID: {}", attorney.getAttorneyId(), e);
@@ -188,7 +184,7 @@ public class AttorneysController {
      * @param attorneyID The ID of the attorney to delete
      * @return ResponseEntity indicating the result of the deletion
      */
-    @DeleteMapping(value = "/attorneys={attorneyID}")
+    @DeleteMapping(value = "/id={attorneyID}")
     public ResponseEntity<ApiResponse> deleteService(@PathVariable("attorneyID") String attorneyID) {
         try {
             logger.info("Deleting attorney with ID: {}", attorneyID);

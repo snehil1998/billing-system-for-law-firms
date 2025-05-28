@@ -3,7 +3,8 @@ package com.perfexiolegal.billingsystem.Transformer;
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.AttorneyDetails;
 import com.perfexiolegal.billingsystem.Model.ServicePricing;
-import com.perfexiolegal.billingsystem.Service.AttorneysService;
+import com.perfexiolegal.billingsystem.Service.IAttorneysService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,11 @@ public class AttorneysTransformer {
     private static final Logger logger = LoggerFactory.getLogger(AttorneysTransformer.class);
 
     @Autowired
-    private AttorneysService attorneysService;
+    private IAttorneysService attorneysService;
 
     public AttorneyDetails update(AttorneyDetails updatedData, String attorneyID) throws ServiceException {
         logger.debug("Updating attorney with ID: {}", attorneyID);
-        AttorneyDetails existingAttorney = attorneysService.getAttorneyById(attorneyID)
+        AttorneyDetails existingAttorney = attorneysService.getById(attorneyID)
                 .orElseThrow(() -> new ServiceException("Attorney not found"));
 
         // Update basic information

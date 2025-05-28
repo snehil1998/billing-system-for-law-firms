@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class ServicesRepository {
+public class ServicesRepository implements IServicesRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ServicesRepository.class);
     private static final String TABLE_NAME = "ebdb.public.services";
@@ -55,7 +55,7 @@ public class ServicesRepository {
                 .build();
     };
 
-    public Optional<List<ServiceDetails>> getAllServices() throws RepositoryException {
+    public Optional<List<ServiceDetails>> getAll() throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME;
             logger.debug("Retrieving all services");
@@ -67,7 +67,7 @@ public class ServicesRepository {
         }
     }
 
-    public Optional<List<ServiceDetails>> getServicesForCase(String caseID) throws RepositoryException {
+    public Optional<List<ServiceDetails>> getByCaseId(String caseID) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE case_id = ?";
             logger.debug("Retrieving services for case with ID: {}", caseID);
@@ -79,7 +79,7 @@ public class ServicesRepository {
         }
     }
 
-    public Optional<List<ServiceDetails>> getServicesForClient(String clientID) throws RepositoryException {
+    public Optional<List<ServiceDetails>> getByClientId(String clientID) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE client_id = ?";
             logger.debug("Retrieving services for client with ID: {}", clientID);
@@ -91,7 +91,7 @@ public class ServicesRepository {
         }
     }
 
-    public Optional<ServiceDetails> getServiceFromId(String serviceID) throws RepositoryException {
+    public Optional<ServiceDetails> getById(String serviceID) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE service_id = ?";
             logger.debug("Retrieving service with ID: {}", serviceID);
@@ -103,7 +103,7 @@ public class ServicesRepository {
         }
     }
 
-    public ServiceDetails postServices(ServiceDetails service) throws RepositoryException {
+    public void create(ServiceDetails service) throws RepositoryException {
         try {
             String sql = "INSERT INTO " + TABLE_NAME + 
                     " (service_id, case_id, client_id, service, date, attorneys, amount) " +
@@ -122,14 +122,13 @@ public class ServicesRepository {
                     service.getDate(),
                     jsonObject,
                     service.getAmount());
-            return service;
         } catch (DataAccessException | JsonProcessingException | SQLException e) {
             logger.error("Error creating service: {}", e.getMessage());
             throw new RepositoryException("Failed to create service in database", e);
         }
     }
 
-    public ServiceDetails updateServices(ServiceDetails service) throws RepositoryException {
+    public void update(ServiceDetails service) throws RepositoryException {
         try {
             String sql = "UPDATE " + TABLE_NAME + 
                     " SET case_id = ?, client_id = ?, service = ?, " +
@@ -149,7 +148,6 @@ public class ServicesRepository {
                     jsonObject,
                     service.getAmount(),
                     service.getServiceId());
-            return service;
         } catch (DataAccessException | JsonProcessingException | SQLException e) {
             logger.error("Error updating service: {}", e.getMessage());
             throw new RepositoryException("Failed to update service in database", e);
@@ -167,7 +165,7 @@ public class ServicesRepository {
         }
     }
 
-    public int deleteByCase(String caseID) throws RepositoryException {
+    public int deleteByCaseId(String caseID) throws RepositoryException {
         try {
             String sql = "DELETE FROM " + TABLE_NAME + " WHERE case_id = ?";
             logger.debug("Deleting services for case with ID: {}", caseID);

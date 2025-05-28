@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class AttorneysRepository {
+public class AttorneysRepository implements IAttorneysRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(AttorneysRepository.class);
     private static final String TABLE_NAME = "ebdb.public.attorneys";
@@ -30,7 +30,7 @@ public class AttorneysRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public Optional<List<AttorneyDetails>> getAllAttorneys() throws RepositoryException {
+    public Optional<List<AttorneyDetails>> getAll() throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME;
             logger.info("Retrieving data for all attorneys");
@@ -55,7 +55,7 @@ public class AttorneysRepository {
         }
     }
 
-    public Optional<AttorneyDetails> getAttorneyById(String attorneyID) throws RepositoryException {
+    public Optional<AttorneyDetails> getById(String attorneyID) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE attorney_id = ?";
             logger.info("Retrieving data for attorney with ID: {}", attorneyID);
@@ -81,7 +81,7 @@ public class AttorneysRepository {
         }
     }
 
-    public AttorneyDetails postAttorneys(AttorneyDetails attorney) throws RepositoryException {
+    public void create(AttorneyDetails attorney) throws RepositoryException {
         try {
             logger.info("Creating attorney: {}", attorney.getAttorneyId());
             
@@ -94,14 +94,12 @@ public class AttorneysRepository {
                     attorney.getFirstName(),
                     attorney.getLastName(),
                     jsonObject);
-
-            return attorney;
         } catch (DataAccessException | JsonProcessingException | SQLException e) {
             throw new RepositoryException("Failed to insert attorney", e);
         }
     }
 
-    public AttorneyDetails updateAttorneys(AttorneyDetails attorney) throws RepositoryException {
+    public void update(AttorneyDetails attorney) throws RepositoryException {
         try {
             logger.info("Updating attorney: {}", attorney.getAttorneyId());
             
@@ -114,8 +112,6 @@ public class AttorneysRepository {
                     attorney.getLastName(),
                     jsonObject,
                     attorney.getAttorneyId());
-
-            return attorney;
         } catch (DataAccessException | JsonProcessingException | SQLException e) {
             throw new RepositoryException("Failed to query for attorney", e);
         }

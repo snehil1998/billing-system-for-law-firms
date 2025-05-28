@@ -2,6 +2,7 @@ package com.perfexiolegal.billingsystem.Repository;
 
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
 import com.perfexiolegal.billingsystem.Model.CaseDetails;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class CasesRepository {
+public class CasesRepository implements ICasesRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(CasesRepository.class);
     private static final String TABLE_NAME = "ebdb.public.cases";
@@ -32,7 +33,7 @@ public class CasesRepository {
             .amount(resultSet.getFloat("amount"))
             .build();
 
-    public Optional<List<CaseDetails>> getAllCases() throws RepositoryException {
+    public Optional<List<CaseDetails>> getAll() throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME;
             logger.debug("Retrieving all cases");
@@ -44,7 +45,7 @@ public class CasesRepository {
         }
     }
 
-    public Optional<CaseDetails> getCaseById(String caseID) throws RepositoryException {
+    public Optional<CaseDetails> getById(String caseID) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE case_id = ?";
             logger.debug("Retrieving case with ID: {}", caseID);
@@ -56,7 +57,7 @@ public class CasesRepository {
         }
     }
 
-    public CaseDetails postCases(CaseDetails postCase) throws RepositoryException {
+    public void create(CaseDetails postCase) throws RepositoryException {
         try {
             String sql = "INSERT INTO " + TABLE_NAME + 
                     " (case_id, case_name, client_id, currency_code, disbursements_amount, services_amount, amount) " +
@@ -70,14 +71,13 @@ public class CasesRepository {
                     postCase.getDisbursementsAmount(),
                     postCase.getServicesAmount(),
                     postCase.getAmount());
-            return postCase;
         } catch (DataAccessException e) {
             logger.error("Error creating case: {}", e.getMessage());
             throw new RepositoryException("Failed to create case in database", e);
         }
     }
 
-    public CaseDetails updateCases(CaseDetails updatedCase) throws RepositoryException {
+    public void update(CaseDetails updatedCase) throws RepositoryException {
         try {
             String sql = "UPDATE " + TABLE_NAME + 
                     " SET case_name = ?, client_id = ?, currency_code = ?, " +
@@ -92,7 +92,6 @@ public class CasesRepository {
                     updatedCase.getServicesAmount(),
                     updatedCase.getAmount(),
                     updatedCase.getCaseId());
-            return updatedCase;
         } catch (DataAccessException e) {
             logger.error("Error updating case: {}", e.getMessage());
             throw new RepositoryException("Failed to update case in database", e);

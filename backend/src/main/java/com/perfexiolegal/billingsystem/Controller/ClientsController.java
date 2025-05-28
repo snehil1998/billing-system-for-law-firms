@@ -3,8 +3,7 @@ package com.perfexiolegal.billingsystem.Controller;
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.ApiResponse;
 import com.perfexiolegal.billingsystem.Model.ClientDetails;
-import com.perfexiolegal.billingsystem.Service.ClientsService;
-import com.perfexiolegal.billingsystem.Transformer.ClientsTransformer;
+import com.perfexiolegal.billingsystem.Service.IClientsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,26 +20,23 @@ import java.util.Optional;
  * Provides endpoints for managing client data.
  */
 @RestController
-@RequestMapping("/backend")
+@RequestMapping("/api/clients")
 public class ClientsController {
 
     private static final Logger logger = LoggerFactory.getLogger(ClientsController.class);
 
     @Autowired
-    private ClientsService clientsService;
-
-    @Autowired
-    private ClientsTransformer clientsTransformer;
+    private IClientsService clientsService;
 
     /**
      * Retrieves all clients.
      * @return ResponseEntity containing a list of all clients
      */
-    @GetMapping(value = "/clients", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> getAllClients() {
+    @GetMapping
+    public ResponseEntity<ApiResponse> getAll() {
         try {
             logger.debug("Retrieving all clients");
-            Optional<List<ClientDetails>> clients = clientsService.getAllClients();
+            Optional<List<ClientDetails>> clients = clientsService.getAll();
             
             if (clients.isEmpty() || clients.get().isEmpty()) {
                 return ResponseEntity.ok(ApiResponse.builder()
@@ -70,11 +66,11 @@ public class ClientsController {
      * @param clientID The ID of the client to retrieve
      * @return ResponseEntity containing the requested client
      */
-    @GetMapping(value = "/clients/{clientID}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> getClientById(@PathVariable("clientID") String clientID) {
+    @GetMapping(value = "/id={clientID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse> getById(@PathVariable("clientID") String clientID) {
         try {
             logger.debug("Retrieving client with ID: {}", clientID);
-            Optional<ClientDetails> client = clientsService.getClientById(clientID);
+            Optional<ClientDetails> client = clientsService.getById(clientID);
             
             if (client.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -104,17 +100,17 @@ public class ClientsController {
      * @param client The client data to create
      * @return ResponseEntity containing the created client
      */
-    @PostMapping(value = "/clients", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     public ResponseEntity<ApiResponse> createClient(@RequestBody ClientDetails client) {
         try {
             logger.debug("Creating new client with ID: {}", client.getClientId());
-            ClientDetails createdClient = clientsService.postClients(client);
+            clientsService.create(client);
             
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.builder()
                             .message("Client created successfully")
                             .success(true)
-                            .data(createdClient)
+                            .data(client)
                             .build());
         } catch (ServiceException e) {
             logger.error("Error creating client: {}", e.getMessage());
@@ -132,18 +128,18 @@ public class ClientsController {
      * @param client The updated client data
      * @return ResponseEntity containing the updated client
      */
-    @PutMapping(value = "/clients/{clientID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/id={clientID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> updateClient(
             @PathVariable("clientID") String clientID,
             @RequestBody ClientDetails client) {
         try {
             logger.debug("Updating client with ID: {}", clientID);
-            ClientDetails updatedClient = clientsService.updateClient(client);
+            clientsService.update(client);
             
             return ResponseEntity.ok(ApiResponse.builder()
                     .message("Client updated successfully")
                     .success(true)
-                    .data(updatedClient)
+                    .data(client)
                     .build());
         } catch (ServiceException e) {
             logger.error("Error updating client with ID {}: {}", clientID, e.getMessage());
@@ -160,7 +156,7 @@ public class ClientsController {
      * @param clientID The ID of the client to delete
      * @return ResponseEntity indicating the result of the deletion
      */
-    @DeleteMapping(value = "/clients={clientID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/id={clientID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> deleteClient(@PathVariable("clientID") String clientID) {
         try {
             logger.debug("Deleting client with ID: {}", clientID);
@@ -195,7 +191,7 @@ public class ClientsController {
      * @param servicesAmount The amount to add to services
      * @return ResponseEntity containing the updated client
      */
-    @PutMapping(value = "/clients/{clientID}/amounts", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/amounts/id={clientID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> updateAmounts(
             @PathVariable("clientID") String clientID,
             @RequestParam double disbursementsAmount,

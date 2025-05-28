@@ -20,7 +20,7 @@ import java.util.Optional;
  * Provides endpoints for managing service data.
  */
 @RestController
-@RequestMapping("/backend")
+@RequestMapping("/api/services")
 public class ServicesController {
 
     private static final Logger logger = LoggerFactory.getLogger(ServicesController.class);
@@ -32,11 +32,11 @@ public class ServicesController {
      * Retrieves all services.
      * @return ResponseEntity containing a list of all services
      */
-    @GetMapping(value = "/services", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> getAllServices() {
+    @GetMapping
+    public ResponseEntity<ApiResponse> getAll() {
         try {
             logger.debug("Retrieving all services");
-            Optional<List<ServiceDetails>> listOfServices = servicesService.getAllServices();
+            Optional<List<ServiceDetails>> listOfServices = servicesService.getAll();
             List<ServiceDetails> services = listOfServices.get();
             
             if (services.isEmpty()) {
@@ -67,11 +67,11 @@ public class ServicesController {
      * @param caseID The ID of the case
      * @return ResponseEntity containing a list of services for the case
      */
-    @GetMapping(value = "/services/case={caseID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/case={caseID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> getServicesForCase(@PathVariable("caseID") String caseID) {
         try {
             logger.debug("Retrieving services for case with ID: {}", caseID);
-            Optional<List<ServiceDetails>> listOfServices = servicesService.getServicesForCase(caseID);
+            Optional<List<ServiceDetails>> listOfServices = servicesService.getByCaseId(caseID);
             List<ServiceDetails> services = listOfServices.get();
             
             if (services.isEmpty()) {
@@ -102,11 +102,11 @@ public class ServicesController {
      * @param serviceID The ID of the service to retrieve
      * @return ResponseEntity containing the requested service
      */
-    @GetMapping(value = "/services={serviceID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/id={serviceID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> getServicesFromId(@PathVariable("serviceID") String serviceID) {
         try {
             logger.debug("Retrieving service with ID: {}", serviceID);
-            Optional<ServiceDetails> retrievedService = servicesService.getServiceFromId(serviceID);
+            Optional<ServiceDetails> retrievedService = servicesService.getById(serviceID);
             
             if (retrievedService.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -136,11 +136,11 @@ public class ServicesController {
      * @param clientID The ID of the client
      * @return ResponseEntity containing a list of services for the client
      */
-    @GetMapping(value = "/services/client={clientID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/client={clientID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> getServicesForClient(@PathVariable("clientID") String clientID) {
         try {
             logger.debug("Retrieving services for client with ID: {}", clientID);
-            Optional<List<ServiceDetails>> listOfServices = servicesService.getServicesForClient(clientID);
+            Optional<List<ServiceDetails>> listOfServices = servicesService.getByClientId(clientID);
             List<ServiceDetails> services = listOfServices.get();
             
             if (services.isEmpty()) {
@@ -171,11 +171,11 @@ public class ServicesController {
      * @param serviceDetails The service data to create
      * @return ResponseEntity containing the created service
      */
-    @PostMapping(value = "/services", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> createNewService(@RequestBody ServiceDetails serviceDetails) {
+    @PostMapping
+    public ResponseEntity<ApiResponse> create(@RequestBody ServiceDetails serviceDetails) {
         try {
             logger.debug("Creating service with name: {}", serviceDetails.getService());
-            servicesService.postServices(serviceDetails);
+            servicesService.create(serviceDetails);
             
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.builder()
@@ -199,13 +199,13 @@ public class ServicesController {
      * @param serviceDetails The updated service data
      * @return ResponseEntity containing the updated service
      */
-    @PutMapping(value = "/services={serviceID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/id={serviceID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> updateService(
             @PathVariable("serviceID") String serviceID,
             @RequestBody ServiceDetails serviceDetails) {
         try {
             logger.debug("Updating service with ID: {}", serviceID);
-            servicesService.updateServices(serviceDetails);
+            servicesService.update(serviceDetails);
             
             return ResponseEntity.ok(ApiResponse.builder()
                     .message("Service updated successfully")
@@ -227,7 +227,7 @@ public class ServicesController {
      * @param serviceID The ID of the service to delete
      * @return ResponseEntity indicating the result of the deletion
      */
-    @DeleteMapping(value = "/services={serviceID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/id={serviceID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> deleteService(@PathVariable("serviceID") String serviceID) {
         try {
             logger.debug("Deleting service with ID: {}", serviceID);
@@ -260,11 +260,11 @@ public class ServicesController {
      * @param caseID The ID of the case
      * @return ResponseEntity indicating the result of the deletion
      */
-    @DeleteMapping(value = "/services/case={caseID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/case={caseID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> deleteByCase(@PathVariable("caseID") String caseID) {
         try {
             logger.debug("Deleting services for case with ID: {}", caseID);
-            int result = servicesService.deleteByCase(caseID);
+            int result = servicesService.deleteByCaseId(caseID);
             
             if (result == 0) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)

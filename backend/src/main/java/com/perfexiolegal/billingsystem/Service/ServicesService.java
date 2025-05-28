@@ -3,6 +3,7 @@ package com.perfexiolegal.billingsystem.Service;
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.ServiceDetails;
+import com.perfexiolegal.billingsystem.Repository.IServicesRepository;
 import com.perfexiolegal.billingsystem.Repository.ServicesRepository;
 import com.perfexiolegal.billingsystem.Transformer.ServicesTransformer;
 
@@ -14,71 +15,71 @@ import java.util.List;
 import java.util.Optional;
 
 @org.springframework.stereotype.Service
-public class ServicesService {
+public class ServicesService implements IServicesService {
 
   @Autowired
-  ServicesRepository servicesRepository;
+  private IServicesRepository servicesRepository;
 
   @Autowired
-  CasesService casesService;
+  private ICasesService casesService;
 
   @Autowired
-  ClientsService clientsService;
+  private IClientsService clientsService;
 
   @Autowired
-  ServicesTransformer servicesTransformer;
+  private ServicesTransformer servicesTransformer;
 
-  final Logger logger = LoggerFactory.getLogger(ServicesRepository.class);
+  private static final Logger logger = LoggerFactory.getLogger(ServicesRepository.class);
 
-  public Optional<List<ServiceDetails>> getAllServices() throws ServiceException {
+  public Optional<List<ServiceDetails>> getAll() throws ServiceException {
     try {
-      return servicesRepository.getAllServices();
+      return servicesRepository.getAll();
     } catch (RepositoryException e) {
       throw new ServiceException("unable to retrieve all services", e);
     }
   }
 
-  public Optional<List<ServiceDetails>> getServicesForCase(String caseID) throws ServiceException {
+  public Optional<List<ServiceDetails>> getByCaseId(String caseID) throws ServiceException {
     try {
-      return servicesRepository.getServicesForCase(caseID);
+      return servicesRepository.getByCaseId(caseID);
     } catch (RepositoryException e) {
       throw new ServiceException("unable to retrieve all services for case", e);
     }
   }
 
-  public Optional<List<ServiceDetails>> getServicesForClient(String clientID) throws ServiceException {
+  public Optional<List<ServiceDetails>> getByClientId(String clientID) throws ServiceException {
     try {
-      return servicesRepository.getServicesForClient(clientID);
+      return servicesRepository.getByClientId(clientID);
     } catch (RepositoryException e) {
       throw new ServiceException("unable to retrieve all services for client", e);
     }
   }
 
-  public Optional<ServiceDetails> getServiceFromId(String serviceID) throws ServiceException {
+  public Optional<ServiceDetails> getById(String serviceID) throws ServiceException {
     try {
-      return servicesRepository.getServiceFromId(serviceID);
+      return servicesRepository.getById(serviceID);
     } catch (RepositoryException e) {
       throw new ServiceException("unable to retrieve service", e);
     }
   }
 
-  public ServiceDetails postServices(ServiceDetails serviceDetails) throws ServiceException {
+  public void create(ServiceDetails serviceDetails) throws ServiceException {
     try {
       ServiceDetails service = servicesTransformer.populateAmount(serviceDetails);
       casesService.updateAmounts(service.getCaseId(), 0, service.getAmount());
       clientsService.updateAmounts(service.getClientId(), 0, service.getAmount());
-      return servicesRepository.postServices(service);
+      servicesRepository.create(service);
     } catch (RepositoryException e) {
       throw new ServiceException("unable to post service", e);
     }
   }
 
-  public ServiceDetails updateServices(ServiceDetails serviceDetails) throws ServiceException {
+  public void update(ServiceDetails serviceDetails) throws ServiceException {
     try {
       logger.info("updating services through service");
       validateServiceExists(serviceDetails.getServiceId());
       ServiceDetails service = servicesTransformer.populateAmount(serviceDetails);
-      return servicesRepository.updateServices(service);
+      servicesRepository.update(service);
     } catch (RepositoryException e) {
       throw new ServiceException("unable to update service", e);
     }
@@ -86,7 +87,7 @@ public class ServicesService {
 
   public int deleteById(String serviceID) throws ServiceException {
     try {
-      ServiceDetails service = getServiceFromId(serviceID).get();
+      ServiceDetails service = getById(serviceID).get();
       casesService.updateAmounts(service.getCaseId(), 0, -service.getAmount());
       clientsService.updateAmounts(service.getClientId(), 0, -service.getAmount());
       return servicesRepository.deleteById(serviceID);
@@ -95,16 +96,16 @@ public class ServicesService {
     }
   }
 
-  public int deleteByCase(String caseID) throws ServiceException {
+  public int deleteByCaseId(String caseID) throws ServiceException {
     try {
-      return servicesRepository.deleteByCase(caseID);
+      return servicesRepository.deleteByCaseId(caseID);
     } catch (RepositoryException e) {
       throw new ServiceException("unable to delete all services", e);
     }
   }
 
   private void validateServiceExists(String serviceID) throws ServiceException {
-    Optional<ServiceDetails> service = getServiceFromId(serviceID);
+    Optional<ServiceDetails> service = getById(serviceID);
     if (service.isEmpty()) {
         throw new ServiceException("Service not found with ID: " + serviceID);
     }

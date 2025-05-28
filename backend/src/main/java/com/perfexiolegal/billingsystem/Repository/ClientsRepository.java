@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class ClientsRepository {
+public class ClientsRepository implements IClientsRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ClientsRepository.class);
     private static final String TABLE_NAME = "ebdb.public.clients";
@@ -31,7 +31,7 @@ public class ClientsRepository {
             .amount(resultSet.getDouble("amount"))
             .build();
 
-    public Optional<List<ClientDetails>> getAllClients() throws RepositoryException {
+    public Optional<List<ClientDetails>> getAll() throws RepositoryException {
         try {
             logger.debug("Retrieving all clients from database");
             String sql = String.format("SELECT * FROM %s", TABLE_NAME);
@@ -43,7 +43,7 @@ public class ClientsRepository {
         }
     }
 
-    public Optional<ClientDetails> getClientsById(String clientID) throws RepositoryException {
+    public Optional<ClientDetails> getById(String clientID) throws RepositoryException {
         try {
             logger.debug("Retrieving client with ID: {}", clientID);
             String sql = String.format("SELECT * FROM %s WHERE client_id = ?", TABLE_NAME);
@@ -55,7 +55,7 @@ public class ClientsRepository {
         }
     }
 
-    public ClientDetails postClients(ClientDetails client) throws RepositoryException {
+    public void create(ClientDetails client) throws RepositoryException {
         try {
             logger.debug("Creating new client with ID: {}", client.getClientId());
             String sql = String.format(
@@ -71,16 +71,14 @@ public class ClientsRepository {
                 client.getDisbursementsAmount(),
                 client.getServicesAmount(),
                 client.getAmount()
-            );
-            
-            return client;
+            );            
         } catch (DataAccessException e) {
             logger.error("Error creating client: {}", e.getMessage());
             throw new RepositoryException("Failed to create client in database", e);
         }
     }
 
-    public ClientDetails updateClients(ClientDetails client) throws RepositoryException {
+    public void update(ClientDetails client) throws RepositoryException {
         try {
             logger.debug("Updating client with ID: {}", client.getClientId());
             String sql = String.format(
@@ -98,7 +96,6 @@ public class ClientsRepository {
                 client.getClientId()
             );
             
-            return client;
         } catch (DataAccessException e) {
             logger.error("Error updating client: {}", e.getMessage());
             throw new RepositoryException("Failed to update client in database", e);

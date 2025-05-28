@@ -3,8 +3,7 @@ package com.perfexiolegal.billingsystem.Controller;
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.ApiResponse;
 import com.perfexiolegal.billingsystem.Model.CaseDetails;
-import com.perfexiolegal.billingsystem.Service.CasesService;
-import com.perfexiolegal.billingsystem.Transformer.CasesTransformer;
+import com.perfexiolegal.billingsystem.Service.ICasesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,26 +20,23 @@ import java.util.Optional;
  * Provides endpoints for managing case data.
  */
 @RestController
-@RequestMapping("/backend")
+@RequestMapping("/api/cases")
 public class CasesController {
 
     private static final Logger logger = LoggerFactory.getLogger(CasesController.class);
 
     @Autowired
-    private CasesService casesService;
-
-    @Autowired
-    private CasesTransformer casesTransformer;
+    private ICasesService casesService;
 
     /**
      * Retrieves all cases.
      * @return ResponseEntity containing a list of all cases
      */
-    @GetMapping(value = "/cases", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> getAllCases() {
+    @GetMapping
+    public ResponseEntity<ApiResponse> getAll() {
         try {
             logger.debug("Retrieving all cases");
-            Optional<List<CaseDetails>> cases = casesService.getAllCases();
+            Optional<List<CaseDetails>> cases = casesService.getAll();
             
             if (cases.isEmpty() || cases.get().isEmpty()) {
                 return ResponseEntity.ok(ApiResponse.builder()
@@ -70,11 +66,11 @@ public class CasesController {
      * @param caseID The ID of the case to retrieve
      * @return ResponseEntity containing the requested case
      */
-    @GetMapping(value = "/cases={caseID}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> getCaseById(@PathVariable("caseID") String caseID) {
+    @GetMapping(value = "/id={caseID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse> getById(@PathVariable("caseID") String caseID) {
         try {
             logger.debug("Retrieving case with ID: {}", caseID);
-            Optional<CaseDetails> case_ = casesService.getCaseById(caseID);
+            Optional<CaseDetails> case_ = casesService.getById(caseID);
             
             if (case_.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -104,17 +100,17 @@ public class CasesController {
      * @param case_ The case data to create
      * @return ResponseEntity containing the created case
      */
-    @PostMapping(value = "/cases", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> createCase(@RequestBody CaseDetails case_) {
+    @PostMapping
+    public ResponseEntity<ApiResponse> create(@RequestBody CaseDetails caseDetails) {
         try {
-            logger.debug("Creating new case with ID: {}", case_.getCaseId());
-            CaseDetails createdCase = casesService.postCases(case_);
+            logger.debug("Creating new case with ID: {}", caseDetails.getCaseId());
+            casesService.create(caseDetails);
             
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.builder()
                             .message("Case created successfully")
                             .success(true)
-                            .data(createdCase)
+                            .data(caseDetails)
                             .build());
         } catch (ServiceException e) {
             logger.error("Error creating case: {}", e.getMessage());
@@ -132,18 +128,18 @@ public class CasesController {
      * @param case_ The updated case data
      * @return ResponseEntity containing the updated case
      */
-    @PutMapping(value = "/cases={caseID}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> updateCase(
+    @PutMapping(value = "/id={caseID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse> update(
             @PathVariable("caseID") String caseID,
-            @RequestBody CaseDetails case_) {
+            @RequestBody CaseDetails caseDetails) {
         try {
             logger.debug("Updating case with ID: {}", caseID);
-            CaseDetails updatedCase = casesService.updateCase(case_);
+            casesService.update(caseDetails);
             
             return ResponseEntity.ok(ApiResponse.builder()
                     .message("Case updated successfully")
                     .success(true)
-                    .data(updatedCase)
+                    .data(caseDetails)
                     .build());
         } catch (ServiceException e) {
             logger.error("Error updating case with ID {}: {}", caseID, e.getMessage());
@@ -160,8 +156,8 @@ public class CasesController {
      * @param caseID The ID of the case to delete
      * @return ResponseEntity indicating the result of the deletion
      */
-    @DeleteMapping(value = "/cases={caseID}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> deleteCase(@PathVariable("caseID") String caseID) {
+    @DeleteMapping(value = "/id={caseID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse> deleteById(@PathVariable("caseID") String caseID) {
         try {
             logger.debug("Deleting case with ID: {}", caseID);
             int result = casesService.deleteById(caseID);
@@ -195,7 +191,7 @@ public class CasesController {
      * @param servicesAmount The amount to add to services
      * @return ResponseEntity containing the updated case
      */
-    @PutMapping(value = "/cases={caseID}/amounts", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/amounts/id={caseID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> updateAmounts(
             @PathVariable("caseID") String caseID,
             @RequestParam double disbursementsAmount,

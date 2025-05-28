@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class ServicesTransformer {
 
   @Autowired
-  AttorneysService attorneysService;
+  private AttorneysService attorneysService;
 
   final Logger logger = LoggerFactory.getLogger(ServicesTransformer.class);
 
@@ -24,7 +24,7 @@ public class ServicesTransformer {
     service.getAttorneys().stream().forEach(attorneys -> {
       AttorneyDetails attorney = null;
       try {
-        attorney = attorneysService.getAttorneyById(attorneys.getId()).get();
+        attorney = attorneysService.getById(attorneys.getId()).get();
       } catch (ServiceException e) {
         logger.info("Cannot retrieve attorney with id: {}", attorneys.getId());
       }
