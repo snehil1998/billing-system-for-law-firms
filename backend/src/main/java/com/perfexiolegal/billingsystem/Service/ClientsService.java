@@ -2,63 +2,100 @@ package com.perfexiolegal.billingsystem.Service;
 
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
-import com.perfexiolegal.billingsystem.Model.Clients;
-import com.perfexiolegal.billingsystem.Repository.ClientsRepository;
-import com.perfexiolegal.billingsystem.Repository.ServicesRepository;
+import com.perfexiolegal.billingsystem.Model.ClientDetails;
+import com.perfexiolegal.billingsystem.Repository.IClientsRepository;
+import com.perfexiolegal.billingsystem.Transformer.ClientsTransformer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-@org.springframework.stereotype.Service
-public class ClientsService {
+@Service
+public class ClientsService implements IClientsService {
 
-  @Autowired
-  ClientsRepository clientsRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ClientsService.class);
 
-  final Logger logger = LoggerFactory.getLogger(ServicesRepository.class);
+    @Autowired
+    private IClientsRepository clientsRepository;
+    @Autowired
+    private ClientsTransformer clientsTransformer;
 
-  public Optional<List<Clients>> getAllClients() throws ServiceException {
-    try {
-      return clientsRepository.getAllClients();
-    } catch (RepositoryException e) {
-      throw new ServiceException("unable to retrieve all clients", e);
+    public Optional<List<ClientDetails>> getAll() throws ServiceException {
+        try {
+            logger.debug("Retrieving all clients");
+            return clientsRepository.getAll();
+        } catch (RepositoryException e) {
+            logger.error("Error retrieving all clients: {}", e.getMessage());
+            throw new ServiceException("Failed to retrieve clients", e);
+        }
     }
-  }
 
-  public Optional<Clients> getClientById(String clientID) throws ServiceException {
-    try {
-      return clientsRepository.getClientsById(clientID);
-    } catch (RepositoryException e) {
-      throw new ServiceException("unable to retrieve all clients", e);
+    public Optional<ClientDetails> getById(String clientID) throws ServiceException {
+        if (!StringUtils.hasText(clientID)) {
+            throw new ServiceException("Client ID cannot be empty");
+        }
+
+        try {
+            logger.debug("Retrieving client with ID: {}", clientID);
+            return clientsRepository.getById(clientID);
+        } catch (RepositoryException e) {
+            logger.error("Error retrieving client with ID {}: {}", clientID, e.getMessage());
+            throw new ServiceException("Failed to retrieve client", e);
+        }
     }
-  }
 
-  public Clients postClients(Clients client) throws ServiceException {
-    try {
-      return clientsRepository.postClients(client);
-    } catch (RepositoryException e) {
-      throw new ServiceException("unable to post client", e);
+    public void create(ClientDetails client) throws ServiceException {
+        try {
+            logger.debug("Creating new client with ID: {}", client.getClientId());
+            clientsRepository.create(client);
+        } catch (RepositoryException e) {
+            logger.error("Error creating client: {}", e.getMessage());
+            throw new ServiceException("Failed to create client", e);
+        }
     }
-  }
 
-  public Clients updateClient(Clients client) throws ServiceException {
-    try {
-      return clientsRepository.updateClients(client);
-    } catch (RepositoryException e) {
-      throw new ServiceException("unable to update client", e);
+    public void update(ClientDetails client) throws ServiceException {
+        try {
+            logger.debug("Updating client with ID: {}", client.getClientId());
+            clientsRepository.update(client);
+        } catch (RepositoryException e) {
+            logger.error("Error updating client: {}", e.getMessage());
+            throw new ServiceException("Failed to update client", e);
+        }
     }
-  }
 
-  public int deleteById(String clientID) throws ServiceException {
-    try {
-      return clientsRepository.deleteById(clientID);
-    } catch (RepositoryException e) {
-      throw new ServiceException("unable to delete client", e);
+    public int deleteById(String clientID) throws ServiceException {
+        if (!StringUtils.hasText(clientID)) {
+            throw new ServiceException("Client ID cannot be empty");
+        }
+
+        try {
+            logger.debug("Deleting client with ID: {}", clientID);
+            return clientsRepository.deleteById(clientID);
+        } catch (RepositoryException e) {
+            logger.error("Error deleting client: {}", e.getMessage());
+            throw new ServiceException("Failed to delete client", e);
+        }
     }
-  }
 
+    public ClientDetails updateAmounts(String clientID, double disbursementsAmount, double servicesAmount) 
+            throws ServiceException {
+        if (!StringUtils.hasText(clientID)) {
+            throw new ServiceException("Client ID cannot be empty");
+        }
+
+        Optional<ClientDetails> existingClient = getById(clientID);
+        if (existingClient.isEmpty()) {
+            throw new ServiceException("Client not found with ID: " + clientID);
+        }
+
+        ClientDetails updatedClient = clientsTransformer.updateAmount(existingClient.get(), disbursementsAmount, servicesAmount);
+        update(updatedClient);
+        return updatedClient;
+    }
 }

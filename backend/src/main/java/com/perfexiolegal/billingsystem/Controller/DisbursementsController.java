@@ -2,210 +2,210 @@ package com.perfexiolegal.billingsystem.Controller;
 
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.ApiResponse;
-import com.perfexiolegal.billingsystem.Model.Disbursements;
-import com.perfexiolegal.billingsystem.Model.DisbursementsWithoutId;
-import com.perfexiolegal.billingsystem.Service.DisbursementsService;
-import com.perfexiolegal.billingsystem.Transformer.DisbursementsTransformer;
+import com.perfexiolegal.billingsystem.Model.DisbursementDetails;
+import com.perfexiolegal.billingsystem.Service.IDisbursementsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-@org.springframework.stereotype.Controller
-@RequestMapping("/backend")
+/**
+ * Controller class for handling disbursement-related HTTP requests.
+ * Provides endpoints for managing disbursement data.
+ */
+@RestController
+@RequestMapping("/api/disbursements")
 public class DisbursementsController {
 
-  final Logger logger = LoggerFactory.getLogger(DisbursementsController.class);
+    private static final Logger logger = LoggerFactory.getLogger(DisbursementsController.class);
 
-  @Autowired
-  DisbursementsService disbursementsService;
+    @Autowired
+    private IDisbursementsService disbursementsService;
 
-  @Autowired
-  DisbursementsTransformer disbursementsTransformer;
-
-  @GetMapping(value = "/disbursements")
-  public ResponseEntity<ApiResponse> getAllDisbursements() {
-    try {
-      logger.info("retrieving all disbursements from controller");
-      Optional<List<Disbursements>> listOfDisbursements = disbursementsService.getAllDisbursements();
-      List<Disbursements> disbursements = listOfDisbursements.get();
-      if (disbursements.isEmpty()) {
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("No disbursements found")
-            .success(true)
-            .data(disbursements)
-            .build(), HttpStatus.OK);
-      }
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Disbursements retrieved successfully")
-          .success(true)
-          .data(disbursements)
-          .build(), HttpStatus.OK);
-    } catch (ServiceException e) {
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Internal server error")
-          .success(false)
-          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+    /**
+     * Retrieves all disbursements.
+     * @return ResponseEntity containing a list of all disbursements
+     */
+    @GetMapping
+    public ResponseEntity<ApiResponse> getAll() {
+        try {
+            logger.debug("Retrieving all disbursements");
+            Optional<List<DisbursementDetails>> disbursements = disbursementsService.getAll();
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .success(true)
+                    .data(disbursements.orElse(List.of()))
+                    .message("Disbursements retrieved successfully")
+                    .build());
+        } catch (ServiceException e) {
+            logger.error("Error retrieving all disbursements: {}", e.getMessage());
+            return ResponseEntity.status(500).body(ApiResponse.builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build());
+        }
     }
-  }
 
-  @GetMapping(value = "/disbursements={disbursementID}")
-  public ResponseEntity<ApiResponse> getDisbursementForId(@PathVariable("disbursementID") String disbursementID) {
-    try {
-      logger.info("retrieving disbursement from controller with disbursementID: " + disbursementID);
-      Optional<Disbursements> retrievedDisbursement = disbursementsService.getDisbursementsById(disbursementID);
-      if (retrievedDisbursement.isEmpty()) {
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("No disbursement found with ID: " + disbursementID)
-            .success(true)
-            .build(), HttpStatus.OK);
-      }
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Disbursement retrieved successfully")
-          .success(true)
-          .data(retrievedDisbursement.get())
-          .build(), HttpStatus.OK);
-    } catch (ServiceException e) {
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Internal server error")
-          .success(false)
-          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+    /**
+     * Retrieves a specific disbursement by ID.
+     * @param id The ID of the disbursement to retrieve
+     * @return ResponseEntity containing the requested disbursement
+     */
+    @GetMapping("/id={id}")
+    public ResponseEntity<ApiResponse> getById(@PathVariable String id) {
+        try {
+            logger.debug("Retrieving disbursement with ID: {}", id);
+            Optional<DisbursementDetails> disbursement = disbursementsService.getById(id);
+            if (disbursement.isPresent()) {
+                return ResponseEntity.ok(ApiResponse.builder()
+                        .success(true)
+                        .data(disbursement.get())
+                        .message("Disbursement retrieved successfully")
+                        .build());
+            } else {
+                return ResponseEntity.status(404).body(ApiResponse.builder()
+                        .success(false)
+                        .message("Disbursement not found")
+                        .build());
+            }
+        } catch (ServiceException e) {
+            logger.error("Error retrieving disbursement with ID {}: {}", id, e.getMessage());
+            return ResponseEntity.status(500).body(ApiResponse.builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build());
+        }
     }
-  }
 
-  @GetMapping(value = "/disbursements/case={caseID}")
-  public ResponseEntity<ApiResponse> getDisbursementsForCase(@PathVariable("caseID") String caseID) {
-    try {
-      logger.info("retrieving disbursement from controller with caseID: " + caseID);
-      Optional<List<Disbursements>> listOfDisbursements = disbursementsService.getDisbursementsByCaseId(caseID);
-      List<Disbursements> disbursements = listOfDisbursements.get();
-      if (disbursements.isEmpty()) {
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("No disbursements found for case: " + caseID)
-            .success(true)
-            .data(disbursements)
-            .build(), HttpStatus.OK);
-      }
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Disbursements retrieved successfully")
-          .success(true)
-          .data(disbursements)
-          .build(), HttpStatus.OK);
-    } catch (ServiceException e) {
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Internal server error")
-          .success(false)
-          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+    /**
+     * Retrieves all disbursements for a specific case.
+     * @param caseId The ID of the case
+     * @return ResponseEntity containing a list of disbursements for the case
+     */
+    @GetMapping("/case={caseId}")
+    public ResponseEntity<ApiResponse> getByCaseId(@PathVariable String caseId) {
+        try {
+            logger.debug("Retrieving disbursements for case with ID: {}", caseId);
+            Optional<List<DisbursementDetails>> disbursements = disbursementsService.getByCaseId(caseId);
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .success(true)
+                    .data(disbursements.orElse(List.of()))
+                    .message("Disbursements retrieved successfully")
+                    .build());
+        } catch (ServiceException e) {
+            logger.error("Error retrieving disbursements for case {}: {}", caseId, e.getMessage());
+            return ResponseEntity.status(500).body(ApiResponse.builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build());
+        }
     }
-  }
 
-  @GetMapping(value = "/disbursements/client={clientID}")
-  public ResponseEntity<ApiResponse> getDisbursementsForClient(@PathVariable("clientID") String clientID) {
-    try{
-      logger.info("retrieving disbursement from controller with clientID: " + clientID);
-      Optional<List<Disbursements>> listOfDisbursements = disbursementsService.getDisbursementsByClientId(clientID);
-      List<Disbursements> disbursements = listOfDisbursements.get();
-      if (disbursements.isEmpty()) {
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("No disbursements found for client: " + clientID)
-            .success(true)
-            .data(disbursements)
-            .build(), HttpStatus.OK);
-      }
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Disbursements retrieved successfully")
-          .success(true)
-          .data(disbursements)
-          .build(), HttpStatus.OK);
-    } catch (ServiceException e) {
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Internal server error")
-          .success(false)
-          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+    /**
+     * Retrieves all disbursements for a specific client.
+     * @param clientId The ID of the client
+     * @return ResponseEntity containing a list of disbursements for the client
+     */
+    @GetMapping("/client={clientId}")
+    public ResponseEntity<ApiResponse> getByClientId(@PathVariable String clientId) {
+        try {
+            logger.debug("Retrieving disbursements for client with ID: {}", clientId);
+            Optional<List<DisbursementDetails>> disbursements = disbursementsService.getByClientId(clientId);
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .success(true)
+                    .data(disbursements.orElse(List.of()))
+                    .message("Disbursements retrieved successfully")
+                    .build());
+        } catch (ServiceException e) {
+            logger.error("Error retrieving disbursements for client {}: {}", clientId, e.getMessage());
+            return ResponseEntity.status(500).body(ApiResponse.builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build());
+        }
     }
-  }
 
-  @PostMapping(value = "/disbursements", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<ApiResponse> createNewService(@RequestBody DisbursementsWithoutId disbursementJSON) {
-    try {
-      logger.info("Creating disbursement with name: " + disbursementJSON.getDisbursement());
-      Disbursements disbursement = disbursementsTransformer.postTransformer(disbursementJSON);
-      disbursementsService.postDisbursements(disbursement);
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Disbursement was created successfully.")
-          .success(true)
-          .data(disbursement)
-          .build(), HttpStatus.CREATED);
-    } catch (ServiceException e) {
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Internal server error")
-          .success(false)
-          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+    /**
+     * Creates a new disbursement.
+     * @param disbursement The disbursement data to create
+     * @return ResponseEntity indicating the result of the creation
+     */
+    @PostMapping
+    public ResponseEntity<ApiResponse> create(@RequestBody DisbursementDetails disbursement) {
+        try {
+            logger.debug("Creating new disbursement");
+            disbursementsService.create(disbursement);
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .success(true)
+                    .message("Disbursement created successfully")
+                    .build());
+        } catch (ServiceException e) {
+            logger.error("Error creating disbursement: {}", e.getMessage());
+            return ResponseEntity.status(500).body(ApiResponse.builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build());
+        }
     }
-  }
 
-  @PutMapping(value = "/disbursements={disbursementID}")
-  public ResponseEntity<ApiResponse> updateService(@PathVariable("disbursementID") String disbursementID,
-                                              @RequestBody DisbursementsWithoutId disbursementJSONWithoutID) {
-    try {
-      logger.info("check existence of disbursement with disbursement ID: " + disbursementID);
-      Optional<Disbursements> findDisbursement = disbursementsService.getDisbursementsById(disbursementID);
-      if (findDisbursement.isPresent()) {
-        logger.info("update disbursement with ID: " + findDisbursement);
-        Disbursements disbursement = disbursementsTransformer.update(disbursementJSONWithoutID, disbursementID);
-        disbursementsService.updateDisbursements(disbursement);
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("Disbursement was updated successfully.")
-            .success(true)
-            .data(disbursement)
-            .build(), HttpStatus.OK);
-      } else{
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("Cannot find disbursement with id=" + disbursementID)
-            .success(false)
-            .build(), HttpStatus.NOT_FOUND);
-      }
-    } catch (ServiceException e) {
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Internal server error")
-          .success(false)
-          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+    /**
+     * Updates an existing disbursement.
+     * @param id The ID of the disbursement to update
+     * @param disbursement The updated disbursement data
+     * @return ResponseEntity indicating the result of the update
+     */
+    @PutMapping("/id={id}")
+    public ResponseEntity<ApiResponse> update(@PathVariable String id, @RequestBody DisbursementDetails disbursement) {
+        try {
+            logger.debug("Updating disbursement with ID: {}", id);
+            DisbursementDetails updatedDisbursement = DisbursementDetails.builder()
+                    .disbursementId(id)
+                    .caseId(disbursement.getCaseId())
+                    .clientId(disbursement.getClientId())
+                    .disbursement(disbursement.getDisbursement())
+                    .date(disbursement.getDate())
+                    .currencyCode(disbursement.getCurrencyCode())
+                    .conversionRate(disbursement.getConversionRate())
+                    .inrAmount(disbursement.getInrAmount())
+                    .conversionAmount(disbursement.getConversionAmount())
+                    .build();
+            disbursementsService.update(updatedDisbursement);
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .success(true)
+                    .message("Disbursement updated successfully")
+                    .build());
+        } catch (ServiceException e) {
+            logger.error("Error updating disbursement: {}", e.getMessage());
+            return ResponseEntity.status(500).body(ApiResponse.builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build());
+        }
     }
-  }
 
-  @DeleteMapping(value = "/disbursements={disbursementID}")
-  public ResponseEntity<ApiResponse> deleteService(@PathVariable("disbursementID") String disbursementID) {
-    try {
-      logger.info("deleting disbursement with ID: " + disbursementID);
-      int result = disbursementsService.deleteDisbursementById(disbursementID);
-      if (result == 0) {
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("Cannot find disbursement with id= " + disbursementID)
-            .success(false)
-            .build(), HttpStatus.NOT_FOUND);
-      }
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Disbursement was deleted successfully.")
-          .success(true)
-          .build(), HttpStatus.OK);
-    } catch (ServiceException e) {
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Cannot delete disbursement.")
-          .success(false)
-          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+    /**
+     * Deletes a disbursement.
+     * @param id The ID of the disbursement to delete
+     * @return ResponseEntity indicating the result of the deletion
+     */
+    @DeleteMapping("/id={id}")
+    public ResponseEntity<ApiResponse> deleteById(@PathVariable String id) {
+        try {
+            logger.debug("Deleting disbursement with ID: {}", id);
+            disbursementsService.deleteById(id);
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .success(true)
+                    .message("Disbursement deleted successfully")
+                    .build());
+        } catch (ServiceException e) {
+            logger.error("Error deleting disbursement: {}", e.getMessage());
+            return ResponseEntity.status(500).body(ApiResponse.builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build());
+        }
     }
-  }
 }

@@ -1,34 +1,30 @@
 package com.perfexiolegal.billingsystem.Transformer;
 
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
-import com.perfexiolegal.billingsystem.Model.Attorneys;
+import com.perfexiolegal.billingsystem.Model.AttorneyDetails;
 import com.perfexiolegal.billingsystem.Model.ServicePricing;
-import com.perfexiolegal.billingsystem.Model.Services;
-import com.perfexiolegal.billingsystem.Model.ServicesWithoutId;
-import com.perfexiolegal.billingsystem.Model.ServicesWithoutIdAndAmount;
+import com.perfexiolegal.billingsystem.Model.ServiceDetails;
 import com.perfexiolegal.billingsystem.Service.AttorneysService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 @Component
 public class ServicesTransformer {
 
   @Autowired
-  AttorneysService attorneysService;
+  private AttorneysService attorneysService;
 
   final Logger logger = LoggerFactory.getLogger(ServicesTransformer.class);
 
-  public Services fromJsonWithoutIDAndAmount(ServicesWithoutIdAndAmount service)
+  public ServiceDetails populateAmount(ServiceDetails service)
       throws ServiceException {
     double[] amount = {0};
     service.getAttorneys().stream().forEach(attorneys -> {
-      Attorneys attorney = null;
+      AttorneyDetails attorney = null;
       try {
-        attorney = attorneysService.getAttorneyById(attorneys.getId()).get();
+        attorney = attorneysService.getById(attorneys.getId()).get();
       } catch (ServiceException e) {
         logger.info("Cannot retrieve attorney with id: {}", attorneys.getId());
       }
@@ -49,7 +45,7 @@ public class ServicesTransformer {
 
     });
 
-    return new Services(
+    return new ServiceDetails(
         service.getServiceId(),
         service.getCaseId(),
         service.getClientId(),
@@ -59,17 +55,4 @@ public class ServicesTransformer {
         amount[0]
     );
   }
-
-  public Services update(ServicesWithoutId service, String serviceID) {
-    return new Services(
-        serviceID,
-        service.getCaseId(),
-        service.getClientId(),
-        service.getService(),
-        service.getDate(),
-        service.getAttorneys(),
-        service.getAmount()
-    );
-  }
-
 }

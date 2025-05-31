@@ -1,33 +1,25 @@
 package com.perfexiolegal.billingsystem.Transformer;
 
-import com.perfexiolegal.billingsystem.Model.Cases;
-import com.perfexiolegal.billingsystem.Model.CasesWithoutId;
+import com.perfexiolegal.billingsystem.Model.CaseDetails;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CasesTransformer {
 
-  public Cases update(CasesWithoutId updatedCase, String caseID) {
-    return new Cases(
-        caseID,
-        updatedCase.getCaseName(),
-        updatedCase.getClientId(),
-        updatedCase.getCurrencyCode(),
-        updatedCase.getDisbursementsAmount(),
-        updatedCase.getServicesAmount(),
-        updatedCase.getAmount()
-    );
-  }
+    private static final Logger logger = LoggerFactory.getLogger(CasesTransformer.class);
 
-  public Cases updateAmount(Cases updatedCase, double disbursementsAmount, double servicesAmount) {
-    return new Cases(
-        updatedCase.getCaseId(),
-        updatedCase.getCaseName(),
-        updatedCase.getClientId(),
-        updatedCase.getCurrencyCode(),
-        updatedCase.getDisbursementsAmount() + disbursementsAmount,
-        updatedCase.getServicesAmount() + servicesAmount,
-        updatedCase.getAmount() + disbursementsAmount + servicesAmount
-    );
-  }
+    public CaseDetails updateAmount(CaseDetails updatedCase, double disbursementsAmount, double servicesAmount) {
+        logger.debug("Updating amounts for case with ID: {}", updatedCase.getCaseId());
+        return CaseDetails.builder()
+                .caseId(updatedCase.getCaseId())
+                .caseName(updatedCase.getCaseName())
+                .clientId(updatedCase.getClientId())
+                .currencyCode(updatedCase.getCurrencyCode())
+                .disbursementsAmount(updatedCase.getDisbursementsAmount() + disbursementsAmount)
+                .servicesAmount(updatedCase.getServicesAmount() + servicesAmount)
+                .amount(updatedCase.getAmount() + disbursementsAmount + servicesAmount)
+                .build();
+    }
 }

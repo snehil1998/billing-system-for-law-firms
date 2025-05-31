@@ -83,42 +83,42 @@ const apiService = {
 
 export const clientsApi = {
     getAll: () => apiService.get(API_ENDPOINTS.CLIENTS),
-    getById: (id) => apiService.get(`${API_ENDPOINTS.CLIENTS}=${id}`),
+    getById: (id) => apiService.get(`${API_ENDPOINTS.CLIENTS}/id=${id}`),
     create: (data) => apiService.post(API_ENDPOINTS.CLIENTS, data),
-    update: (id, data) => apiService.put(`${API_ENDPOINTS.CLIENTS}=${id}`, data),
-    delete: (id) => apiService.delete(`${API_ENDPOINTS.CLIENTS}=${id}`),
+    update: (id, data) => apiService.put(`${API_ENDPOINTS.CLIENTS}/id=${id}`, data),
+    delete: (id) => apiService.delete(`${API_ENDPOINTS.CLIENTS}/id=${id}`),
 };
 
 export const casesApi = {
     getAll: () => apiService.get(API_ENDPOINTS.CASES),  
-    getById: (id) => apiService.get(`${API_ENDPOINTS.CASES}=${id}`),
+    getById: (id) => apiService.get(`${API_ENDPOINTS.CASES}/id=${id}`),
     create: (data) => apiService.post(API_ENDPOINTS.CASES, data),
-    update: (id, data) => apiService.put(`${API_ENDPOINTS.CASES}=${id}`, data),
-    delete: (id) => apiService.delete(`${API_ENDPOINTS.CASES}=${id}`),
+    update: (id, data) => apiService.put(`${API_ENDPOINTS.CASES}/id=${id}`, data),
+    delete: (id) => apiService.delete(`${API_ENDPOINTS.CASES}/id=${id}`),
 };
 
 export const servicesApi = {
     getAll: () => apiService.get(API_ENDPOINTS.SERVICES),
     getByClientId: (clientId) => apiService.get(`${API_ENDPOINTS.SERVICES}/client=${clientId}`),
     create: (data) => apiService.post(API_ENDPOINTS.SERVICES, data),
-    update: (id, data) => apiService.put(`${API_ENDPOINTS.SERVICES}=${id}`, data),
-    delete: (id) => apiService.delete(`${API_ENDPOINTS.SERVICES}=${id}`),
+    update: (id, data) => apiService.put(`${API_ENDPOINTS.SERVICES}/id=${id}`, data),
+    delete: (id) => apiService.delete(`${API_ENDPOINTS.SERVICES}/id=${id}`),
 };
 
 export const disbursementsApi = {
     getAll: () => apiService.get(API_ENDPOINTS.DISBURSEMENTS),
     getByClientId: (clientId) => apiService.get(`${API_ENDPOINTS.DISBURSEMENTS}/client=${clientId}`),
     create: (data) => apiService.post(API_ENDPOINTS.DISBURSEMENTS, data),
-    update: (id, data) => apiService.put(`${API_ENDPOINTS.DISBURSEMENTS}=${id}`, data),
-    delete: (id) => apiService.delete(`${API_ENDPOINTS.DISBURSEMENTS}=${id}`),
+    update: (id, data) => apiService.put(`${API_ENDPOINTS.DISBURSEMENTS}/id=${id}`, data),
+    delete: (id) => apiService.delete(`${API_ENDPOINTS.DISBURSEMENTS}/id=${id}`),
 };
 
 export const attorneysApi = {
     getAll: () => apiService.get(API_ENDPOINTS.ATTORNEYS),
-    getById: (id) => apiService.get(`${API_ENDPOINTS.ATTORNEYS}=${id}`),
+    getById: (id) => apiService.get(`${API_ENDPOINTS.ATTORNEYS}/id=${id}`),
     create: (data) => apiService.post(API_ENDPOINTS.ATTORNEYS, data),
-    update: (id, data) => apiService.put(`${API_ENDPOINTS.ATTORNEYS}=${id}`, data),
-    delete: (id) => apiService.delete(`${API_ENDPOINTS.ATTORNEYS}=${id}`),
+    update: (id, data) => apiService.put(`${API_ENDPOINTS.ATTORNEYS}/id=${id}`, data),
+    delete: (id) => apiService.delete(`${API_ENDPOINTS.ATTORNEYS}/id=${id}`),
 };
 
 export const currencyApi = {

@@ -1,4 +1,4 @@
-export const API_BASE_URL = '/backend';
+export const API_BASE_URL = '/api';
 export const EXCHANGE_RATE_API_KEY = 'fca_live_vcE4usEJziAUlGk0J5DcgZQAKfjS0M8kAF0sYP4A';
 export const EXCHANGE_RATE_API = `https://api.freecurrencyapi.com/v1/historical?apikey=${EXCHANGE_RATE_API_KEY}`;
 export const EXCHANGE_RATE_API_LATEST = `https://api.freecurrencyapi.com/v1/latest?apikey=${EXCHANGE_RATE_API_KEY}`;

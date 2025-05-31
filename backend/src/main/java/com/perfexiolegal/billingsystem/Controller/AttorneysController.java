@@ -2,179 +2,213 @@ package com.perfexiolegal.billingsystem.Controller;
 
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.ApiResponse;
-import com.perfexiolegal.billingsystem.Model.Attorneys;
-import com.perfexiolegal.billingsystem.Model.AttorneysWithoutId;
-import com.perfexiolegal.billingsystem.Service.AttorneysService;
+import com.perfexiolegal.billingsystem.Model.AttorneyDetails;
+import com.perfexiolegal.billingsystem.Service.IAttorneysService;
 import com.perfexiolegal.billingsystem.Transformer.AttorneysTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@org.springframework.stereotype.Controller
-@RequestMapping("/backend")
+/**
+ * REST Controller for managing attorney-related operations.
+ * Provides endpoints for CRUD operations on attorneys.
+ */
+@RestController
+@RequestMapping("/api/attorneys")
 public class AttorneysController {
 
-  final Logger logger = LoggerFactory.getLogger(AttorneysController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AttorneysController.class);
 
-  @Autowired
-  AttorneysService attorneysService;
+    @Autowired
+    private IAttorneysService attorneysService;
+    @Autowired
+    private AttorneysTransformer attorneysTransformer;
 
-  @Autowired
-  AttorneysTransformer attorneysTransformer;
+    /**
+     * Retrieves all attorneys from the system.
+     * @return ResponseEntity containing the list of attorneys or an empty list
+     */
+    @GetMapping
+    public ResponseEntity<ApiResponse> getAllAttorneys() {
+        try {
+            logger.info("Retrieving all attorneys");
+            Optional<List<AttorneyDetails>> listOfAttorneys = attorneysService.getAll();
+            List<AttorneyDetails> attorneys = listOfAttorneys.orElse(List.of());
 
-  @GetMapping(value = "/attorneys")
-  public ResponseEntity<ApiResponse> getAllAttorneys() {
-    try {
-      logger.info("retrieving all attorneys from controller");
-      Optional<List<Attorneys>> listOfAttorneys = attorneysService.getAllAttorneys();
-      List<Attorneys> attorneys = listOfAttorneys.get();
-      if (attorneys.isEmpty()) {
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("No attorneys found")
-            .success(true)
-            .data(attorneys)
-            .build(), HttpStatus.OK);
-      }
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Attorneys retrieved successfully")
-          .success(true)
-          .data(attorneys)
-          .build(), HttpStatus.OK);
-    } catch (ServiceException e) {
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Internal server error")
-          .success(false)
-          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  @GetMapping(value = "/attorneys={attorneyID}")
-  public ResponseEntity<ApiResponse> getAttorneysForCase(@PathVariable("attorneyID") String attorneyID) {
-    try {
-      logger.info("retrieving attorney from controller with attorneyID: " + attorneyID);
-      Optional<Attorneys> retrievedAttorneys = attorneysService.getAttorneyById(attorneyID);
-      if (retrievedAttorneys.isEmpty()) {
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("No attorney found with ID: " + attorneyID)
-            .success(true)
-            .build(), HttpStatus.OK);
-      }
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Attorney retrieved successfully")
-          .success(true)
-          .data(retrievedAttorneys.get())
-          .build(), HttpStatus.OK);
-    } catch (ServiceException e) {
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Internal server error")
-          .success(false)
-          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  @PostMapping(value = "/attorneys", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<ApiResponse> createNewAttorney(@RequestBody Attorneys attorney) {
-    try {
-      logger.info("Creating attorney with attorneyID: " + attorney.getAttorneyId());
-      try{
-        attorneysService.getAttorneyById(attorney.getAttorneyId()).isPresent();
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("Attorney with ID already exists.")
-            .success(false)
-            .build(), HttpStatus.GONE);
-      } catch (Exception e) {
-        attorneysService.postAttorneys(attorney);
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("Attorney was created successfully.")
-            .success(true)
-            .data(attorney)
-            .build(), HttpStatus.CREATED);
-      }
-    } catch (ServiceException e) {
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Internal server error")
-          .success(false)
-          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  @PutMapping(value = "/attorneys={attorneyID}")
-  public ResponseEntity<ApiResponse> updateAttorney(@PathVariable("attorneyID") String attorneyID,
-                                              @RequestBody AttorneysWithoutId attorneyJSONWithoutID) {
-    try {
-      logger.info("check existence of attorney with attorney ID: " + attorneyID);
-      Optional<Attorneys> findAttorney = attorneysService.getAttorneyById(attorneyID);
-      if (findAttorney.isPresent()) {
-        logger.info("update attorney with ID: " + attorneyID);
-        Attorneys updatedAttorney;
-        if (attorneyJSONWithoutID.getServicePricing().get(0).getPrice() < 0) {
-          updatedAttorney = attorneysTransformer.deleteServicePrice(findAttorney.get(),
-              attorneyJSONWithoutID.getServicePricing().get(0).getClientId());
-        } else {
-          String clientId = attorneyJSONWithoutID.getServicePricing().get(0).getClientId();
-          if(findAttorney.get().getServicePricing().stream()
-              .anyMatch(pricing -> pricing.getClientId().equals(clientId))) {
-            return new ResponseEntity<>(ApiResponse.builder()
-                .message("Client already exists in service pricing.")
-                .success(false)
-                .build(), HttpStatus.GONE);
-          }
-          updatedAttorney = attorneysTransformer.update(attorneyJSONWithoutID, attorneyID);
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .message(attorneys.isEmpty() ? "No attorneys found" : "Attorneys retrieved successfully")
+                    .success(true)
+                    .data(attorneys)
+                    .build());
+        } catch (ServiceException e) {
+            logger.error("Failed to retrieve attorneys", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.builder()
+                            .message("Internal server error")
+                            .success(false)
+                            .build());
         }
-        attorneysService.updateAttorney(updatedAttorney);
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("Attorney was updated successfully.")
-            .success(true)
-            .data(updatedAttorney)
-            .build(), HttpStatus.OK);
-      } else{
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("Cannot find attorney with id=" + attorneyID)
-            .success(false)
-            .build(), HttpStatus.NOT_FOUND);
-      }
-    } catch (ServiceException e) {
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Internal server error")
-          .success(false)
-          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
 
-  @DeleteMapping(value = "/attorneys={attorneyID}")
-  public ResponseEntity<ApiResponse> deleteService(@PathVariable("attorneyID") String attorneyID) {
-    try {
-      logger.info("deleting attorney with ID: " + attorneyID);
-      int result = attorneysService.deleteById(attorneyID);
-      if (result == 0) {
-        return new ResponseEntity<>(ApiResponse.builder()
-            .message("Cannot find attorney with id= " + attorneyID)
-            .success(false)
-            .build(), HttpStatus.NOT_FOUND);
-      }
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Attorney was deleted successfully.")
-          .success(true)
-          .build(), HttpStatus.OK);
-    } catch (ServiceException e) {
-      return new ResponseEntity<>(ApiResponse.builder()
-          .message("Cannot delete attorney.")
-          .success(false)
-          .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+    /**
+     * Retrieves a specific attorney by their ID.
+     * @param attorneyID The ID of the attorney to retrieve
+     * @return ResponseEntity containing the attorney if found
+     */
+    @GetMapping(value = "/id={attorneyID}")
+    public ResponseEntity<ApiResponse> getById(@PathVariable("attorneyID") String attorneyID) {
+        try {
+            logger.info("Retrieving attorney with ID: {}", attorneyID);
+            Optional<AttorneyDetails> retrievedAttorneys = attorneysService.getById(attorneyID);
+
+            if (retrievedAttorneys.isEmpty()) {
+                return ResponseEntity.ok(ApiResponse.builder()
+                        .message("No attorney found with ID: " + attorneyID)
+                        .success(true)
+                        .build());
+            }
+
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .message("Attorney retrieved successfully")
+                    .success(true)
+                    .data(retrievedAttorneys.get())
+                    .build());
+        } catch (ServiceException e) {
+            logger.error("Failed to retrieve attorney with ID: {}", attorneyID, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.builder()
+                            .message("Internal server error")
+                            .success(false)
+                            .build());
+        }
     }
-  }
 
+    /**
+     * Updates an existing attorney's information.
+     * @param attorneyID The ID of the attorney to update
+     * @param updatedData The updated attorney data
+     * @return ResponseEntity containing the updated attorney
+     */
+    @PutMapping(value = "/id={attorneyID}")
+    public ResponseEntity<ApiResponse> updateAttorney(
+            @PathVariable("attorneyID") String attorneyID,
+            @RequestBody AttorneyDetails updatedData) {
+        try {
+            logger.info("Updating attorney with ID: {}", attorneyID);
+            Optional<AttorneyDetails> existingAttorney = attorneysService.getById(attorneyID);
+
+            if (existingAttorney.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.builder()
+                                .message("Cannot find attorney with id=" + attorneyID)
+                                .success(false)
+                                .build());
+            }
+
+            AttorneyDetails updatedAttorney;
+            if (updatedData.getServicePricing().get(0).getPrice() < 0) {
+                updatedAttorney = attorneysTransformer.deleteServicePrice(
+                        existingAttorney.get(),
+                        updatedData.getServicePricing().get(0).getClientId());
+            } else {
+                try {
+                    updatedAttorney = attorneysTransformer.update(updatedData, attorneyID);
+                } catch (ServiceException e) {
+                    return ResponseEntity.status(HttpStatus.CONFLICT)
+                            .body(ApiResponse.builder()
+                                    .message(e.getMessage())
+                                    .success(false)
+                                    .build());
+                }
+            }
+
+            attorneysService.update(updatedAttorney);
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .message("Attorney was updated successfully")
+                    .success(true)
+                    .data(updatedAttorney)
+                    .build());
+        } catch (ServiceException e) {
+            logger.error("Failed to update attorney with ID: {}", attorneyID, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.builder()
+                            .message("Internal server error")
+                            .success(false)
+                            .build());
+        }
+    }
+
+    /**
+     * Creates a new attorney in the system.
+     * @param attorney The attorney data to create
+     * @return ResponseEntity containing the created attorney
+     */
+    @PostMapping
+    public ResponseEntity<ApiResponse> create(@RequestBody AttorneyDetails attorney) {
+        try {
+            logger.info("Creating attorney with ID: {}", attorney.getAttorneyId());
+            
+            if (attorneysService.getById(attorney.getAttorneyId()).isPresent()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(ApiResponse.builder()
+                                .message("Attorney with ID already exists")
+                                .success(false)
+                                .build());
+            }
+
+             attorneysService.create(attorney);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(ApiResponse.builder()
+                            .message("Attorney was created successfully")
+                            .success(true)
+                            .data(attorney)
+                            .build());
+        } catch (ServiceException e) {
+            logger.error("Failed to create attorney with ID: {}", attorney.getAttorneyId(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.builder()
+                            .message("Internal server error")
+                            .success(false)
+                            .build());
+        }
+    }
+
+    /**
+     * Deletes an attorney by their ID.
+     * @param attorneyID The ID of the attorney to delete
+     * @return ResponseEntity indicating the result of the deletion
+     */
+    @DeleteMapping(value = "/id={attorneyID}")
+    public ResponseEntity<ApiResponse> deleteService(@PathVariable("attorneyID") String attorneyID) {
+        try {
+            logger.info("Deleting attorney with ID: {}", attorneyID);
+            int result = attorneysService.deleteById(attorneyID);
+
+            if (result == 0) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.builder()
+                                .message("Cannot find attorney with id=" + attorneyID)
+                                .success(false)
+                                .build());
+            }
+
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .message("Attorney was deleted successfully")
+                    .success(true)
+                    .build());
+        } catch (ServiceException e) {
+            logger.error("Failed to delete attorney with ID: {}", attorneyID, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.builder()
+                            .message("Cannot delete attorney")
+                            .success(false)
+                            .build());
+        }
+    }
 }

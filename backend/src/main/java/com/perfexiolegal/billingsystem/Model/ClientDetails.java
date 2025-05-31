@@ -6,16 +6,16 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.List;
-
 @Builder
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class AttorneysWithoutId {
-  private String firstName;
-  private String lastName;
-  private List<ServicePricing> servicePricing;
-
+public class ClientDetails {
+  private String clientId;
+  private String clientName;
+  private String currencyCode;
+  private double disbursementsAmount;
+  private double servicesAmount;
+  private double amount;
 }

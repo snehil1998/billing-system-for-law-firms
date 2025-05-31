@@ -1,25 +1,19 @@
 package com.perfexiolegal.billingsystem.Transformer;
 
-import com.perfexiolegal.billingsystem.Model.Clients;
-import com.perfexiolegal.billingsystem.Model.ClientsWithoutId;
+import com.perfexiolegal.billingsystem.Model.ClientDetails;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ClientsTransformer {
 
-  public Clients update(ClientsWithoutId client, String clientID) {
-    return new Clients(
-        clientID,
-        client.getClientName(),
-        client.getCurrencyCode(),
-        client.getDisbursementsAmount(),
-        client.getServicesAmount(),
-        client.getAmount()
-    );
-  }
+  private static final Logger logger = LoggerFactory.getLogger(ClientsTransformer.class);
 
-  public Clients updateAmount(Clients updatedClient, double disbursementsAmount, double servicesAmount) {
-    return new Clients(
+  public ClientDetails updateAmount(ClientDetails updatedClient, double disbursementsAmount, double servicesAmount) {
+    logger.debug("Updating amounts for client with ID: {}", updatedClient.getClientId());
+    return new ClientDetails(
         updatedClient.getClientId(),
         updatedClient.getClientName(),
         updatedClient.getCurrencyCode(),
