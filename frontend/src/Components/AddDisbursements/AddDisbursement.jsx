@@ -11,6 +11,8 @@ import { requestCases } from "../../redux/cases/CasesActions";
 import "../common/AddForm.css";
 import { currencyApi } from "../../services/api";
 import { disbursementsApi } from "../../services/api";
+import { pdfUploadApi } from '../../services/api';
+import { FileInput } from "../common/FileInput";
 
 const AddDisbursement = (props) => {
     const today = dayjs();
@@ -23,14 +25,37 @@ const AddDisbursement = (props) => {
     const [inrAmount, setInrAmount] = useState("0");
     const [conversionAmount, setConversionAmount] = useState(0);
     const [disbursementID, setDisbursementID] = useState("");
+    const [file, setFile] = useState(null);
+
+    const getClientNameForSelectedCase = () => {
+        return caseID === '' ? '' : props.clientsData.find(data => data.clientId === props.casesData
+            .find(data => data.caseId === caseID)?.clientId)?.clientName
+    }
+
+    const getCaseNameForSelectedCase = () => {
+        return caseID === '' ? '' : props.casesData.find(data => data.caseId === caseID)?.caseName
+    }
+
+    const caseOptions = props.casesData?.map(eachCase => {
+        return {label: eachCase.caseName, value: eachCase.caseId}
+    });
 
     let handleSubmit = async (e) => {
         e.preventDefault();
         window.scrollTo(0, 0);
         try {
-            if(caseID === '' || disbursement === '' || !date || inrAmount === '0') {
+            if(caseID === '' || disbursement === '' || !date || inrAmount === '0' || file == null) {
                 return props.addMessage('❗ Please complete all fields to add a disbursement.')
             }
+            const caseName = getCaseNameForSelectedCase()
+            const clientName = getClientNameForSelectedCase()
+            const directory = `${clientName.replace(/[^a-zA-Z0-9-_]/g, "_")}/${caseName.replace(/[^a-zA-Z0-9-_]/g, "_")}/${disbursementID}.pdf`;
+            const formData = new FormData();
+            formData.append('pdf', file);
+            formData.append('directory', directory);
+            
+            await pdfUploadApi.uploadInvoice(formData);
+
             await disbursementsApi.create({
                 disbursementId: disbursementID,
                 caseId: caseID,
@@ -51,6 +76,7 @@ const AddDisbursement = (props) => {
             setConversionRate(0);
             setInrAmount("0");
             setConversionAmount(0);
+            setFile(null)
             props.addMessage("Disbursement was created successfully!");
             props.requestDisbursements('');
         } catch (err) {
@@ -69,15 +95,8 @@ const AddDisbursement = (props) => {
         setConversionRate(0);
         setInrAmount("0");
         setConversionAmount(0);
+        setFile(null);
     }
-
-    const caseOptions = props.casesData?.map(eachCase => {
-        return {label: eachCase.caseName, value: eachCase.caseId}
-    });
-
-    const handleChangeCases = (event) => {
-        setCaseID(event.target.value);
-    };
 
     useEffect(() => {
         async function fetchData() {
@@ -102,9 +121,12 @@ const AddDisbursement = (props) => {
     }, [currencyCode, date, conversionRate])
 
     useEffect(() => {
-        if (conversionRate !== undefined && conversionRate !== null) {
-            const amount = (parseFloat(inrAmount) / conversionRate);
-            setConversionAmount(amount.toFixed(2));
+        const inr = parseFloat(inrAmount);
+        const rate = parseFloat(conversionRate);
+        if (!isNaN(inr) && !isNaN(rate) && rate !== 0) {
+            setConversionAmount((inr / rate).toFixed(2));
+        } else {
+            setConversionAmount("");
         }
     }, [conversionRate, inrAmount])
 
@@ -116,11 +138,6 @@ const AddDisbursement = (props) => {
     useEffect(() => {
         props.requestCases('');
     }, [])
-
-    const getClientNameForSelectedCase = () => {
-        return caseID === '' ? '' : props.clientsData.find(data => data.clientId === props.casesData
-            .find(data => data.caseId === caseID)?.clientId)?.clientName
-    }
 
     return (
         <div className="add-form-container">
@@ -146,7 +163,7 @@ const AddDisbursement = (props) => {
                         id="caseId"
                         className="form-input"
                         value={caseID}
-                        onChange={handleChangeCases}
+                        onChange={(e) => setCaseID(e.target.value)}
                     >
                         <option value="" disabled>Select a case</option>
                         {caseOptions?.sort((a, b) => {
@@ -200,6 +217,12 @@ const AddDisbursement = (props) => {
                     />
                 </div>
                 <div className="form-group">
+                    <label htmlFor="invoicePdf" className="form-label">
+                        Upload Invoice:
+                    </label>
+                    <FileInput fileName={file?.name} onChange={(file) => setFile(file)} />
+                </div>
+                <div className="form-group">
                     <label htmlFor="currencyCode" className="form-label">
                         Currency Code:
                     </label>
@@ -219,7 +242,7 @@ const AddDisbursement = (props) => {
                         id="conversionRate"
                         className="form-input"
                         type="number"
-                        value={conversionRate !== undefined && conversionRate !== null ? conversionRate : 0}
+                        value={isNaN(conversionRate) ? "" : conversionRate}
                         disabled
                     />
                 </div>
@@ -231,7 +254,7 @@ const AddDisbursement = (props) => {
                         id="inrAmount"
                         className="form-input"
                         type="number"
-                        value={inrAmount || "0"}
+                        value={isNaN(parseFloat(inrAmount)) ? "" : inrAmount}
                         onChange={(e) => setInrAmount(e.target.value || "0")}
                         placeholder="Enter amount in INR"
                     />
@@ -244,7 +267,7 @@ const AddDisbursement = (props) => {
                         id="conversionAmount"
                         className="form-input"
                         type="number"
-                        value={conversionAmount !== undefined && conversionAmount !== null ? conversionAmount : 0}
+                        value={isNaN(conversionAmount) ? "" : conversionAmount}
                         disabled
                     />
                 </div>

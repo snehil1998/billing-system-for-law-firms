@@ -77,7 +77,7 @@ public class ServicesService implements IServicesService {
   public void update(ServiceDetails serviceDetails) throws ServiceException {
     try {
       logger.info("updating services through service");
-      validateServiceExists(serviceDetails.getServiceId());
+      getServiceIfExists(serviceDetails.getServiceId());
       ServiceDetails service = servicesTransformer.populateAmount(serviceDetails);
       servicesRepository.update(service);
     } catch (RepositoryException e) {
@@ -87,7 +87,7 @@ public class ServicesService implements IServicesService {
 
   public int deleteById(String serviceID) throws ServiceException {
     try {
-      ServiceDetails service = getById(serviceID).get();
+      ServiceDetails service = getServiceIfExists(serviceID);
       casesService.updateAmounts(service.getCaseId(), 0, -service.getAmount());
       clientsService.updateAmounts(service.getClientId(), 0, -service.getAmount());
       return servicesRepository.deleteById(serviceID);
@@ -104,10 +104,11 @@ public class ServicesService implements IServicesService {
     }
   }
 
-  private void validateServiceExists(String serviceID) throws ServiceException {
+  private ServiceDetails getServiceIfExists(String serviceID) throws ServiceException {
     Optional<ServiceDetails> service = getById(serviceID);
     if (service.isEmpty()) {
         throw new ServiceException("Service not found with ID: " + serviceID);
     }
+    return service.get();
   }
 }
