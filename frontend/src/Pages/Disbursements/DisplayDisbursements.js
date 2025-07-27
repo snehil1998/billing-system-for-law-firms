@@ -39,6 +39,10 @@ const DisplayServices = (props) => {
                     accessorKey: 'disbursement',
                     size: 150,
                 }, {
+                    header: 'Description',
+                    accessorKey: 'description',
+                    size: 150,
+                }, {
                     header: 'Date',
                     accessorKey: 'date',
                     size: 150,
@@ -71,6 +75,7 @@ const DisplayServices = (props) => {
                 casename: filterCases?.caseName || 'N/A',
                 clientname: filterClients?.clientName || 'N/A',
                 disbursement: disbursement.disbursement,
+                description: disbursement.description,
                 date: disbursement.date,
                 currencycode: disbursement.currencyCode,
                 conversionrate: disbursement.conversionRate?.toFixed(2),

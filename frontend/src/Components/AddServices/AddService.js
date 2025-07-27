@@ -14,7 +14,6 @@ import './AddService.css';
 import DynamicInputList from "../common/DynamicInputList";
 
 const AddService = (props) => {
-    const [serviceID, setServiceID] = useState("");
     const [serviceName, setServiceName] = useState("");
     const [caseID, setCaseID] = useState("");
     const [description, setDescription] = useState("");
@@ -32,7 +31,7 @@ const AddService = (props) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         window.scrollTo(0, 0);
-        if (!serviceID || !serviceName || !caseID || !description || !date) {
+        if (!serviceName || !caseID || !description || !date) {
             return props.addMessage("Please complete all fields to add a service.");
         }
         if (!validateMinutes()) {
@@ -43,14 +42,13 @@ const AddService = (props) => {
         }
         try {
             await servicesApi.create({
-                serviceId: serviceID,
                 caseId: caseID,
                 clientId: clientID,
                 service: serviceName,
+                description: description,
                 date: date,
                 attorneys: attorneySelections.map(sel => ({ id: sel.attorneyId, minutes: parseInt(sel.minutes) })),
             });
-            setServiceID("");
             setServiceName("");
             setCaseID("");
             setDescription("");
@@ -62,17 +60,12 @@ const AddService = (props) => {
             props.addMessage("Service was created successfully!");
             props.requestServices("");
         } catch (error) {
-            if (error.status === 410) {
-                props.addMessage(`Please use a different service ID. ${serviceID} already exists.`);
-            } else {
-                props.addMessage("❗ Error occurred while adding data into services.");
-            }
+            props.addMessage("❗ Error occurred while adding data into services.");
         }
     };
 
     const handleClear = (e) => {
         e.preventDefault();
-        setServiceID("");
         setServiceName("");
         setCaseID("");
         setClientID("");
@@ -132,19 +125,6 @@ const AddService = (props) => {
     return (
         <div className="add-form-container">
             <form onSubmit={handleSubmit} onReset={handleClear} className="add-form">
-                <div className="form-group">
-                    <label htmlFor="serviceId" className="form-label">
-                        Service ID:
-                    </label>
-                    <input
-                        id="serviceId"
-                        className="form-input"
-                        type="text"
-                        value={serviceID}
-                        onChange={(e) => setServiceID(e.target.value)}
-                        placeholder="Enter service ID"
-                    />
-                </div>
                 <div className="form-group">
                     <label htmlFor="serviceName" className="form-label">
                         Service Name:
@@ -215,13 +195,13 @@ const AddService = (props) => {
                         className="form-input"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        placeholder="Enter service description"
-                        rows="4"
+                        placeholder="Enter description"
+                        rows="2"
                     />
                 </div>
                 <div className="form-group">
                     <label htmlFor="date" className="form-label">
-                        Date:
+                        Service Date:
                     </label>
                     <input
                         id="date"

@@ -2,7 +2,8 @@ package com.perfexiolegal.billingsystem.Controller;
 
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.ApiResponse;
-import com.perfexiolegal.billingsystem.Model.ServiceDetails;
+import com.perfexiolegal.billingsystem.Model.ServiceRequest;
+import com.perfexiolegal.billingsystem.Model.ServiceResponse;
 import com.perfexiolegal.billingsystem.Service.ServicesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +37,8 @@ public class ServicesController {
     public ResponseEntity<ApiResponse> getAll() {
         try {
             logger.debug("Retrieving all services");
-            Optional<List<ServiceDetails>> listOfServices = servicesService.getAll();
-            List<ServiceDetails> services = listOfServices.get();
+            Optional<List<ServiceResponse>> listOfServices = servicesService.getAll();
+            List<ServiceResponse> services = listOfServices.get();
             
             if (services.isEmpty()) {
                 return ResponseEntity.ok(ApiResponse.builder()
@@ -71,8 +72,8 @@ public class ServicesController {
     public ResponseEntity<ApiResponse> getServicesForCase(@PathVariable("caseID") String caseID) {
         try {
             logger.debug("Retrieving services for case with ID: {}", caseID);
-            Optional<List<ServiceDetails>> listOfServices = servicesService.getByCaseId(caseID);
-            List<ServiceDetails> services = listOfServices.get();
+            Optional<List<ServiceResponse>> listOfServices = servicesService.getByCaseId(caseID);
+            List<ServiceResponse> services = listOfServices.get();
             
             if (services.isEmpty()) {
                 return ResponseEntity.ok(ApiResponse.builder()
@@ -103,10 +104,10 @@ public class ServicesController {
      * @return ResponseEntity containing the requested service
      */
     @GetMapping(value = "/id={serviceID}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> getServicesFromId(@PathVariable("serviceID") String serviceID) {
+    public ResponseEntity<ApiResponse> getServicesFromId(@PathVariable("serviceID") Long serviceID) {
         try {
             logger.debug("Retrieving service with ID: {}", serviceID);
-            Optional<ServiceDetails> retrievedService = servicesService.getById(serviceID);
+            Optional<ServiceResponse> retrievedService = servicesService.getById(serviceID);
             
             if (retrievedService.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -140,8 +141,8 @@ public class ServicesController {
     public ResponseEntity<ApiResponse> getServicesForClient(@PathVariable("clientID") String clientID) {
         try {
             logger.debug("Retrieving services for client with ID: {}", clientID);
-            Optional<List<ServiceDetails>> listOfServices = servicesService.getByClientId(clientID);
-            List<ServiceDetails> services = listOfServices.get();
+            Optional<List<ServiceResponse>> listOfServices = servicesService.getByClientId(clientID);
+            List<ServiceResponse> services = listOfServices.get();
             
             if (services.isEmpty()) {
                 return ResponseEntity.ok(ApiResponse.builder()
@@ -172,16 +173,16 @@ public class ServicesController {
      * @return ResponseEntity containing the created service
      */
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@RequestBody ServiceDetails serviceDetails) {
+    public ResponseEntity<ApiResponse> create(@RequestBody ServiceRequest request) {
         try {
-            logger.debug("Creating service with name: {}", serviceDetails.getService());
-            servicesService.create(serviceDetails);
+            logger.debug("Creating service with name: {}", request.getService());
+            servicesService.create(request);
             
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.builder()
                             .message("Service created successfully")
                             .success(true)
-                            .data(serviceDetails)
+                            .data(request)
                             .build());
         } catch (ServiceException e) {
             logger.error("Error creating service: {}", e.getMessage());
@@ -201,11 +202,11 @@ public class ServicesController {
      */
     @PutMapping(value = "/id={serviceID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> updateService(
-            @PathVariable("serviceID") String serviceID,
-            @RequestBody ServiceDetails serviceDetails) {
+            @PathVariable("serviceID") Long serviceID,
+            @RequestBody ServiceRequest serviceDetails) {
         try {
             logger.debug("Updating service with ID: {}", serviceID);
-            servicesService.update(serviceDetails);
+            servicesService.update(serviceID, serviceDetails);
             
             return ResponseEntity.ok(ApiResponse.builder()
                     .message("Service updated successfully")
@@ -228,7 +229,7 @@ public class ServicesController {
      * @return ResponseEntity indicating the result of the deletion
      */
     @DeleteMapping(value = "/id={serviceID}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> deleteService(@PathVariable("serviceID") String serviceID) {
+    public ResponseEntity<ApiResponse> deleteService(@PathVariable("serviceID") Long serviceID) {
         try {
             logger.debug("Deleting service with ID: {}", serviceID);
             int result = servicesService.deleteById(serviceID);

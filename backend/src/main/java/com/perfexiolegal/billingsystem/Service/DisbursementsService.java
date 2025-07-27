@@ -1,8 +1,12 @@
 package com.perfexiolegal.billingsystem.Service;
 
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
-import com.perfexiolegal.billingsystem.Model.DisbursementDetails;
+import com.perfexiolegal.billingsystem.Model.DisbursementRequest;
+import com.perfexiolegal.billingsystem.Model.DisbursementResponse;
+import com.perfexiolegal.billingsystem.Model.DisbursementRequestDto;
 import com.perfexiolegal.billingsystem.Repository.IDisbursementsRepository;
+import com.perfexiolegal.billingsystem.Transformer.DisbursementsTransformer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +28,11 @@ public class DisbursementsService implements IDisbursementsService {
     @Autowired
     private IClientsService clientsService;
 
+    @Autowired
+    private DisbursementsTransformer disbursementsTransformer;
+
     @Override
-    public Optional<List<DisbursementDetails>> getAll() throws ServiceException {
+    public Optional<List<DisbursementResponse>> getAll() throws ServiceException {
         try {
             logger.debug("Retrieving all disbursements");
             return disbursementsRepository.getAll();
@@ -36,7 +43,7 @@ public class DisbursementsService implements IDisbursementsService {
     }
 
     @Override
-    public Optional<DisbursementDetails> getById(String disbursementId) throws ServiceException {
+    public Optional<DisbursementResponse> getById(Long disbursementId) throws ServiceException {
         try {
             logger.debug("Retrieving disbursement with ID: {}", disbursementId);
             return disbursementsRepository.getById(disbursementId);
@@ -47,9 +54,9 @@ public class DisbursementsService implements IDisbursementsService {
     }
 
     @Override
-    public void create(DisbursementDetails details) throws ServiceException {
+    public void create(DisbursementRequest details) throws ServiceException {
         try {
-            logger.debug("Creating disbursement with ID: {}", details.getDisbursementId());
+            logger.debug("Creating disbursement for case: {}", details.getCaseId());
             casesService.updateAmounts(details.getCaseId(), details.getConversionAmount(), 0);
             clientsService.updateAmounts(details.getClientId(), details.getConversionAmount(), 0);
             disbursementsRepository.create(details);
@@ -60,11 +67,15 @@ public class DisbursementsService implements IDisbursementsService {
     }
 
     @Override
-    public void update(DisbursementDetails details) throws ServiceException {
+    public void update(Long disbursementId, DisbursementRequest details) throws ServiceException {
         try {
-            logger.debug("Updating disbursement with ID: {}", details.getDisbursementId());
-            getDisbursementIfExists(details.getDisbursementId());
-            disbursementsRepository.update(details);
+            logger.debug("Updating disbursement for caseID: {}", details.getCaseId());
+            DisbursementResponse disbursement = getDisbursementIfExists(disbursementId);
+            DisbursementRequestDto disbursementRequestDto = disbursementsTransformer.ToDisbursementRequestDto(details);
+            disbursementsRepository.update(disbursementId, disbursementRequestDto);
+            double updatedAmount = disbursementRequestDto.getConversionAmount() - disbursement.getConversionAmount();
+            casesService.updateAmounts(details.getCaseId(), 0, updatedAmount);
+            clientsService.updateAmounts(details.getClientId(), 0, updatedAmount);
         } catch (Exception e) {
             logger.error("Error updating disbursement: {}", e.getMessage());
             throw new ServiceException("Failed to update disbursement", e);
@@ -72,13 +83,14 @@ public class DisbursementsService implements IDisbursementsService {
     }
 
     @Override
-    public int deleteById(String disbursementId) throws ServiceException {
+    public int deleteById(Long disbursementId) throws ServiceException {
         try {
             logger.debug("Deleting disbursement with ID: {}", disbursementId);
-            DisbursementDetails details = getDisbursementIfExists(disbursementId);
+            DisbursementResponse details = getDisbursementIfExists(disbursementId);
+            int result = disbursementsRepository.deleteById(disbursementId);
             casesService.updateAmounts(details.getCaseId(), -details.getConversionAmount(), 0);
             clientsService.updateAmounts(details.getClientId(), -details.getConversionAmount(), 0);
-            return disbursementsRepository.deleteById(disbursementId);
+            return result;
         } catch (Exception e) {
             logger.error("Error deleting disbursement: {}", e.getMessage());
             throw new ServiceException("Failed to delete disbursement", e);
@@ -86,7 +98,7 @@ public class DisbursementsService implements IDisbursementsService {
     }
 
     @Override
-    public Optional<List<DisbursementDetails>> getByClientId(String clientID) throws ServiceException {
+    public Optional<List<DisbursementResponse>> getByClientId(String clientID) throws ServiceException {
         try {
             logger.debug("Retrieving disbursements for client with ID: {}", clientID);
             return disbursementsRepository.getByClientId(clientID);
@@ -97,7 +109,7 @@ public class DisbursementsService implements IDisbursementsService {
     }
 
     @Override
-    public Optional<List<DisbursementDetails>> getByCaseId(String caseID) throws ServiceException {
+    public Optional<List<DisbursementResponse>> getByCaseId(String caseID) throws ServiceException {
         try {
             logger.debug("Retrieving disbursements for case with ID: {}", caseID);
             return disbursementsRepository.getByCaseId(caseID);
@@ -107,8 +119,8 @@ public class DisbursementsService implements IDisbursementsService {
         }
     }
 
-    private DisbursementDetails getDisbursementIfExists(String disbursementId) throws ServiceException {
-        Optional<DisbursementDetails> disbursement = getById(disbursementId);
+    private DisbursementResponse getDisbursementIfExists(Long disbursementId) throws ServiceException {
+        Optional<DisbursementResponse> disbursement = getById(disbursementId);
         if (disbursement.isEmpty()) {
             throw new ServiceException("Disbursement not found with ID: " + disbursementId);
         }

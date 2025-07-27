@@ -19,12 +19,12 @@ const AddDisbursement = (props) => {
     const [caseID, setCaseID] = useState("");
     const [clientID, setClientID] = useState("");
     const [disbursement, setDisbursement] = useState("");
+    const [description, setDescription] = useState("");
     const [date, setDate] = useState(today.format('YYYY-MM-DD'));
     const [currencyCode, setCurrencyCode] = useState("");
     const [conversionRate, setConversionRate] = useState(0);
     const [inrAmount, setInrAmount] = useState("0");
     const [conversionAmount, setConversionAmount] = useState(0);
-    const [disbursementID, setDisbursementID] = useState("");
     const [file, setFile] = useState(null);
 
     const getClientNameForSelectedCase = () => {
@@ -44,12 +44,12 @@ const AddDisbursement = (props) => {
         e.preventDefault();
         window.scrollTo(0, 0);
         try {
-            if(caseID === '' || disbursement === '' || !date || inrAmount === '0' || file == null) {
+            if(caseID === '' || disbursement === '' || !description || !date || inrAmount === '0' || file == null) {
                 return props.addMessage('❗ Please complete all fields to add a disbursement.')
             }
             const caseName = getCaseNameForSelectedCase()
             const clientName = getClientNameForSelectedCase()
-            const directory = `${clientName.replace(/[^a-zA-Z0-9-_]/g, "_")}/${caseName.replace(/[^a-zA-Z0-9-_]/g, "_")}/${disbursementID}.pdf`;
+            const directory = `${clientName.replace(/[^a-zA-Z0-9-_]/g, "_")}/${caseName.replace(/[^a-zA-Z0-9-_]/g, "_")}/${file.name}.pdf`;
             const formData = new FormData();
             formData.append('pdf', file);
             formData.append('directory', directory);
@@ -57,20 +57,20 @@ const AddDisbursement = (props) => {
             await pdfUploadApi.uploadInvoice(formData);
 
             await disbursementsApi.create({
-                disbursementId: disbursementID,
                 caseId: caseID,
                 clientId: clientID,
                 disbursement: disbursement,
+                description: description,
                 date: date,
                 currencyCode: currencyCode,
                 conversionRate: conversionRate,
                 inrAmount: parseFloat(inrAmount),
                 conversionAmount: conversionAmount,
             })
-            setDisbursementID("");
             setCaseID("");
             setClientID("");
             setDisbursement("");
+            setDescription("");
             setDate(today.format('YYYY-MM-DD'));
             setCurrencyCode("");
             setConversionRate(0);
@@ -90,6 +90,7 @@ const AddDisbursement = (props) => {
         setCaseID("");
         setClientID("");
         setDisbursement("");
+        setDescription("");
         setDate(today.format('YYYY-MM-DD'));
         setCurrencyCode("");
         setConversionRate(0);
@@ -143,19 +144,6 @@ const AddDisbursement = (props) => {
         <div className="add-form-container">
             <form onSubmit={handleSubmit} onReset={handleClear} className="add-form">
                 <div className="form-group">
-                    <label htmlFor="disbursementId" className="form-label">
-                        Disbursement ID:
-                    </label>
-                    <input
-                        id="disbursementId"
-                        className="form-input"
-                        type="text"
-                        value={disbursementID || ""}
-                        onChange={e => setDisbursementID(e.target.value)}
-                        placeholder="Enter disbursement ID"
-                    />
-                </div>
-                <div className="form-group">
                     <label htmlFor="caseId" className="form-label">
                         Case:
                     </label>
@@ -193,7 +181,7 @@ const AddDisbursement = (props) => {
                 </div>
                 <div className="form-group">
                     <label htmlFor="date" className="form-label">
-                        Date:
+                        Disbursement Date:
                     </label>
                      <input
                         id="date"
@@ -213,7 +201,20 @@ const AddDisbursement = (props) => {
                         type="text"
                         value={disbursement || ""}
                         onChange={(e) => setDisbursement(e.target.value || "")}
-                        placeholder="Enter disbursement details"
+                        placeholder="Enter disbursement"
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="description" className="form-label">
+                        Description:
+                    </label>
+                    <input
+                        id="description"
+                        className="form-input"
+                        type="text"
+                        value={description || ""}
+                        onChange={(e) => setDescription(e.target.value || "")}
+                        placeholder="Enter description"
                     />
                 </div>
                 <div className="form-group">
