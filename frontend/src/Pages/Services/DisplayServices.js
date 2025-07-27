@@ -40,6 +40,9 @@ const DisplayServices = (props) => {
                         header: 'Service',
                         accessorKey: 'service',
                     }, {
+                        header: 'Description',
+                        accessorKey: 'description',
+                    }, {
                         header: 'Date',
                         accessorKey: 'date',
                     }, {
@@ -77,7 +80,7 @@ const DisplayServices = (props) => {
                         accessorKey: 'total',
                     }
                 ]
-            }
+            },
     ], []);
 
     let data = [];
@@ -113,6 +116,7 @@ const DisplayServices = (props) => {
                 casename: filterCases[0]?.caseName ?? 'N/A',
                 clientname: filterClients[0]?.clientName ?? 'N/A',
                 service: service.service,
+                description: service.description,
                 date: service.date,
                 currencycode: filterClients[0]?.currencyCode,
                 attorneys: attorneyNamesList?.toString(),
@@ -128,6 +132,7 @@ const DisplayServices = (props) => {
                         casename: "",
                         clientname: "",
                         service: "",
+                        description: "",
                         date: "",
                         currencycode: "",
                         attorneys: name,

@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
     SERVICES: `${API_BASE_URL}/services`,
     DISBURSEMENTS: `${API_BASE_URL}/disbursements`,
     ATTORNEYS: `${API_BASE_URL}/attorneys`,
+    PDF_UPLOAD: `${API_BASE_URL}/pdf-upload`
 };
 
 export const HTTP_STATUS = {

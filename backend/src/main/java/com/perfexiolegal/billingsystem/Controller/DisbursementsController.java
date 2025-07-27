@@ -2,7 +2,8 @@ package com.perfexiolegal.billingsystem.Controller;
 
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
 import com.perfexiolegal.billingsystem.Model.ApiResponse;
-import com.perfexiolegal.billingsystem.Model.DisbursementDetails;
+import com.perfexiolegal.billingsystem.Model.DisbursementRequest;
+import com.perfexiolegal.billingsystem.Model.DisbursementResponse;
 import com.perfexiolegal.billingsystem.Service.IDisbursementsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ public class DisbursementsController {
     public ResponseEntity<ApiResponse> getAll() {
         try {
             logger.debug("Retrieving all disbursements");
-            Optional<List<DisbursementDetails>> disbursements = disbursementsService.getAll();
+            Optional<List<DisbursementResponse>> disbursements = disbursementsService.getAll();
             return ResponseEntity.ok(ApiResponse.builder()
                     .success(true)
                     .data(disbursements.orElse(List.of()))
@@ -55,10 +56,10 @@ public class DisbursementsController {
      * @return ResponseEntity containing the requested disbursement
      */
     @GetMapping("/id={id}")
-    public ResponseEntity<ApiResponse> getById(@PathVariable String id) {
+    public ResponseEntity<ApiResponse> getById(@PathVariable Long id) {
         try {
             logger.debug("Retrieving disbursement with ID: {}", id);
-            Optional<DisbursementDetails> disbursement = disbursementsService.getById(id);
+            Optional<DisbursementResponse> disbursement = disbursementsService.getById(id);
             if (disbursement.isPresent()) {
                 return ResponseEntity.ok(ApiResponse.builder()
                         .success(true)
@@ -89,7 +90,7 @@ public class DisbursementsController {
     public ResponseEntity<ApiResponse> getByCaseId(@PathVariable String caseId) {
         try {
             logger.debug("Retrieving disbursements for case with ID: {}", caseId);
-            Optional<List<DisbursementDetails>> disbursements = disbursementsService.getByCaseId(caseId);
+            Optional<List<DisbursementResponse>> disbursements = disbursementsService.getByCaseId(caseId);
             return ResponseEntity.ok(ApiResponse.builder()
                     .success(true)
                     .data(disbursements.orElse(List.of()))
@@ -113,7 +114,7 @@ public class DisbursementsController {
     public ResponseEntity<ApiResponse> getByClientId(@PathVariable String clientId) {
         try {
             logger.debug("Retrieving disbursements for client with ID: {}", clientId);
-            Optional<List<DisbursementDetails>> disbursements = disbursementsService.getByClientId(clientId);
+            Optional<List<DisbursementResponse>> disbursements = disbursementsService.getByClientId(clientId);
             return ResponseEntity.ok(ApiResponse.builder()
                     .success(true)
                     .data(disbursements.orElse(List.of()))
@@ -134,7 +135,7 @@ public class DisbursementsController {
      * @return ResponseEntity indicating the result of the creation
      */
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@RequestBody DisbursementDetails disbursement) {
+    public ResponseEntity<ApiResponse> create(@RequestBody DisbursementRequest disbursement) {
         try {
             logger.debug("Creating new disbursement");
             disbursementsService.create(disbursement);
@@ -158,21 +159,10 @@ public class DisbursementsController {
      * @return ResponseEntity indicating the result of the update
      */
     @PutMapping("/id={id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable String id, @RequestBody DisbursementDetails disbursement) {
+    public ResponseEntity<ApiResponse> update(@PathVariable Long id, @RequestBody DisbursementRequest disbursement) {
         try {
             logger.debug("Updating disbursement with ID: {}", id);
-            DisbursementDetails updatedDisbursement = DisbursementDetails.builder()
-                    .disbursementId(id)
-                    .caseId(disbursement.getCaseId())
-                    .clientId(disbursement.getClientId())
-                    .disbursement(disbursement.getDisbursement())
-                    .date(disbursement.getDate())
-                    .currencyCode(disbursement.getCurrencyCode())
-                    .conversionRate(disbursement.getConversionRate())
-                    .inrAmount(disbursement.getInrAmount())
-                    .conversionAmount(disbursement.getConversionAmount())
-                    .build();
-            disbursementsService.update(updatedDisbursement);
+            disbursementsService.update(id, disbursement);
             return ResponseEntity.ok(ApiResponse.builder()
                     .success(true)
                     .message("Disbursement updated successfully")
@@ -192,7 +182,7 @@ public class DisbursementsController {
      * @return ResponseEntity indicating the result of the deletion
      */
     @DeleteMapping("/id={id}")
-    public ResponseEntity<ApiResponse> deleteById(@PathVariable String id) {
+    public ResponseEntity<ApiResponse> deleteById(@PathVariable Long id) {
         try {
             logger.debug("Deleting disbursement with ID: {}", id);
             disbursementsService.deleteById(id);

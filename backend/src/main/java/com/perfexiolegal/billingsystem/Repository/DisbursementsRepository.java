@@ -1,7 +1,10 @@
 package com.perfexiolegal.billingsystem.Repository;
 
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
-import com.perfexiolegal.billingsystem.Model.DisbursementDetails;
+import com.perfexiolegal.billingsystem.Model.DisbursementRequest;
+import com.perfexiolegal.billingsystem.Model.DisbursementResponse;
+import com.perfexiolegal.billingsystem.Model.DisbursementRequestDto;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,21 +26,23 @@ public class DisbursementsRepository implements IDisbursementsRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private final RowMapper<DisbursementDetails> disbursementsRowMapper = (resultSet, i) -> {
-        String disbursementId = resultSet.getString("disbursement_id");
+    private final RowMapper<DisbursementResponse> disbursementsRowMapper = (resultSet, i) -> {
+        Long disbursementId = resultSet.getLong("disbursement_id");
         String caseId = resultSet.getString("case_id");
         String clientId = resultSet.getString("client_id");
         String disbursement = resultSet.getString("disbursement");
+        String description = resultSet.getString("description");
         Date date = (Date) resultSet.getObject("date");
         String currencyCode = resultSet.getString("currency_code");
         double conversionRate = resultSet.getDouble("conversion_rate");
         double inrAmount = resultSet.getDouble("inr_amount");
         double conversionAmount = resultSet.getDouble("conversion_amount");
-        return DisbursementDetails.builder()
+        return DisbursementResponse.builder()
                 .disbursementId(disbursementId)
                 .caseId(caseId)
                 .clientId(clientId)
                 .disbursement(disbursement)
+                .description(description)
                 .date(date)
                 .currencyCode(currencyCode)
                 .conversionRate(conversionRate)
@@ -47,11 +52,11 @@ public class DisbursementsRepository implements IDisbursementsRepository {
     };
 
     @Override
-    public Optional<List<DisbursementDetails>> getAll() throws RepositoryException {
+    public Optional<List<DisbursementResponse>> getAll() throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME;
             logger.debug("Retrieving all disbursements");
-            List<DisbursementDetails> disbursementList = jdbcTemplate.query(sql, disbursementsRowMapper);
+            List<DisbursementResponse> disbursementList = jdbcTemplate.query(sql, disbursementsRowMapper);
             return Optional.of(disbursementList);
         } catch (DataAccessException e) {
             logger.error("Error retrieving all disbursements: {}", e.getMessage());
@@ -60,11 +65,11 @@ public class DisbursementsRepository implements IDisbursementsRepository {
     }
 
     @Override
-    public Optional<DisbursementDetails> getById(String id) throws RepositoryException {
+    public Optional<DisbursementResponse> getById(Long id) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE disbursement_id = ?";
             logger.debug("Retrieving disbursement with ID: {}", id);
-            List<DisbursementDetails> disbursements = jdbcTemplate.query(sql, disbursementsRowMapper, id);
+            List<DisbursementResponse> disbursements = jdbcTemplate.query(sql, disbursementsRowMapper, id);
             return disbursements.isEmpty() ? Optional.empty() : Optional.of(disbursements.get(0));
         } catch (DataAccessException e) {
             logger.error("Error retrieving disbursement with ID {}: {}", id, e.getMessage());
@@ -73,19 +78,19 @@ public class DisbursementsRepository implements IDisbursementsRepository {
     }
 
     @Override
-    public void create(DisbursementDetails entity) throws RepositoryException {
+    public void create(DisbursementRequest entity) throws RepositoryException {
         try {
             String sql = "INSERT INTO " + TABLE_NAME + 
-                    " (disbursement_id, case_id, client_id, disbursement, date, " +
+                    " (case_id, client_id, disbursement, description, date, " +
                     "currency_code, conversion_rate, inr_amount, conversion_amount) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            logger.debug("Creating disbursement with ID: {}", entity.getDisbursementId());
+            logger.debug("Creating disbursement for case: {}", entity.getCaseId());
             
             jdbcTemplate.update(sql,
-                    entity.getDisbursementId(),
                     entity.getCaseId(),
                     entity.getClientId(),
                     entity.getDisbursement(),
+                    entity.getDescription(),
                     entity.getDate(),
                     entity.getCurrencyCode(),
                     entity.getConversionRate(),
@@ -98,24 +103,25 @@ public class DisbursementsRepository implements IDisbursementsRepository {
     }
 
     @Override
-    public void update(DisbursementDetails entity) throws RepositoryException {
+    public void update(Long disbursementId, DisbursementRequestDto entity) throws RepositoryException {
         try {
             String sql = "UPDATE " + TABLE_NAME + 
-                    " SET case_id = ?, client_id = ?, disbursement = ?, date = ?, " +
+                    " SET case_id = ?, client_id = ?, disbursement = ?, description = ?, date = ?, " +
                     "currency_code = ?, conversion_rate = ?, inr_amount = ?, conversion_amount = ? " +
                     "WHERE disbursement_id = ?";
-            logger.debug("Updating disbursement with ID: {}", entity.getDisbursementId());
+            logger.debug("Updating disbursement with ID: {}", disbursementId);
             
             jdbcTemplate.update(sql,
                     entity.getCaseId(),
                     entity.getClientId(),
                     entity.getDisbursement(),
+                    entity.getDescription(),
                     entity.getDate(),
                     entity.getCurrencyCode(),
                     entity.getConversionRate(),
                     entity.getInrAmount(),
                     entity.getConversionAmount(),
-                    entity.getDisbursementId());
+                    disbursementId);
         } catch (DataAccessException e) {
             logger.error("Error updating disbursement: {}", e.getMessage());
             throw new RepositoryException("Failed to update disbursement in database", e);
@@ -123,7 +129,7 @@ public class DisbursementsRepository implements IDisbursementsRepository {
     }
 
     @Override
-    public int deleteById(String id) throws RepositoryException {
+    public int deleteById(Long id) throws RepositoryException {
         try {
             String sql = "DELETE FROM " + TABLE_NAME + " WHERE disbursement_id = ?";
             logger.debug("Deleting disbursement with ID: {}", id);
@@ -135,11 +141,11 @@ public class DisbursementsRepository implements IDisbursementsRepository {
     }
 
     @Override
-    public Optional<List<DisbursementDetails>> getByClientId(String clientID) throws RepositoryException {
+    public Optional<List<DisbursementResponse>> getByClientId(String clientID) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE client_id = ?";
             logger.debug("Retrieving disbursements for client with ID: {}", clientID);
-            List<DisbursementDetails> disbursementList = jdbcTemplate.query(sql, disbursementsRowMapper, clientID);
+            List<DisbursementResponse> disbursementList = jdbcTemplate.query(sql, disbursementsRowMapper, clientID);
             return Optional.of(disbursementList);
         } catch (DataAccessException e) {
             logger.error("Error retrieving disbursements for client {}: {}", clientID, e.getMessage());
@@ -148,11 +154,11 @@ public class DisbursementsRepository implements IDisbursementsRepository {
     }
 
     @Override
-    public Optional<List<DisbursementDetails>> getByCaseId(String caseID) throws RepositoryException {
+    public Optional<List<DisbursementResponse>> getByCaseId(String caseID) throws RepositoryException {
         try {
             String sql = "SELECT * FROM " + TABLE_NAME + " WHERE case_id = ?";
             logger.debug("Retrieving disbursements for case with ID: {}", caseID);
-            List<DisbursementDetails> disbursementList = jdbcTemplate.query(sql, disbursementsRowMapper, caseID);
+            List<DisbursementResponse> disbursementList = jdbcTemplate.query(sql, disbursementsRowMapper, caseID);
             return Optional.of(disbursementList);
         } catch (DataAccessException e) {
             logger.error("Error retrieving disbursements for case {}: {}", caseID, e.getMessage());

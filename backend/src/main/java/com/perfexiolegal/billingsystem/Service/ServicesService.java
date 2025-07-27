@@ -2,7 +2,10 @@ package com.perfexiolegal.billingsystem.Service;
 
 import com.perfexiolegal.billingsystem.Exceptions.RepositoryException;
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
-import com.perfexiolegal.billingsystem.Model.ServiceDetails;
+import com.perfexiolegal.billingsystem.Model.CaseDetails;
+import com.perfexiolegal.billingsystem.Model.ServiceRequestDto;
+import com.perfexiolegal.billingsystem.Model.ServiceRequest;
+import com.perfexiolegal.billingsystem.Model.ServiceResponse;
 import com.perfexiolegal.billingsystem.Repository.IServicesRepository;
 import com.perfexiolegal.billingsystem.Repository.ServicesRepository;
 import com.perfexiolegal.billingsystem.Transformer.ServicesTransformer;
@@ -31,7 +34,7 @@ public class ServicesService implements IServicesService {
 
   private static final Logger logger = LoggerFactory.getLogger(ServicesRepository.class);
 
-  public Optional<List<ServiceDetails>> getAll() throws ServiceException {
+  public Optional<List<ServiceResponse>> getAll() throws ServiceException {
     try {
       return servicesRepository.getAll();
     } catch (RepositoryException e) {
@@ -39,7 +42,7 @@ public class ServicesService implements IServicesService {
     }
   }
 
-  public Optional<List<ServiceDetails>> getByCaseId(String caseID) throws ServiceException {
+  public Optional<List<ServiceResponse>> getByCaseId(String caseID) throws ServiceException {
     try {
       return servicesRepository.getByCaseId(caseID);
     } catch (RepositoryException e) {
@@ -47,7 +50,7 @@ public class ServicesService implements IServicesService {
     }
   }
 
-  public Optional<List<ServiceDetails>> getByClientId(String clientID) throws ServiceException {
+  public Optional<List<ServiceResponse>> getByClientId(String clientID) throws ServiceException {
     try {
       return servicesRepository.getByClientId(clientID);
     } catch (RepositoryException e) {
@@ -55,7 +58,7 @@ public class ServicesService implements IServicesService {
     }
   }
 
-  public Optional<ServiceDetails> getById(String serviceID) throws ServiceException {
+  public Optional<ServiceResponse> getById(Long serviceID) throws ServiceException {
     try {
       return servicesRepository.getById(serviceID);
     } catch (RepositoryException e) {
@@ -63,34 +66,38 @@ public class ServicesService implements IServicesService {
     }
   }
 
-  public void create(ServiceDetails serviceDetails) throws ServiceException {
+  public void create(ServiceRequest request) throws ServiceException {
     try {
-      ServiceDetails service = servicesTransformer.populateAmount(serviceDetails);
+      ServiceRequestDto service = servicesTransformer.ToServiceRequestDto(request);
+      servicesRepository.create(service);
       casesService.updateAmounts(service.getCaseId(), 0, service.getAmount());
       clientsService.updateAmounts(service.getClientId(), 0, service.getAmount());
-      servicesRepository.create(service);
     } catch (RepositoryException e) {
       throw new ServiceException("unable to post service", e);
     }
   }
 
-  public void update(ServiceDetails serviceDetails) throws ServiceException {
+  public void update(Long serviceId, ServiceRequest request) throws ServiceException {
     try {
       logger.info("updating services through service");
-      validateServiceExists(serviceDetails.getServiceId());
-      ServiceDetails service = servicesTransformer.populateAmount(serviceDetails);
-      servicesRepository.update(service);
+      ServiceResponse service = getServiceIfExists(serviceId);
+      ServiceRequestDto serviceDto = servicesTransformer.ToServiceRequestDto(request);
+      servicesRepository.update(serviceId, serviceDto);
+      double updatedAmount = serviceDto.getAmount() - service.getAmount();
+      casesService.updateAmounts(service.getCaseId(), 0, updatedAmount);
+      clientsService.updateAmounts(service.getClientId(), 0, updatedAmount);
     } catch (RepositoryException e) {
       throw new ServiceException("unable to update service", e);
     }
   }
 
-  public int deleteById(String serviceID) throws ServiceException {
+  public int deleteById(Long serviceID) throws ServiceException {
     try {
-      ServiceDetails service = getById(serviceID).get();
+      ServiceResponse service = getServiceIfExists(serviceID);
+      int result = servicesRepository.deleteById(serviceID);
       casesService.updateAmounts(service.getCaseId(), 0, -service.getAmount());
       clientsService.updateAmounts(service.getClientId(), 0, -service.getAmount());
-      return servicesRepository.deleteById(serviceID);
+      return result;
     } catch (RepositoryException e) {
       throw new ServiceException("unable to delete service", e);
     }
@@ -98,16 +105,23 @@ public class ServicesService implements IServicesService {
 
   public int deleteByCaseId(String caseID) throws ServiceException {
     try {
-      return servicesRepository.deleteByCaseId(caseID);
+      Optional<CaseDetails> caseDetails = casesService.getById(caseID);
+      if (caseDetails.isEmpty()) {
+        throw new ServiceException("Case not found with ID: " + caseID);
+      }
+      int result = servicesRepository.deleteByCaseId(caseID);
+      casesService.updateAmounts(caseID, 0, -caseDetails.get().getAmount());
+      return result;
     } catch (RepositoryException e) {
-      throw new ServiceException("unable to delete all services", e);
+      throw new ServiceException("unable to delete all services for caseID: " + caseID, e);
     }
   }
 
-  private void validateServiceExists(String serviceID) throws ServiceException {
-    Optional<ServiceDetails> service = getById(serviceID);
+  private ServiceResponse getServiceIfExists(Long serviceID) throws ServiceException {
+    Optional<ServiceResponse> service = getById(serviceID);
     if (service.isEmpty()) {
         throw new ServiceException("Service not found with ID: " + serviceID);
     }
+    return service.get();
   }
 }

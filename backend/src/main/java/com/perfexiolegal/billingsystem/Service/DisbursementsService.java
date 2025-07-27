@@ -1,8 +1,12 @@
 package com.perfexiolegal.billingsystem.Service;
 
 import com.perfexiolegal.billingsystem.Exceptions.ServiceException;
-import com.perfexiolegal.billingsystem.Model.DisbursementDetails;
+import com.perfexiolegal.billingsystem.Model.DisbursementRequest;
+import com.perfexiolegal.billingsystem.Model.DisbursementResponse;
+import com.perfexiolegal.billingsystem.Model.DisbursementRequestDto;
 import com.perfexiolegal.billingsystem.Repository.IDisbursementsRepository;
+import com.perfexiolegal.billingsystem.Transformer.DisbursementsTransformer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +22,17 @@ public class DisbursementsService implements IDisbursementsService {
     @Autowired
     private IDisbursementsRepository disbursementsRepository;
 
+    @Autowired
+    private ICasesService casesService;
+
+    @Autowired
+    private IClientsService clientsService;
+
+    @Autowired
+    private DisbursementsTransformer disbursementsTransformer;
+
     @Override
-    public Optional<List<DisbursementDetails>> getAll() throws ServiceException {
+    public Optional<List<DisbursementResponse>> getAll() throws ServiceException {
         try {
             logger.debug("Retrieving all disbursements");
             return disbursementsRepository.getAll();
@@ -30,22 +43,23 @@ public class DisbursementsService implements IDisbursementsService {
     }
 
     @Override
-    public Optional<DisbursementDetails> getById(String id) throws ServiceException {
+    public Optional<DisbursementResponse> getById(Long disbursementId) throws ServiceException {
         try {
-            logger.debug("Retrieving disbursement with ID: {}", id);
-            return disbursementsRepository.getById(id);
+            logger.debug("Retrieving disbursement with ID: {}", disbursementId);
+            return disbursementsRepository.getById(disbursementId);
         } catch (Exception e) {
-            logger.error("Error retrieving disbursement with ID {}: {}", id, e.getMessage());
+            logger.error("Error retrieving disbursement with ID {}: {}", disbursementId, e.getMessage());
             throw new ServiceException("Failed to retrieve disbursement", e);
         }
     }
 
     @Override
-    public void create(DisbursementDetails entity) throws ServiceException {
+    public void create(DisbursementRequest details) throws ServiceException {
         try {
-            validateDisbursement(entity);
-            logger.debug("Creating disbursement with ID: {}", entity.getDisbursementId());
-            disbursementsRepository.create(entity);
+            logger.debug("Creating disbursement for case: {}", details.getCaseId());
+            casesService.updateAmounts(details.getCaseId(), details.getConversionAmount(), 0);
+            clientsService.updateAmounts(details.getClientId(), details.getConversionAmount(), 0);
+            disbursementsRepository.create(details);
         } catch (Exception e) {
             logger.error("Error creating disbursement: {}", e.getMessage());
             throw new ServiceException("Failed to create disbursement", e);
@@ -53,11 +67,15 @@ public class DisbursementsService implements IDisbursementsService {
     }
 
     @Override
-    public void update(DisbursementDetails entity) throws ServiceException {
+    public void update(Long disbursementId, DisbursementRequest details) throws ServiceException {
         try {
-            validateDisbursement(entity);
-            logger.debug("Updating disbursement with ID: {}", entity.getDisbursementId());
-            disbursementsRepository.update(entity);
+            logger.debug("Updating disbursement for caseID: {}", details.getCaseId());
+            DisbursementResponse disbursement = getDisbursementIfExists(disbursementId);
+            DisbursementRequestDto disbursementRequestDto = disbursementsTransformer.ToDisbursementRequestDto(details);
+            disbursementsRepository.update(disbursementId, disbursementRequestDto);
+            double updatedAmount = disbursementRequestDto.getConversionAmount() - disbursement.getConversionAmount();
+            casesService.updateAmounts(details.getCaseId(), 0, updatedAmount);
+            clientsService.updateAmounts(details.getClientId(), 0, updatedAmount);
         } catch (Exception e) {
             logger.error("Error updating disbursement: {}", e.getMessage());
             throw new ServiceException("Failed to update disbursement", e);
@@ -65,10 +83,14 @@ public class DisbursementsService implements IDisbursementsService {
     }
 
     @Override
-    public int deleteById(String id) throws ServiceException {
+    public int deleteById(Long disbursementId) throws ServiceException {
         try {
-            logger.debug("Deleting disbursement with ID: {}", id);
-            return disbursementsRepository.deleteById(id);
+            logger.debug("Deleting disbursement with ID: {}", disbursementId);
+            DisbursementResponse details = getDisbursementIfExists(disbursementId);
+            int result = disbursementsRepository.deleteById(disbursementId);
+            casesService.updateAmounts(details.getCaseId(), -details.getConversionAmount(), 0);
+            clientsService.updateAmounts(details.getClientId(), -details.getConversionAmount(), 0);
+            return result;
         } catch (Exception e) {
             logger.error("Error deleting disbursement: {}", e.getMessage());
             throw new ServiceException("Failed to delete disbursement", e);
@@ -76,7 +98,7 @@ public class DisbursementsService implements IDisbursementsService {
     }
 
     @Override
-    public Optional<List<DisbursementDetails>> getByClientId(String clientID) throws ServiceException {
+    public Optional<List<DisbursementResponse>> getByClientId(String clientID) throws ServiceException {
         try {
             logger.debug("Retrieving disbursements for client with ID: {}", clientID);
             return disbursementsRepository.getByClientId(clientID);
@@ -87,7 +109,7 @@ public class DisbursementsService implements IDisbursementsService {
     }
 
     @Override
-    public Optional<List<DisbursementDetails>> getByCaseId(String caseID) throws ServiceException {
+    public Optional<List<DisbursementResponse>> getByCaseId(String caseID) throws ServiceException {
         try {
             logger.debug("Retrieving disbursements for case with ID: {}", caseID);
             return disbursementsRepository.getByCaseId(caseID);
@@ -97,36 +119,11 @@ public class DisbursementsService implements IDisbursementsService {
         }
     }
 
-    private void validateDisbursement(DisbursementDetails disbursement) throws ServiceException {
-        if (disbursement == null) {
-            throw new ServiceException("Disbursement details cannot be null");
+    private DisbursementResponse getDisbursementIfExists(Long disbursementId) throws ServiceException {
+        Optional<DisbursementResponse> disbursement = getById(disbursementId);
+        if (disbursement.isEmpty()) {
+            throw new ServiceException("Disbursement not found with ID: " + disbursementId);
         }
-        if (disbursement.getDisbursementId() == null || disbursement.getDisbursementId().trim().isEmpty()) {
-            throw new ServiceException("Disbursement ID cannot be null or empty");
-        }
-        if (disbursement.getCaseId() == null || disbursement.getCaseId().trim().isEmpty()) {
-            throw new ServiceException("Case ID cannot be null or empty");
-        }
-        if (disbursement.getClientId() == null || disbursement.getClientId().trim().isEmpty()) {
-            throw new ServiceException("Client ID cannot be null or empty");
-        }
-        if (disbursement.getDisbursement() == null || disbursement.getDisbursement().trim().isEmpty()) {
-            throw new ServiceException("Disbursement description cannot be null or empty");
-        }
-        if (disbursement.getDate() == null) {
-            throw new ServiceException("Date cannot be null");
-        }
-        if (disbursement.getCurrencyCode() == null || disbursement.getCurrencyCode().trim().isEmpty()) {
-            throw new ServiceException("Currency code cannot be null or empty");
-        }
-        if (disbursement.getConversionRate() <= 0) {
-            throw new ServiceException("Conversion rate must be greater than 0");
-        }
-        if (disbursement.getInrAmount() < 0) {
-            throw new ServiceException("INR amount cannot be negative");
-        }
-        if (disbursement.getConversionAmount() < 0) {
-            throw new ServiceException("Conversion amount cannot be negative");
-        }
-    }
+        return disbursement.get();
+      }
 }

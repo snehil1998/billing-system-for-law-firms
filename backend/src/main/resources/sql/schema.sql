@@ -4,10 +4,11 @@
 -- All services
 CREATE TABLE services
 (
-    Service_Id VARCHAR(40) PRIMARY KEY,
+    Service_Id BIGSERIAL PRIMARY KEY,
     Case_Id  VARCHAR(40) NOT NULL,
     Client_Id   VARCHAR(40) NOT NULL,
     Service   VARCHAR(10000) NOT NULL,
+    Description VARCHAR(10000) NULL,
     Date    DATE NOT NULL,
     Attorneys   JSONB NOT NULL,
     Amount  FLOAT NOT NULL
@@ -77,10 +78,11 @@ CREATE TABLE cases
 -- All disbursements
 CREATE TABLE disbursements
 (
-    Disbursement_Id   VARCHAR(40) PRIMARY KEY,
+    Disbursement_Id   BIGSERIAL PRIMARY KEY,
     Case_Id     VARCHAR(40) NOT NULL,
     Client_Id   VARCHAR(40) NOT NULL,
     Disbursement VARCHAR(10000) NOT NULL,
+    Description VARCHAR(10000) NULL,
     Date    DATE NOT NULL,
     Currency_Code   VARCHAR(3) NOT NULL,
     Conversion_Rate     FLOAT NOT NULL,

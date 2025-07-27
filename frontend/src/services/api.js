@@ -48,6 +48,19 @@ const apiService = {
         }
     },
 
+    async postFormData(endpoint, formData) {
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                body: formData,
+            });
+            return await handleResponse(response);
+        } catch (error) {
+            console.error(`Error posting FormData to ${endpoint}:`, error);
+            throw error;
+        }
+    },
+
     async put(endpoint, data) {
         try {
             const response = await fetch(endpoint, {
@@ -126,3 +139,7 @@ export const currencyApi = {
     getRate: (date, currencyCode) => apiService.get(`${EXCHANGE_RATE_API}&date=${date}&base_currency=${currencyCode}`),
     getLatestRate: (currencyCode) => apiService.get(`${EXCHANGE_RATE_API_LATEST}&base_currency=${currencyCode}`),
 };
+
+export const pdfUploadApi = {
+    uploadInvoice: (formData) => apiService.postFormData(`${API_ENDPOINTS.PDF_UPLOAD}/invoice`, formData)
+}

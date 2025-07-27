@@ -14,11 +14,12 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class ServiceDetails {
-  private String serviceId;
+public class ServiceResponse {
+  private Long serviceId;
   private String caseId;
   private String clientId;
   private String service;
+  private String description;
   private Date date;
   private List<AttorneyMinutes> attorneys;
   private double amount;

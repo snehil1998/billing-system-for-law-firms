@@ -11,7 +11,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class   ServicePricing {
+public class ServicePricing {
   private String clientId;
   private float price;
   public ServicePricing() {

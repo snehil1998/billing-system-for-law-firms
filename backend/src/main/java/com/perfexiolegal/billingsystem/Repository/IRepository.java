@@ -7,8 +7,6 @@ import java.util.Optional;
 
 public interface IRepository<T> {
     Optional<List<T>> getAll() throws RepositoryException;
-    Optional<T> getById(String id) throws RepositoryException;
     void create(T entity) throws RepositoryException;
     void update(T entity) throws RepositoryException;
-    int deleteById(String id) throws RepositoryException;
 } 
